@@ -1,0 +1,189 @@
+{
+  "commit": "143a01b60e5d82fa85ea1078a32f790ec696fa9b",
+  "eligible_for_fresh_64": true,
+  "official_64_result": false,
+  "binary_sha": {
+    "Joint": "98bda063ee0d235031dca1f1d2f39dbc3e3673b2ecb075e8506a053e393187a7",
+    "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f",
+    "Sm": "28cb540691b8890f01b37693f822074a2246c37fd24537545bfeb5e272c45d47",
+    "JointE": "0269df1b334e1d5b8a1cd655a421571ced12122d9190f4d8339afb6a121cb5ca",
+    "JointF": "357b77720e54c8db2e7b7766fbbfcf162e3a4e98ddab14b3a6de89f27803a9f1",
+    "JointL": "a2ae6e99d6ca9c5e715e5f01f6cb22e1f67f1819668e2378b8a0b2bccc4b048e"
+  },
+  "timing": {
+    "status": "timing_passed",
+    "stages": {
+      "screen": {
+        "rows": [
+          {
+            "Df": 12.257846779190004,
+            "Joint": 12.24520500190556,
+            "Sm": 12.663553148508072
+          },
+          {
+            "Sm": 12.60255616903305,
+            "Df": 12.348940588533878,
+            "Joint": 12.150430356152356
+          },
+          {
+            "Joint": 12.120397257618606,
+            "Sm": 12.589452003128827,
+            "Df": 12.457274219952524
+          }
+        ],
+        "median": {
+          "Joint": 12.150430356152356,
+          "Df": 12.348940588533878,
+          "Sm": 12.60255616903305
+        },
+        "against": {
+          "Df": {
+            "wins": 3,
+            "saving": 0.016075081984428863
+          },
+          "Sm": {
+            "wins": 3,
+            "saving": 0.035875722894348705
+          }
+        },
+        "passed": true,
+        "tags": [
+          "fullside32joint42g0b0p0-00-Df32",
+          "fullside32joint42g0b0p1-00-Joint32",
+          "fullside32joint42g0b0p2-00-Sm32",
+          "fullside32joint42g0b1p0-00-Sm32",
+          "fullside32joint42g0b1p1-00-Df32",
+          "fullside32joint42g0b1p2-00-Joint32",
+          "fullside32joint42g0b2p0-00-Joint32",
+          "fullside32joint42g0b2p1-00-Sm32",
+          "fullside32joint42g0b2p2-00-Df32"
+        ]
+      },
+      "confirm": {
+        "rows": [
+          {
+            "Sm": 12.62320610601455,
+            "Joint": 12.343121697194874,
+            "Df": 12.331181823275983
+          },
+          {
+            "Joint": 12.0480184443295,
+            "Df": 12.368576450273395,
+            "Sm": 12.506808029487729
+          },
+          {
+            "Df": 12.406182486563921,
+            "Sm": 12.544925718568265,
+            "Joint": 12.087714127264917
+          }
+        ],
+        "median": {
+          "Joint": 12.087714127264917,
+          "Df": 12.368576450273395,
+          "Sm": 12.544925718568265
+        },
+        "against": {
+          "Df": {
+            "wins": 2,
+            "saving": 0.022707732303523853
+          },
+          "Sm": {
+            "wins": 3,
+            "saving": 0.036445938506165176
+          }
+        },
+        "passed": true,
+        "tags": [
+          "fullside32joint42g1b0p0-00-Sm32",
+          "fullside32joint42g1b0p1-00-Joint32",
+          "fullside32joint42g1b0p2-00-Df32",
+          "fullside32joint42g1b1p0-00-Joint32",
+          "fullside32joint42g1b1p1-00-Df32",
+          "fullside32joint42g1b1p2-00-Sm32",
+          "fullside32joint42g1b2p0-00-Df32",
+          "fullside32joint42g1b2p1-00-Sm32",
+          "fullside32joint42g1b2p2-00-Joint32"
+        ]
+      }
+    },
+    "tags": [
+      "fullside32joint42g0b0p0-00-Df32",
+      "fullside32joint42g0b0p1-00-Joint32",
+      "fullside32joint42g0b0p2-00-Sm32",
+      "fullside32joint42g0b1p0-00-Sm32",
+      "fullside32joint42g0b1p1-00-Df32",
+      "fullside32joint42g0b1p2-00-Joint32",
+      "fullside32joint42g0b2p0-00-Joint32",
+      "fullside32joint42g0b2p1-00-Sm32",
+      "fullside32joint42g0b2p2-00-Df32",
+      "fullside32joint42g1b0p0-00-Sm32",
+      "fullside32joint42g1b0p1-00-Joint32",
+      "fullside32joint42g1b0p2-00-Df32",
+      "fullside32joint42g1b1p0-00-Joint32",
+      "fullside32joint42g1b1p1-00-Df32",
+      "fullside32joint42g1b1p2-00-Sm32",
+      "fullside32joint42g1b2p0-00-Df32",
+      "fullside32joint42g1b2p1-00-Sm32",
+      "fullside32joint42g1b2p2-00-Joint32"
+    ],
+    "passed": true
+  },
+  "hydro": {
+    "early": {
+      "serial": "traceref-00-11",
+      "candidates": [
+        "sidev42early-00-JointE32",
+        "sidev42fallback-00-JointF32"
+      ],
+      "frames": 5,
+      "fields": 25
+    },
+    "late": {
+      "serial": "deepref-00-81",
+      "candidates": [
+        "deepsidev42late-00-JointL32"
+      ],
+      "frames": 7,
+      "fields": 25
+    }
+  },
+  "status": "evidence_complete",
+  "report_sha": {
+    "joint42-side32-audit-v1-timing-files.json": "4a37473908758dbdda89d46e1491b3a7e9c489f9a1a5d260e0e9d26be79492c7",
+    "v6-reference.json": "2345be452bf11086d152f7ccfbce9cf1b42a9bdff5a94bd44ea6bb8b806263d1",
+    "fullside32joint42g0b0p0-00-Df32.json": "937d7184c39a558910fe4bd0f7ecd80d39cbe6a27b1adfc22d76018e83b70c5a",
+    "fullside32joint42g0b0p1-00-Joint32.json": "0c7ed0cd5b6552835fadbfcee9ac34b1846a5ecb158a6ffcd0f62b2b3a9d6714",
+    "fullside32joint42g0b0p2-00-Sm32.json": "0fe7bfd46152c25e10d2dc6c2e2bace7e0e706d121ddcc9b0aa9fe0a9ff54796",
+    "fullside32joint42g0b1p0-00-Sm32.json": "6949ee08003d12b38a4f73ef4f78a1662d974d2ad0198b0dda6ad864ccfd475a",
+    "fullside32joint42g0b1p1-00-Df32.json": "66a08e48fd080e7573853ede616857777cc47fdbcee77d9bcafb97433ad688c3",
+    "fullside32joint42g0b1p2-00-Joint32.json": "a7b92d576475e9ffd4234b44b524bfada74f028f3f594ae367fead1dab91c80c",
+    "fullside32joint42g0b2p0-00-Joint32.json": "e7aa9f001226f300fb483ab598e66a73aead14f676ce74f3b00785f1d180051b",
+    "fullside32joint42g0b2p1-00-Sm32.json": "05027a3f685dcc31e2e40d12f690eed40bab4d2edefe33de621164cd100f90b0",
+    "fullside32joint42g0b2p2-00-Df32.json": "1412ed11f16c8014248086211fa4130cd30429be2c5728f3fcbad3ac0ed6a25a",
+    "fullside32joint42g1b0p0-00-Sm32.json": "bd33b3b01666e203400f097768b026fce935c1380236069d66340111acc20c23",
+    "fullside32joint42g1b0p1-00-Joint32.json": "d4a3322585d393ef573e62383cbea38d6762a726ac092fa5a7425865e6f7cdc3",
+    "fullside32joint42g1b0p2-00-Df32.json": "1ec5d1939d6a50f7aa9b63d72ce682d8dbef76fc2c83faeafc378cf235322d82",
+    "fullside32joint42g1b1p0-00-Joint32.json": "e9818e69cefd6071eebd24c957c123059db63e2721a654fcbf55dd0c08091428",
+    "fullside32joint42g1b1p1-00-Df32.json": "e9972175cd7d275756cce91aa47008e42f0681317e5ab8b6f3e5e16417c2128a",
+    "fullside32joint42g1b1p2-00-Sm32.json": "ed223e0efee8be73307f2c9f54d6ea4c96509c12a81788aa346899ebdca06023",
+    "fullside32joint42g1b2p0-00-Df32.json": "ed96ad0341265a288be69de1a6006cd64bd83c0ba9c110765566ec4c5847aad3",
+    "fullside32joint42g1b2p1-00-Sm32.json": "539c259231656423ae284f72140f6c106692725cc9a81c07d5ae8a338b24e872",
+    "fullside32joint42g1b2p2-00-Joint32.json": "408970a2ce753898d5362c84894f8b7ad286e010ee0c3c65d866bb2c6828b90e",
+    "joint42-side32-screen.json": "50e3bacc33bbbb2813956c38d3aae596f2ea0fc7a1fb3cd1a88cb712b4944fe3",
+    "joint42-side32-confirm.json": "2778bc711243fd52a1e452e73806600b3ff3214b0b9db75dd5ecf1dae6dfb367",
+    "traceref-00-11.json": "df5f1084577930038e9b22e90a416cabaf7a0fd3922dd0c2fdbe0a72ad7913be",
+    "sidev42early-00-JointE32.json": "7f56dfcaab32414942e4ce309c63fb6a81075b632463c018e1f977964074e11a",
+    "joint42-side32-audit-v1-ledger/sidev42early-00-JointE32.affinity.json": "7da3e51f79649576197d16c70f2bd4769b14bed8fc42bf5b0436d475d118464d",
+    "sidev42fallback-00-JointF32.json": "de644a438bc9a1923abe80f98b4b5296bcb1262c34efc835095c312f57af2302",
+    "joint42-side32-audit-v1-ledger/sidev42fallback-00-JointF32.affinity.json": "239e99f2d392989e80f50edd3b7346afcc97533092656a161376c7bf2e165216",
+    "joint42-side32-audit-v1-early-files.json": "5e7e5b83e9bec0432480f12f421069de936e57adca17446023b4d1af56d720f2",
+    "joint42-side32-audit-v1-early-fields.json": "1148aa36304b64ad311662dc59ddd0eb7d839b30f8b3064a1d02668e291e8bfd",
+    "deepref-00-81.json": "5c51696da42fc49ab097c76ed2ab7d0f98eb8607fbeba815a6c5584be9d7efb1",
+    "deepsidev42late-00-JointL32.json": "aa8f7771b0a483534d7526d29c0bab8460abf9c41a4059796e4aacf41440bf9c",
+    "joint42-side32-audit-v1-ledger/deepsidev42late-00-JointL32.affinity.json": "a5fd0dd92811f119dff60d043f6b634599bead4a3e0df847cc1db52cb3451501",
+    "joint42-side32-audit-v1-late-files.json": "8e99f5cdd97fdeee503f7638f37196a17ba2889787d47bd6db810139d2a05b45",
+    "joint42-side32-audit-v1-late-fields.json": "6c68d6386635726bfe925dfa51099b17200290ef17ba19fd123e66a8ae78e7e1",
+    "v42-native/manifest.json": "ec8291182116a007b4073a96d81ce02c9cf44a6032b7a3b8aaf3e826f5257b69",
+    "v42-traces/manifest.json": "d52ffe6b56751092f84719fad602c568e2883e2832ac830f94113f689acdb5c2"
+  }
+}
