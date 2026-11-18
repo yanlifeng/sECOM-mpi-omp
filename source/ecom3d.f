@@ -1718,12 +1718,6 @@
 
       IF(HORZMIX.EQ.'CLOSURE   ') CALL SMAG !CNG MOVE UP HERE, BEFORE DUMWAD,DVMWAD IS RESET FOR NEXT EXTERNAL
 
-      DO 130 J=1,JM
-      DO 130 I=1,IM
-      DUMWAD(I,J)=DUM(I,J) ! NG09292011
-      DVMWAD(I,J)=DVM(I,J) ! NG09292011
-130   CONTINUE
-
 !
 !NG      IF(HORZMIX.EQ.'CLOSURE   ') CALL SMAG
 !
@@ -1737,6 +1731,12 @@
         IF(VAMAX.GT.100.) GO TO 9100
         GO TO 8001
       ENDIF
+! The fallback still resets both face masks before its first substep.
+      DO 130 J=1,JM
+      DO 130 I=1,IM
+      DUMWAD(I,J)=DUM(I,J)
+      DVMWAD(I,J)=DVM(I,J)
+130   CONTINUE
                    DO 8000 IEXT=1,ISPLIT
 !
 !pl      CALL EXTRNL(ADVUA,ADVVA,TRNU,TRNV,DTE2,BFRIC,DTI2)
@@ -3174,6 +3174,17 @@
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL ROWVMAX(JM),ROWEMIN(JM)
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
+! Restore all face masks exactly once per outer step, after SMAG. Use
+! the same row owners as the stencil; the first fluxes use only D,
+! geometry and velocities. Their barrier precedes all reads of WAD.
+!$OMP DO SCHEDULE(STATIC)
+      DO J=1,JM
+        DO I=1,IM
+          DUMWAD(I,J)=DUM(I,J)
+          DVMWAD(I,J)=DVM(I,J)
+        ENDDO
+      ENDDO
+!$OMP END DO NOWAIT
       DO ISEQ=1,ISPLIT
 ! No worker reads IEXT before the first flux-stage barrier inside
 ! EXTRNL_TEAM. The preceding substep publishes its own check first.
