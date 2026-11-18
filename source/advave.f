@@ -15,12 +15,26 @@
 ! must finish before the V stage reuses the shared FLUX arrays.
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
       DO J=1,JM
+       IF(ADVECT.EQ.'NON-LINEAR'.AND.J.GE.2.AND.J.LE.JMM1) THEN
+! The two nonlinear fluxes and TPS overwrite 2:IMM1 in these rows.
+! U divergence writes only 3:IMM1. All other entries retain +0.
+        FLUXUA(1,J)=0.0
+        FLUXUA(IM,J)=0.0
+        FLUXVA(1,J)=0.0
+        FLUXVA(IM,J)=0.0
+        TPS(1,J)=0.0
+        TPS(IM,J)=0.0
+        ADVUA(1,J)=0.0
+        ADVUA(2,J)=0.0
+        ADVUA(IM,J)=0.0
+       ELSE
        DO I=1,IM
       FLUXUA(I,J)=0.0
       FLUXVA(I,J)=0.0
       ADVUA(I,J)=0.0
       TPS(I,J)=0.0
        ENDDO
+       ENDIF
        IF(J.GE.2) THEN
         IF(ADVECT.EQ.'NON-LINEAR') THEN
          IF(J.LE.JMM1) THEN
@@ -67,11 +81,21 @@
 !$OMP END DO
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
       DO J=1,JM
+       IF(ADVECT.EQ.'NON-LINEAR'.AND.J.GE.3.AND.J.LE.JMM1) THEN
+! V-stage U flux is assigned over 2:IM; V flux over 2:IMM1 only.
+! Preserve explicit +0 before FLUXVA(IM,J) is multiplied by H1.
+        FLUXUA(1,J)=0.0
+        FLUXVA(1,J)=0.0
+        FLUXVA(IM,J)=0.0
+        ADVVA(1,J)=0.0
+        ADVVA(IM,J)=0.0
+       ELSE
        DO I=1,IM
       FLUXUA(I,J)=0.0
       FLUXVA(I,J)=0.0
       ADVVA(I,J)=0.0
        ENDDO
+       ENDIF
        IF(J.GE.2.AND.J.LE.JMM1) THEN
         IF(ADVECT.EQ.'NON-LINEAR') THEN
          IF(J.GE.3) THEN
