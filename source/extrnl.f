@@ -225,7 +225,12 @@
 !NG INCLUDE SIMILARLY TO 3D TREATMENT 
 !NG WHETHER THIS IS A GOOD IDEA NEEDS FURTHER INVESTIGATION!
 !$OMP END DO
+! End of the barotropic stress producer (or CURV42D initialization
+! on the nonbarotropic path). Both ordered boundary updates below
+! are performed by one worker, with no consumers between them.
+ 5000 CONTINUE
 !$OMP SINGLE
+      IF(TOR.EQ.'BAROTROPIC') THEN
       DO 310 N=1,NUMEBC
       IE=IETA(N)
       JE=JETA(N)
@@ -245,9 +250,7 @@
         TXBOT(IE,JE)=TXBOT(IE,JE+1) ! NG same as internal bcond, cosmetic
       ENDIF
  310  CONTINUE
-!$OMP END SINGLE
-
- 5000 CONTINUE
+      ENDIF
 
 !
 !-----------------------------------------------------------------------
@@ -256,7 +259,6 @@
 !
 
 !NG2012 CORNERS FIX - NO NEED TO HARDWIRE ANYMORE
-!$OMP SINGLE
       DO N=1,NUMECR
        IF(NCHARD(N).EQ.1) THEN ! Bottom Left Corner
         Va(ICHARD(N),JCHARD(N)+1) =
