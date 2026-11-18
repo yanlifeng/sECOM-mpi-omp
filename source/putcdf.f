@@ -1329,15 +1329,8 @@
 !  temporary output of wind and surface solar radiation
         WRITE(1002,'(f10.3,1x,f14.0)')TMID,DATEHOUR
         WRITE(1006,'(f10.3,1x,f14.0,i10)')TMID,DATEHOUR,NUMEPC
-       DO J=1,JM
-        DO I=1,IM
-         IF (FSM(I,J).NE.0) 
-     +   write(1002,'(2i5,6f10.3)')I,J,ARCET(I,J)
-     +                         ,ARCWSX2D(I,J),ARCWSY2D(I,J)
-     +                         ,ARCSWOBS(I,J),VARWIF(I,J)*1000.
-     +                         ,AREAICE(I,J)
-        END DO
-       END DO
+        CALL SECOM_WINDTEXT(1002,IM,JM,FSM,ARCET,ARCWSX2D,ARCWSY2D,
+     +                      ARCSWOBS,VARWIF,AREAICE)
        DO J=39,41
         DO I=22,24
          write(1006,'(2i5,13E10.3)')I,J,ARCET(I,J)
