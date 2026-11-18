@@ -9,14 +9,14 @@ NF_FFLAGS := $(shell $(NF_CONFIG) --fflags)
 NF_LIBS := $(shell $(NF_CONFIG) --flibs)
 EXTRA_LIBS ?=
 OBJECT_NAMES = bcdata.o first.o disply.o maxmin.o print.o prints.o prtxy.o setdom.o sinter.o slicexz.o sliceyz.o tands.o zeroes.o reordr.o sedflx.o sedic.o suslod.o fhcalc.o wavesmb.o wavedon.o chembed.o randb.o oclamp.o advave.o advq.o advt.o antidif.o antidif_chem.o antidif_sed.o archive.o baropg.o pclamp.o ptide_noaa.o alphabc.o densityUNESCO.o ecom3d.o profu.o profv.o proft.o profq.o profe.o smag.o transport.o vertvl.o advsed.o profsed.o bulk.o fzol.o jday.o longwave.o ncld.o n_cloud.o qsat.o vapor.o wreal.o traninp.o chemflx.o partrak.o onepart.o advcon.o stress.o bottau.o advchem.o datehr.o getdate.o hitflx.o north.o solar.o zenith.o mixed.o putcdf.o tscdf.o extrnl.o advu.o advv.o bcond.o setdom_corners.o epcpercell.o smooth.o wandd_kky.o read_corner_loc.o update_cbc.o wetbulb.o airdensity.o update_cbc_mannings.o netcdf_read_restart.o netcdf_read_synop_met.o netcdf_read_ifric2dt.o netcdf_read_corner_loc.o netcdf_read_model_grid.o netcdf_read_bc_elev.o netcdf_read_bc_ts.o netcdf_read_bc_diff1.o netcdf_read_bc_diff2.o netcdf_read_ic_ts.o netcdf_read_bc_met.o netcdf_read_bc_dis.o
-OBJECT_NAMES += baro_check.o windtext.o
+OBJECT_NAMES += baro_check.o windtext.o halo43.o guard43.o
 OBJDIR = build/$(MODE)
 OBJECTS = $(addprefix $(OBJDIR)/,$(OBJECT_NAMES))
 ifeq ($(MODE),omp)
 OMP_LINK = -fopenmp
 $(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o $(OBJDIR)/ecom3d.o $(OBJDIR)/wandd_kky.o: EXTRA_FFLAGS = -fopenmp
 $(OBJDIR)/bcond.o $(OBJDIR)/bottau.o $(OBJDIR)/update_cbc_mannings.o: EXTRA_FFLAGS = -fopenmp
-$(OBJDIR)/baro_check.o: EXTRA_FFLAGS = -fopenmp
+$(OBJDIR)/baro_check.o $(OBJDIR)/halo43.o: EXTRA_FFLAGS = -fopenmp
 else ifneq ($(MODE),serial)
 $(error MODE must be serial or omp)
 endif
@@ -41,3 +41,9 @@ check-windtext: $(OBJDIR)/check-windtext
 $(OBJDIR)/check-windtext: ../validation/check_windtext.f windtext.f
 	mkdir -p $(@D)
 	$(FC) $(FFLAGS) -fcheck=all $^ -o $@
+
+# Optional two-group advection; inactive unless SECOM_V43_HALO=1 and the
+# actual team is admitted. Keep the public ADVAVE and serial paths intact.
+$(OBJDIR)/guard43.o: guard43.c Makefile.portable
+	mkdir -p $(@D)
+	$(CC) -std=c11 -O2 $(OMP_LINK) -c $< -o $@
