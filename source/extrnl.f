@@ -6,6 +6,14 @@
 !$OMP END PARALLEL
       END
       RECURSIVE SUBROUTINE EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE)
+! The existing standalone/team ABI never assumes an outer-step certificate.
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
+      LOGICAL ROTATE,C40ROW(JM)
+      C40ROW=.FALSE.
+      CALL EXTRNL_CORE40(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE,C40ROW,.FALSE.)
+      END
+      RECURSIVE SUBROUTINE EXTRNL_CORE40(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE,C40ROW,C40ENV)
 !pl      SUBROUTINE EXTRNL(ADVUA,ADVVA,TRNU,TRNV,DTE2,BFRIC,DTI2)
 !     VERSION(11/16/90)
 !
@@ -19,7 +27,7 @@
 !
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
-      LOGICAL ROTATE
+      LOGICAL ROTATE,C40ROW(JM),C40ENV,C40USE,C40_DU,C40_DV
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
@@ -283,7 +291,32 @@
 
 !$OMP END SINGLE
 !$OMP DO SCHEDULE(STATIC)
-      DO 425 J=2,JMM1
+      DO J=2,JMM1
+        C40USE=C40ENV.AND.C40ROW(J)
+        IF(C40USE) C40USE=C40_DU(J,ADVUA)
+        IF(C40USE) THEN
+      DO 4425 I=3,IMM1
+      UAF(I,J)=ADVUA(I,J)
+     .    -ARU(I,J)*( CURV42D(I,J)*D(I,J)*(VA(I,J+1)+VA(I,J))
+     .              +CURV42D(I-1,J)*D(I-1,J)*(VA(I-1,J+1)+VA(I-1,J)) )
+     .         +.25*GRAV*(H2(I,J)+H2(I-1,J))*(D(I,J)+D(I-1,J))
+     .             *( (1.-2.*THETA)*(EL(I,J)-EL(I-1,J))
+     .            +THETA*(ELB(I,J)-ELB(I-1,J)+ELF(I,J)-ELF(I-1,J)) )
+     .         +.25*GRAV*(H2(I,J)+H2(I-1,J))*(D(I,J)+D(I-1,J))
+     .             *(DATUM(1,J)-DATUM(1,J))*RAMP
+     .         +RAMP*TRNU(1,J)
+     .      -ARU(I,J)*
+     .      ( -.5*((100.-AREAICE(1,J))/100.*TXSURF(I,J)+
+     .             (100.-AREAICE(1,J))/100.*TXSURF(I-1,J) )
+     .                -TXICE(I,J)
+     .                +TXBOT(I,J)  )
+     *            +ARU(I,J)*(D(I,J)+D(I-1,J))*(PATM(1,J)-PATM(1,J))
+     *            *RAMP*PATMOPT/RHO0/(H1(I,J)+H1(I-1,J))
+ 4425 UAF(I,J)=
+     .         ((H(I,J)+ELB(I,J)+H(I-1,J)+ELB(I-1,J))*ARU(I,J)*UAB(I,J)
+     .                -4.*DTE*UAF(I,J))
+     .        /((H(I,J)+ELF(I,J)+H(I-1,J)+ELF(I-1,J))*ARU(I,J))
+        ELSE
       DO 425 I=3,IMM1
       UAF(I,J)=ADVUA(I,J)
      .    -ARU(I,J)*( CURV42D(I,J)*D(I,J)*(VA(I,J+1)+VA(I,J))
@@ -309,6 +342,8 @@
      .         ((H(I,J)+ELB(I,J)+H(I-1,J)+ELB(I-1,J))*ARU(I,J)*UAB(I,J)
      .                -4.*DTE*UAF(I,J))
      .        /((H(I,J)+ELF(I,J)+H(I-1,J)+ELF(I-1,J))*ARU(I,J))
+        ENDIF
+      ENDDO
 !
 !-----------------------------------------------------------------------
 !     CALCULATE V COMPONENT OF VELOCITY
@@ -317,7 +352,32 @@
 ! VAF reads UA/VA, not UAF. Both updates finish before BCOND(13).
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
-      DO 435 J=3,JMM1
+      DO J=3,JMM1
+        C40USE=C40ENV.AND.C40ROW(J).AND.C40ROW(J-1)
+        IF(C40USE) C40USE=C40_DV(J,ADVVA)
+        IF(C40USE) THEN
+      DO 4435 I=2,IMM1
+      VAF(I,J)=ADVVA(I,J)
+     .    +ARV(I,J)*( CURV42D(I,J)*D(I,J)*(UA(I+1,J)+UA(I,J))
+     .                +CURV42D(I,J-1)*D(I,J-1)*(UA(I+1,J-1)+UA(I,J-1)) )
+     .           +.25*GRAV*(H1(I,J)+H1(I,J-1))*(D(I,J)+D(I,J-1))
+     .                *( (1.-2.*THETA)*(EL(I,J)-EL(I,J-1))
+     .                +THETA*(ELB(I,J)-ELB(I,J-1)+ELF(I,J)-ELF(I,J-1)) )
+     .           +.25*GRAV*(H1(I,J)+H1(I,J-1))*(D(I,J)+D(I,J-1))
+     .                *(DATUM(1,J)-DATUM(1,J-1))*RAMP
+     .           +RAMP*TRNV(1,J)
+     .    + ARV(I,J)*
+     .      (  .5*((100.-AREAICE(1,J))/100.*TYSURF(I,J)+
+     .             (100.-AREAICE(1,J-1))/100.*TYSURF(I,J-1) )
+     .               +TYICE(I,J)
+     .               -TYBOT(I,J)   )
+     *            +ARV(I,J)*(D(I,J)+D(I,J-1))*(PATM(1,J)-PATM(1,J-1))
+     *            *RAMP*PATMOPT/RHO0/(H2(I,J)+H2(I,J-1))
+ 4435 VAF(I,J)=
+     .        ((H(I,J)+ELB(I,J)+H(I,J-1)+ELB(I,J-1))*VAB(I,J)*ARV(I,J)
+     .              -4.*DTE*VAF(I,J))
+     .       /((H(I,J)+ELF(I,J)+H(I,J-1)+ELF(I,J-1))*ARV(I,J))
+        ELSE
       DO 435 I=2,IMM1
       VAF(I,J)=ADVVA(I,J)  
      .    +ARV(I,J)*( CURV42D(I,J)*D(I,J)*(UA(I+1,J)+UA(I,J))
@@ -342,6 +402,8 @@
      .        ((H(I,J)+ELB(I,J)+H(I,J-1)+ELB(I,J-1))*VAB(I,J)*ARV(I,J)
      .              -4.*DTE*VAF(I,J))
      .       /((H(I,J)+ELF(I,J)+H(I,J-1)+ELF(I,J-1))*ARV(I,J))
+        ENDIF
+      ENDDO
 !
 !JKL
 !$OMP END DO

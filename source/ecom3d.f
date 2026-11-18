@@ -3173,12 +3173,20 @@
       INCLUDE 'comdeck'
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL ROWVMAX(JM),ROWEMIN(JM)
-!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
+      LOGICAL C40ROW(JM),C40ENV,C40_FP_OK,C40_ZERO_ROW
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ,C40ENV)
+      C40ENV=.FALSE.
+      IF(BCTYPE.EQ.'CLAMPED') C40ENV=C40_FP_OK()
 ! Restore all face masks exactly once per outer step, after SMAG. Use
 ! the same row owners as the stencil; the first fluxes use only D,
 ! geometry and velocities. Their barrier precedes all reads of WAD.
 !$OMP DO SCHEDULE(STATIC)
       DO J=1,JM
+! Always refresh after outer-step and restart forcing producers.
+! The initial EXTRNL flux-stage join publishes all rows ahead of 425.
+        C40ROW(J)=.FALSE.
+        IF(BCTYPE.EQ.'CLAMPED') C40ROW(J)=C40_ZERO_ROW(IM,DATUM(1,J),
+     &    AREAICE(1,J),PATM(1,J),TRNU(1,J),TRNV(1,J))
         DO I=1,IM
           DUMWAD(I,J)=DUM(I,J)
           DVMWAD(I,J)=DVM(I,J)
@@ -3191,7 +3199,7 @@
 !$OMP MASTER
         IEXT=ISEQ
 !$OMP END MASTER
-        CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.)
+        CALL EXTRNL_CORE40(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.,C40ROW,C40ENV)
         CALL WANDD_TEAM(EL,D)
         CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
         IF(VAMAX.GT.100.) EXIT
