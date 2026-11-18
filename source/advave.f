@@ -1,4 +1,11 @@
       SUBROUTINE ADVAVE(ADVUA,ADVVA)
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM)
+      INTEGER M26DUMMY(7,1)
+      CALL ADVAVE26(ADVUA,ADVVA,-1,M26DUMMY)
+      END
+      SUBROUTINE ADVAVE26(ADVUA,ADVVA,N26,M26)
+      INTEGER N26,M26(7,*)
 !     VERSION(09/27/90)
 !
       INCLUDE 'comdeck'
@@ -110,7 +117,14 @@
 !
 ! Keep potentially overlapping boundary entries in original order.
 !$OMP SINGLE
-      IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
+      IF(N26.GE.0) THEN
+      DO N=1,N26
+        IE=M26(5,N)
+        JE=M26(6,N)
+        ADVUA(IE,JE)=0.0
+        ADVVA(IE,JE)=0.0
+      ENDDO
+      ELSE IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
        DO 309 N=1,NUMEBC
         IE=IETA(N)
         JE=JETA(N)

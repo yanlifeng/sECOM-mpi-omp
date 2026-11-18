@@ -91,7 +91,7 @@
 !
 !     12/13: boundary entries only; an existing external-mode team
 !     applies the identical dense mask immediately afterwards.
-      GOTO (10,20,30,40,50,60,70,80,81,181,90,10,20), IDX
+      GOTO (10,20,30,40,50,60,70,80,81,181,90,10,20,20), IDX
 !
 !     ******************************************************************
 !
@@ -150,6 +150,7 @@
          ENDIF
       ENDIF
  200  CONTINUE
+      IF(IDX.EQ.14) RETURN
 !
       IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
        DO 209 N=1,NUMEBC

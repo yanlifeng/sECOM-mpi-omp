@@ -3173,6 +3173,10 @@
       INCLUDE 'comdeck'
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL ROWVMAX(JM),ROWEMIN(JM)
+      INTEGER N26,M26(7,EBCM)
+! Decode the final static geometry anew after forcing on each outer step.
+! N26<0 leaves all original boundary paths in place.
+      CALL BUILD_BOUNDARY26(N26,M26)
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
       DO ISEQ=1,ISPLIT
 ! No worker reads IEXT before the first flux-stage barrier inside
@@ -3180,7 +3184,7 @@
 !$OMP MASTER
         IEXT=ISEQ
 !$OMP END MASTER
-        CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.)
+        CALL EXTRNL_TEAM26(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.,N26,M26)
         CALL WANDD_TEAM(EL,D)
         CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
         IF(VAMAX.GT.100.) EXIT

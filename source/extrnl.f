@@ -6,6 +6,14 @@
 !$OMP END PARALLEL
       END
       RECURSIVE SUBROUTINE EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE)
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
+      LOGICAL ROTATE
+      INTEGER M26DUMMY(7,1)
+      CALL EXTRNL_TEAM26(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE,-1,M26DUMMY)
+      END
+      RECURSIVE SUBROUTINE EXTRNL_TEAM26(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE,N26,M26)
+      INTEGER N26,M26(7,*)
 !pl      SUBROUTINE EXTRNL(ADVUA,ADVVA,TRNU,TRNV,DTE2,BFRIC,DTI2)
 !     VERSION(11/16/90)
 !
@@ -144,7 +152,7 @@
 !
 !$OMP END SINGLE
 ! ADVAVE uses the existing EXTRNL team; all workers must call it.
-      CALL ADVAVE(ADVUA,ADVVA)
+      CALL ADVAVE26(ADVUA,ADVVA,N26,M26)
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 95 J=1,JM
@@ -220,6 +228,20 @@
 !NG WHETHER THIS IS A GOOD IDEA NEEDS FURTHER INVESTIGATION!
 !$OMP END DO
 !$OMP SINGLE
+      IF(N26.GE.0) THEN
+      DO N=1,N26
+        IE=M26(1,N)
+        JE=M26(2,N)
+        IC=M26(3,N)
+        JC=M26(4,N)
+        CURV42D(IE,JE)=CURV42D(IC,JC)
+        IF(M26(7,N).EQ.1) THEN
+          TYBOT(IE,JE)=TYBOT(IC,JC)
+        ELSE
+          TXBOT(IE,JE)=TXBOT(IC,JC)
+        ENDIF
+      ENDDO
+      ELSE
       DO 310 N=1,NUMEBC
       IE=IETA(N)
       JE=JETA(N)
@@ -239,6 +261,7 @@
         TXBOT(IE,JE)=TXBOT(IE,JE+1) ! NG same as internal bcond, cosmetic
       ENDIF
  310  CONTINUE
+      ENDIF
 !$OMP END SINGLE
 
  5000 CONTINUE
@@ -344,7 +367,21 @@
       IF(BCTYPE.EQ.'MIXED  ') CALL MIXED(1)
 !JKL
 
+      IF(N26.GE.0) THEN
+! IDX 14 runs the original common prologue and discharge section.
+        CALL BCOND(14,DTI2,0)
+      DO N=1,N26
+        IE=M26(1,N)
+        JE=M26(2,N)
+        IF(M26(7,N).EQ.1) THEN
+          VAF(IE,JE)=0.0
+        ELSE
+          UAF(IE,JE)=0.0
+        ENDIF
+      ENDDO
+      ELSE
       CALL BCOND(13,DTI2,0)
+      ENDIF
 !$OMP END SINGLE
 ! On the no-transport barotropic path filtering reads the masked
 ! results only at the very same cell. Rotate before those values
@@ -382,4 +419,43 @@
 !
 !hli      print *,'returning from EXTRNL'
       RETURN
+      END
+
+      SUBROUTINE BUILD_BOUNDARY26(N26,M26)
+      INCLUDE 'comdeck'
+      INTEGER N26,M26(7,*)
+      N26=-1
+! BARO_SUBCYCLE is entered only when main-program-local JTM is zero.
+      IF(TOR.NE.'BAROTROPIC'.OR.BCTYPE.NE.'CLAMPED') RETURN
+      IF(OPTEBC(15:20).NE.'LINEAR'.OR.NUMQBC.NE.0.OR.
+     & NUMDBC.NE.0.OR.NUMEPC.NE.0) RETURN
+      N26=0
+      DO N=1,NUMEBC
+        IE=IETA(N)
+        JE=JETA(N)
+        IC=ICON(N)
+        JC=JCON(N)
+        IDX26=0
+        IDY26=0
+        IF(FSM(IE+1,JE).EQ.0.0.AND.JE.EQ.JC) THEN
+          IDX26=-1
+        ELSE IF(FSM(IE-1,JE).EQ.0.0.AND.JE.EQ.JC) THEN
+          IDX26=1
+        ELSE IF(FSM(IE,JE+1).EQ.0.0.AND.IE.EQ.IC) THEN
+          IDY26=-1
+        ELSE IF(FSM(IE,JE-1).EQ.0.0.AND.IE.EQ.IC) THEN
+          IDY26=1
+        ELSE
+          CYCLE
+        ENDIF
+        N26=N26+1
+        M26(1,N26)=IE
+        M26(2,N26)=JE
+        M26(3,N26)=IE+IDX26
+        M26(4,N26)=JE+IDY26
+        M26(5,N26)=IE+MAX(IDX26,0)
+        M26(6,N26)=JE+MAX(IDY26,0)
+        M26(7,N26)=2
+        IF(IDX26.NE.0) M26(7,N26)=1
+      ENDDO
       END
