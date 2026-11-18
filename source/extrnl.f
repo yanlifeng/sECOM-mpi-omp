@@ -122,7 +122,12 @@
           ELF(I,J)=ELF(I,J)*FSM(I,J)
         ENDDO
       ENDDO
-!$OMP END DO
+!$OMP END DO NOWAIT
+! On the persistent CLAMPED path no special clamp consumes ELF here.
+! ADVAVE is independent of ELF; its first END DO completes the mask
+! before a momentum update can read ELF. Keep both joins otherwise.
+      IF(.NOT.(ROTATE.AND.BCTYPE.EQ.'CLAMPED')) THEN
+!$OMP BARRIER
 !$OMP SINGLE
 !
 !     Introduced Inverted Reid and Bodine (IRANDB) and Optimized Clamped 
@@ -143,6 +148,7 @@
       IF (BCTYPE.EQ.'PCLAMP ') CALL PCLAMP
 !
 !$OMP END SINGLE
+      ENDIF
 ! ADVAVE uses the existing EXTRNL team; all workers must call it.
       CALL ADVAVE(ADVUA,ADVVA)
 !
