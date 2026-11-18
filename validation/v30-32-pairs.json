@@ -1,0 +1,59 @@
+{
+  "screen": {
+    "phase": "screen",
+    "key": "Cj",
+    "binaries": {
+      "Cj": "57470e8c96c0f8133cde7ffb37e422b64b98251a1f200b0ba331173447a5e5e9",
+      "Tk": "7139d8594c737a951b1d3847bdb8138c99b60ef7876c4255f537ae6a05ebf0cc"
+    },
+    "source_tags": [
+      "fullclampjoin0-00-Cj32",
+      "fullclampjoin1-00-Tk32",
+      "fullclampjoin2-00-Tk32",
+      "fullclampjoin3-00-Cj32"
+    ],
+    "candidate_s": [
+      13.98519809357822,
+      13.934017170220613
+    ],
+    "win_pairs": 2,
+    "control": "Tk",
+    "control_s": [
+      14.19233978819102,
+      14.08297201897949
+    ],
+    "reduction": 0.012593903324573552,
+    "passed": true
+  },
+  "confirmed": true,
+  "confirmation": {
+    "phase": "confirmation",
+    "key": "Cj",
+    "binaries": {
+      "Tk": "7139d8594c737a951b1d3847bdb8138c99b60ef7876c4255f537ae6a05ebf0cc",
+      "Cj": "57470e8c96c0f8133cde7ffb37e422b64b98251a1f200b0ba331173447a5e5e9"
+    },
+    "source_tags": [
+      "fullconfirmnewclampjoin0-00-Tk32",
+      "fullconfirmnewclampjoin1-00-Cj32",
+      "fullconfirmnewclampjoin2-00-Cj32",
+      "fullconfirmnewclampjoin3-00-Tk32",
+      "fullconfirmnewclampjoin4-00-Tk32",
+      "fullconfirmnewclampjoin5-00-Cj32"
+    ],
+    "candidate_s": [
+      13.64467602968216,
+      13.513298534788191,
+      13.684034750796854
+    ],
+    "win_pairs": 3,
+    "control": "Tk",
+    "control_s": [
+      14.286006218753755,
+      14.177522958256304,
+      14.192094944417477
+    ],
+    "reduction": 0.038572100657390695,
+    "passed": true
+  }
+}
