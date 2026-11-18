@@ -1,0 +1,89 @@
+{
+  "scope": "synthetic input, physical 32, ADVAVE only; not full solver or dual-socket timing",
+  "cases": {
+    "v43-kernel32-long1": {
+      "median_s": {
+        "A-original": 1.5670965295284986,
+        "B-global-direct": 1.481899119913578,
+        "C-local-halo": 1.3857041387818754,
+        "D-global-halo": 1.4910901808179915
+      },
+      "C_vs_A_reduction": 0.11575061735424796,
+      "C_vs_D_reduction": 0.07067717525864381,
+      "C_wins": {
+        "A-original": 2,
+        "B-global-direct": 2,
+        "C-local-halo": 0,
+        "D-global-halo": 2
+      },
+      "rows": [
+        [
+          1.5843395357951522,
+          1.509406017139554,
+          1.4132337672635913,
+          1.5159967290237546
+        ],
+        [
+          1.5498535232618451,
+          1.454392222687602,
+          1.3581745103001595,
+          1.4661836326122284
+        ]
+      ],
+      "other_busy_max": 0.2790993734211895,
+      "result_sha": "c1d7ed9403e6bc3f3b434837ac4bf4ffeb398e99c7ebb003c48c658406c6d35b"
+    },
+    "v43-kernel32-confirm1": {
+      "median_s": {
+        "A-original": 1.5213976204395294,
+        "B-global-direct": 1.4750400013290346,
+        "C-local-halo": 1.3862075940705836,
+        "D-global-halo": 1.484664561226964
+      },
+      "C_vs_A_reduction": 0.08885910202087055,
+      "C_vs_D_reduction": 0.06631596774628545,
+      "C_wins": {
+        "A-original": 4,
+        "B-global-direct": 4,
+        "C-local-halo": 0,
+        "D-global-halo": 4
+      },
+      "rows": [
+        [
+          1.516959366388619,
+          1.5149181010201573,
+          1.4121655719354749,
+          1.514847151003778
+        ],
+        [
+          1.4887503487989306,
+          1.4733238033950329,
+          1.4194987984374166,
+          1.451856722123921
+        ],
+        [
+          1.5325111141428351,
+          1.4767561992630363,
+          1.3602496162056923,
+          1.4562574857845902
+        ],
+        [
+          1.52583587449044,
+          1.459516511298716,
+          1.3559046499431133,
+          1.5130716366693377
+        ]
+      ],
+      "other_busy_max": 0.2833292281376928,
+      "result_sha": "e1a0c22a9d6b6fe1577c86f2c494ce371914c74879cb645221256071af82e943"
+    }
+  },
+  "arrays_checked": 480,
+  "calls_per_execution": 40000,
+  "grid": [
+    372,
+    479
+  ],
+  "binary_sha": "12914890b37c7d7cc5ec2f8c38a336ecce67192393b7bd16cbf48dae51f81a3c",
+  "gold_raw_sha": "7f8eaabda200873e5089f617c792f5d4362a94d0df93109c6a16a35d4461657b"
+}
