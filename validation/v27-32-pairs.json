@@ -1,0 +1,59 @@
+{
+  "screen": {
+    "phase": "screen",
+    "key": "Tk",
+    "binaries": {
+      "Tk": "7139d8594c737a951b1d3847bdb8138c99b60ef7876c4255f537ae6a05ebf0cc",
+      "T": "208a0524b8a99adbe2cc7f26a085f77259537ae4ca0920f7c4e9c80d63794ffb"
+    },
+    "source_tags": [
+      "fullwindmask0-00-Tk32",
+      "fullwindmask1-00-T32",
+      "fullwindmask2-00-T32",
+      "fullwindmask3-00-Tk32"
+    ],
+    "candidate_s": [
+      14.018253396265209,
+      14.46062338910997
+    ],
+    "win_pairs": 2,
+    "control": "T",
+    "control_s": [
+      15.204226492904127,
+      15.353450732305646
+    ],
+    "reduction": 0.06802874526469593,
+    "passed": true
+  },
+  "confirmed": true,
+  "confirmation": {
+    "phase": "confirmation",
+    "key": "Tk",
+    "binaries": {
+      "T": "208a0524b8a99adbe2cc7f26a085f77259537ae4ca0920f7c4e9c80d63794ffb",
+      "Tk": "7139d8594c737a951b1d3847bdb8138c99b60ef7876c4255f537ae6a05ebf0cc"
+    },
+    "source_tags": [
+      "fullconfirmnewwindmask0-00-T32",
+      "fullconfirmnewwindmask1-00-Tk32",
+      "fullconfirmnewwindmask2-00-Tk32",
+      "fullconfirmnewwindmask3-00-T32",
+      "fullconfirmnewwindmask4-00-T32",
+      "fullconfirmnewwindmask5-00-Tk32"
+    ],
+    "candidate_s": [
+      14.676137668080628,
+      14.477274884469807,
+      14.247999733313918
+    ],
+    "win_pairs": 3,
+    "control": "T",
+    "control_s": [
+      15.138406977057457,
+      15.149007754400373,
+      15.054155386984348
+    ],
+    "reduction": 0.04367250091701247,
+    "passed": true
+  }
+}
