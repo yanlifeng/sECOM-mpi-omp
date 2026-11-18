@@ -3173,6 +3173,8 @@
       INCLUDE 'comdeck'
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL ROWVMAX(JM),ROWEMIN(JM)
+      INTEGER(SELECTED_INT_KIND(2)) IWDFLAG(IM,JM)
+      SAVE IWDFLAG
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
       DO ISEQ=1,ISPLIT
 !$OMP SINGLE
@@ -3187,12 +3189,16 @@
             ELB(I,J)=EL(I,J)+.5*NU*(ELB(I,J)-2.*EL(I,J)+ELF(I,J))
             EL(I,J)=ELF(I,J)
             D(I,J)=H(I,J)+EL(I,J)
+! Exact first-stage wet/dry predicates, rebuilt from this substep.
+            IWDFLAG(I,J)=0
+            IF(D(I,J).LE.WETMIN) IWDFLAG(I,J)=
+     &        MERGE(1,0,FSM(I,J).NE.0.)+MERGE(2,0,DUM(I,J).NE.0.)+MERGE(4,0,DVM(I,J).NE.0.)
             UA(I,J)=UAF(I,J)
             VA(I,J)=VAF(I,J)
           ENDDO
         ENDDO
 !$OMP END DO
-        CALL WANDD_TEAM(EL,D)
+        CALL WANDD_FLAGS_TEAM(EL,D,IWDFLAG)
         CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
         IF(VAMAX.GT.100.) EXIT
       ENDDO
