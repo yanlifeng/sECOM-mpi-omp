@@ -3175,23 +3175,12 @@
       REAL ROWVMAX(JM),ROWEMIN(JM)
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
       DO ISEQ=1,ISPLIT
-!$OMP SINGLE
+! No worker reads IEXT before the first flux-stage barrier inside
+! EXTRNL_TEAM. The preceding substep publishes its own check first.
+!$OMP MASTER
         IEXT=ISEQ
-!$OMP END SINGLE
-        CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2)
-!$OMP DO SCHEDULE(STATIC)
-        DO J=1,JM
-          DO I=1,IM
-            UAB(I,J)=UA(I,J)+.5*NU*(UAB(I,J)-2.*UA(I,J)+UAF(I,J))
-            VAB(I,J)=VA(I,J)+.5*NU*(VAB(I,J)-2.*VA(I,J)+VAF(I,J))
-            ELB(I,J)=EL(I,J)+.5*NU*(ELB(I,J)-2.*EL(I,J)+ELF(I,J))
-            EL(I,J)=ELF(I,J)
-            D(I,J)=H(I,J)+EL(I,J)
-            UA(I,J)=UAF(I,J)
-            VA(I,J)=VAF(I,J)
-          ENDDO
-        ENDDO
-!$OMP END DO
+!$OMP END MASTER
+        CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.)
         CALL WANDD_TEAM(EL,D)
         CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
         IF(VAMAX.GT.100.) EXIT
