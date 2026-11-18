@@ -9,13 +9,18 @@
         VROWMAX=-1.E10
 !$OMP SIMD REDUCTION(MAX:VROWMAX) PRIVATE(VMAXTMP)
         DO I=1,IMM1
-      VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
+! SQRT is monotone on a finite nonnegative sum of squares. Reduce the
+! original rounded squared norm, then round the root once per row.
+! The final scan below still compares rounded roots: distinct squared
+! norms may tie after SQRT, even in different rows or at the abort limit.
+      VMAXTMP=(0.5*DUMWAD(I,J)*UAF(I,J)+
      .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
      .             (0.5*DVMWAD(I,J)*VAF(I,J)+
-     .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
+     .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2
           IF(VMAXTMP.GT.VROWMAX) VROWMAX=VMAXTMP
         ENDDO
         ROWVMAX(J)=VROWMAX
+        IF(VROWMAX.GE.0.) ROWVMAX(J)=SQRT(VROWMAX)
       ENDDO
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
