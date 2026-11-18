@@ -12,6 +12,10 @@
 !
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
+! Coefficients fixed between surface-forcing updates. Never cache the
+! velocity, water column, wet/dry state or velocity-dependent stresses.
+      REAL BEDX(IM,JM),BEDY(IM,JM),ICEX(IM,JM),ICEY(IM,JM)
+      REAL WXFIX(IM,JM),WYFIX(IM,JM)
 !
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J)
 !$OMP DO SCHEDULE(STATIC)
@@ -167,6 +171,12 @@
      .          (FSM(I,J+1)+FSM(I,J)+1.E-30)-
      .      (H1(I,J)*FSM(I,J)+H1(I,J-1)*FSM(I,J-1))/
      .          (FSM(I,J)+FSM(I,J-1)+1.E-30)
+         BEDX(I,J)=-0.5*(CBC(I,J)+CBC(I-1,J))
+         BEDY(I,J)=-0.5*(CBC(I,J)+CBC(I,J-1))
+         ICEX(I,J)=0.5*(AREAICE(I,J)/100.*VARWIF(I,J)
+     .             +AREAICE(I-1,J)/100.*VARWIF(I-1,J))
+         ICEY(I,J)=-0.5*(AREAICE(I,J)/100.*VARWIF(I,J)
+     .             +AREAICE(I,J-1)/100.*VARWIF(I,J-1))
         ENDDO
        ENDDO
 !$OMP END DO
@@ -185,11 +195,10 @@
       DO 100 J=2,JMM1
       DO 100 I=2,IMM1
 !NG04232008      TXBOT(I,J)=-BFRIC
-      TXBOT(I,J)=-0.5*(CBC(I,J)+CBC(I-1,J))
+      TXBOT(I,J)=BEDX(I,J)
      .     *SQRT(UAB(I,J)**2+(.25*(VAB(I,J)
      .     +VAB(I,J+1)+VAB(I-1,J)+VAB(I-1,J+1)))**2)*UAB(I,J)
-      TXICE(I,J)=0.5*(AREAICE(I,J)/100.*VARWIF(I,J)      ! NG FOR ICE
-     .               +AREAICE(I-1,J)/100.*VARWIF(I-1,J)) ! NG FOR ICE
+      TXICE(I,J)=ICEX(I,J)
      .     *SQRT(UAB(I,J)**2+(.25*(VAB(I,J)
      .     +VAB(I,J+1)+VAB(I-1,J)+VAB(I-1,J+1)))**2)*UAB(I,J)
  100  CONTINUE
@@ -198,11 +207,10 @@
       DO 102 J=2,JMM1
       DO 102 I=2,IMM1
 !NG04232008      TYBOT(I,J)=-BFRIC
-      TYBOT(I,J)=-0.5*(CBC(I,J)+CBC(I,J-1))
+      TYBOT(I,J)=BEDY(I,J)
      .     *SQRT((.25*(UAB(I,J)+UAB(I+1,J)
      .     +UAB(I,J-1)+UAB(I+1,J-1)))**2+VAB(I,J)**2)*VAB(I,J)
-      TYICE(I,J)=-0.5*(AREAICE(I,J)/100.*VARWIF(I,J)      ! NG FOR ICE
-     .                +AREAICE(I,J-1)/100.*VARWIF(I,J-1)) ! NG FOR ICE
+      TYICE(I,J)=ICEY(I,J)
      .     *SQRT((.25*(UAB(I,J)+UAB(I+1,J)
      .     +UAB(I,J-1)+UAB(I+1,J-1)))**2+VAB(I,J)**2)*VAB(I,J)
  102  CONTINUE
@@ -267,6 +275,20 @@
       ENDDO
 
 !$OMP END SINGLE
+! BCOND(7) provides wind/ice forcing for the complete outer step
+! (including the 3-D path). The boundary routines of EXTRNL read it.
+      IF(IEXT.EQ.1) THEN
+!$OMP DO SCHEDULE(STATIC)
+       DO J=2,JMM1
+        DO I=2,IMM1
+         IF(I.GE.3) WXFIX(I,J)=-.5*((100.-AREAICE(I,J))/100.*TXSURF(I,J)
+     .                  +(100.-AREAICE(I-1,J))/100.*TXSURF(I-1,J))
+         IF(J.GE.3) WYFIX(I,J)=.5*((100.-AREAICE(I,J))/100.*TYSURF(I,J)
+     .                  +(100.-AREAICE(I,J-1))/100.*TYSURF(I,J-1))
+        ENDDO
+       ENDDO
+!$OMP END DO
+      ENDIF
 !$OMP DO SCHEDULE(STATIC)
       DO 425 J=2,JMM1
       DO 425 I=3,IMM1
@@ -281,8 +303,7 @@
      .         +RAMP*TRNU(I,J)
 !NG     .      -ARU(I,J)*(-.5*(TXSURF(I,J)+TXSURF(I-1,J))+TXBOT(I,J)  )
      .      -ARU(I,J)*
-     .      ( -.5*((100.-AREAICE(I,J))/100.*TXSURF(I,J)+      ! NG FOR ICE
-     .             (100.-AREAICE(I-1,J))/100.*TXSURF(I-1,J) ) ! NG FOR ICE
+     .      ( WXFIX(I,J)
      .                -TXICE(I,J)                             ! NG FOR ICE
      .                +TXBOT(I,J)  )
 !qa         Add Atmospheric Pressure Terms by Quamrul QA 4/20/00
@@ -299,7 +320,7 @@
 !     CALCULATE V COMPONENT OF VELOCITY
 !-----------------------------------------------------------------------
 !
-!$OMP END DO
+!$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
       DO 435 J=3,JMM1
       DO 435 I=2,IMM1
@@ -314,8 +335,7 @@
      .           +RAMP*TRNV(I,J)
 !NG     .    + ARV(I,J)*( .5*(TYSURF(I,J)+TYSURF(I,J-1))-TYBOT(I,J)   )
      .    + ARV(I,J)*
-     .      (  .5*((100.-AREAICE(I,J))/100.*TYSURF(I,J)+      ! NG FOR ICE
-     .             (100.-AREAICE(I,J-1))/100.*TYSURF(I,J-1) ) ! NG FOR ICE
+     .      ( WYFIX(I,J)
      .               +TYICE(I,J)                              ! NG FOR ICE
      .               -TYBOT(I,J)   )
 !qa         Add Atmospheric Pressure Terms by Quamrul QA 4/20/00
