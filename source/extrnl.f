@@ -2,10 +2,10 @@
       INCLUDE 'comdeck'
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
 !$OMP PARALLEL DEFAULT(SHARED)
-      CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2)
+      CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.FALSE.)
 !$OMP END PARALLEL
       END
-      RECURSIVE SUBROUTINE EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2)
+      RECURSIVE SUBROUTINE EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,ROTATE)
 !pl      SUBROUTINE EXTRNL(ADVUA,ADVVA,TRNU,TRNV,DTE2,BFRIC,DTI2)
 !     VERSION(11/16/90)
 !
@@ -19,6 +19,7 @@
 !
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
+      LOGICAL ROTATE
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
@@ -186,7 +187,9 @@
      .                /ART(I,J)
  60   CONTINUE
 !
-!$OMP END DO
+! Neither stress direction reads CURV42D. The barrier after TYICE
+! still completes all three independent fields before boundary edits.
+!$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
       DO 100 J=2,JMM1
       DO 100 I=2,IMM1
@@ -305,7 +308,8 @@
 !     CALCULATE V COMPONENT OF VELOCITY
 !-----------------------------------------------------------------------
 !
-!$OMP END DO
+! VAF reads UA/VA, not UAF. Both updates finish before BCOND(13).
+!$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
       DO 435 J=3,JMM1
       DO 435 I=2,IMM1
@@ -342,6 +346,28 @@
 
       CALL BCOND(13,DTI2,0)
 !$OMP END SINGLE
+! On the no-transport barotropic path filtering reads the masked
+! results only at the very same cell. Rotate before those values
+! leave cache; retain the old interface and timing for other paths.
+      IF(ROTATE) THEN
+!$OMP DO SCHEDULE(STATIC)
+        DO J=1,JM
+          DO I=1,IM
+            TXBOT(I,J)=TXBOT(I,J)*DUM(I,J)
+            TYBOT(I,J)=TYBOT(I,J)*DVM(I,J)
+            UAF(I,J)=UAF(I,J)*DUM(I,J)
+            VAF(I,J)=VAF(I,J)*DVM(I,J)
+            UAB(I,J)=UA(I,J)+.5*NU*(UAB(I,J)-2.*UA(I,J)+UAF(I,J))
+            VAB(I,J)=VA(I,J)+.5*NU*(VAB(I,J)-2.*VA(I,J)+VAF(I,J))
+            ELB(I,J)=EL(I,J)+.5*NU*(ELB(I,J)-2.*EL(I,J)+ELF(I,J))
+            EL(I,J)=ELF(I,J)
+            D(I,J)=H(I,J)+EL(I,J)
+            UA(I,J)=UAF(I,J)
+            VA(I,J)=VAF(I,J)
+          ENDDO
+        ENDDO
+!$OMP END DO
+      ELSE
 !$OMP DO SCHEDULE(STATIC)
       DO J=1,JM
         DO I=1,IM
@@ -352,6 +378,7 @@
         ENDDO
       ENDDO
 !$OMP END DO
+      ENDIF
 !
 !hli      print *,'returning from EXTRNL'
       RETURN
