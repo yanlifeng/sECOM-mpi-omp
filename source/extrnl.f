@@ -20,6 +20,7 @@
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
       LOGICAL ROTATE
+      REAL CORBASE
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
@@ -146,18 +147,15 @@
 ! ADVAVE uses the existing EXTRNL team; all workers must call it.
       CALL ADVAVE(ADVUA,ADVVA)
 !
+! Nonbarotropic callers keep the original complete Coriolis field.
+      IF(TOR.NE.'BAROTROPIC') THEN
 !$OMP DO SCHEDULE(STATIC)
-      DO 95 J=1,JM
-      DO 95 I=1,IM
- 95   CURV42D(I,J)=.25*COR(I,J)
-!
-!-----------------------------------------------------------------------
-!        COMPUTE BOTTOM FRICTION AND CURVATURE TERMS 
-!            IF RUN IS BAROTROPIC MODE ONLY
-!-----------------------------------------------------------------------
-!
+       DO 95 J=1,JM
+       DO 95 I=1,IM
+ 95    CURV42D(I,J)=.25*COR(I,J)
 !$OMP END DO
-      IF(TOR.NE.'BAROTROPIC') GO TO 5000
+       GO TO 5000
+      ENDIF
 !
 !     The reference's permanent grid metrics and FSM cannot change
 !     within this external subcycle. Dynamic wet masks are NOT cached.
@@ -178,14 +176,28 @@
        ENDDO
 !$OMP END DO
       ENDIF
-!$OMP DO SCHEDULE(STATIC)
-      DO 60 J=2,JMM1
-      DO 60 I=2,IMM1
-      CURV42D(I,J)= CURV42D(I,J)
+! Both edges and interior are owned by one row workshare. Each cell
+! gets one store; the separate REAL base preserves the original
+! rounding before the unchanged curvature correction. No halo read of
+! CURV42D occurs until after the subsequent stress barrier.
+!$OMP DO SCHEDULE(STATIC) PRIVATE(CORBASE)
+      DO J=1,JM
+       IF(J.EQ.1.OR.J.EQ.JM) THEN
+        DO I=1,IM
+         CURV42D(I,J)=.25*COR(I,J)
+        ENDDO
+       ELSE
+        CURV42D(1,J)=.25*COR(1,J)
+        CURV42D(IM,J)=.25*COR(IM,J)
+        DO I=2,IMM1
+         CORBASE=.25*COR(I,J)
+         CURV42D(I,J)= CORBASE
      .  +.125*((VA(I,J+1)+VA(I,J))*GEOMX(I,J)
      .    -(UA(I+1,J)+UA(I,J))*GEOMY(I,J))
      .                /ART(I,J)
- 60   CONTINUE
+        ENDDO
+       ENDIF
+      ENDDO
 !
 ! Neither stress direction reads CURV42D. The barrier after TYICE
 ! still completes all three independent fields before boundary edits.
