@@ -34,7 +34,7 @@
         ROWEMIN(J)=ZROWMIN
       ENDDO
 !$OMP END DO
-!$OMP SINGLE
+!$OMP MASTER
       VAMAX=-1.E10
       JVMAX=0
       DO J=1,JMM1
@@ -78,5 +78,6 @@
         ENDDO
       ENDIF
       ENDIF
-!$OMP END SINGLE
+!$OMP END MASTER
+!$OMP BARRIER
       END

@@ -109,7 +109,7 @@
 !$OMP END DO
 !
 ! Keep potentially overlapping boundary entries in original order.
-!$OMP SINGLE
+!$OMP MASTER
       IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
        DO 309 N=1,NUMEBC
         IE=IETA(N)
@@ -147,7 +147,8 @@
         ENDIF
  310   CONTINUE
       ENDIF
-!$OMP END SINGLE
+!$OMP END MASTER
+!$OMP BARRIER
 !
       RETURN
       END
