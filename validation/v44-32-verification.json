@@ -1,0 +1,217 @@
+{
+  "commit": "87490b3a06f85cdafdadce7730ff8547a2deb37a",
+  "official_64_result": false,
+  "eligible_for_fresh_64": true,
+  "binary_sha": {
+    "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f",
+    "EdgeHist": "d2d1e494d1ab3d374dcdbb24aed0911c6172fffca912b2acc4af5ffc385b6e25",
+    "HistZero": "816eb84804651f6cb9441cc2e61fbc152f41e900615d39ca5ffc7c4fb5bccd0f",
+    "EdgeHistE": "50d036077fe2ff0dc457fef56e257d7d6c5579ee0fecea4197a29dfdf6e63607",
+    "EdgeHistF": "d4ce5c08cb749df3f9822c45090c31dc32e92f0d6f44587d8820f70ac52ad537",
+    "EdgeHistL": "8085d0f177695a69600701e76808349826ca89ac98d5832ad1d9c637a3d22096"
+  },
+  "timing": {
+    "status": "timing_passed",
+    "passed": true,
+    "stages": {
+      "screen": {
+        "tags": [
+          "fullside32joint44g0b0p0-00-Df32",
+          "fullside32joint44g0b0p1-00-EdgeHist32",
+          "fullside32joint44g0b0p2-00-HistZero32",
+          "fullside32joint44g0b1p0-00-HistZero32",
+          "fullside32joint44g0b1p1-00-Df32",
+          "fullside32joint44g0b1p2-00-EdgeHist32",
+          "fullside32joint44g0b2p0-00-EdgeHist32",
+          "fullside32joint44g0b2p1-00-HistZero32",
+          "fullside32joint44g0b2p2-00-Df32"
+        ],
+        "rows": [
+          {
+            "Df": 12.305264881812036,
+            "EdgeHist": 11.95577369723469,
+            "HistZero": 12.286608298309147
+          },
+          {
+            "HistZero": 12.241048028692603,
+            "Df": 12.464149942621589,
+            "EdgeHist": 11.865749014541507
+          },
+          {
+            "EdgeHist": 11.848946111276746,
+            "HistZero": 12.176692808046937,
+            "Df": 12.227844953536987
+          }
+        ],
+        "median": {
+          "Df": 12.305264881812036,
+          "EdgeHist": 11.865749014541507,
+          "HistZero": 12.241048028692603
+        },
+        "against": {
+          "Df": {
+            "wins": 3,
+            "saving": 0.0357177087605941
+          },
+          "HistZero": {
+            "wins": 3,
+            "saving": 0.030659059034112812
+          }
+        },
+        "passed": true,
+        "binary_sha": {
+          "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f",
+          "EdgeHist": "d2d1e494d1ab3d374dcdbb24aed0911c6172fffca912b2acc4af5ffc385b6e25",
+          "HistZero": "816eb84804651f6cb9441cc2e61fbc152f41e900615d39ca5ffc7c4fb5bccd0f"
+        }
+      },
+      "confirm": {
+        "tags": [
+          "fullside32joint44g1b0p0-00-HistZero32",
+          "fullside32joint44g1b0p1-00-EdgeHist32",
+          "fullside32joint44g1b0p2-00-Df32",
+          "fullside32joint44g1b1p0-00-EdgeHist32",
+          "fullside32joint44g1b1p1-00-Df32",
+          "fullside32joint44g1b1p2-00-HistZero32",
+          "fullside32joint44g1b2p0-00-Df32",
+          "fullside32joint44g1b2p1-00-HistZero32",
+          "fullside32joint44g1b2p2-00-EdgeHist32"
+        ],
+        "rows": [
+          {
+            "HistZero": 12.262735735625029,
+            "EdgeHist": 11.978614977560937,
+            "Df": 12.345277892425656
+          },
+          {
+            "EdgeHist": 11.883971663191915,
+            "Df": 12.277176027186215,
+            "HistZero": 12.245418331585824
+          },
+          {
+            "Df": 12.325215326622128,
+            "HistZero": 12.27095927298069,
+            "EdgeHist": 11.874621337279677
+          }
+        ],
+        "median": {
+          "Df": 12.325215326622128,
+          "EdgeHist": 11.883971663191915,
+          "HistZero": 12.262735735625029
+        },
+        "against": {
+          "Df": {
+            "wins": 3,
+            "saving": 0.03580007746210645
+          },
+          "HistZero": {
+            "wins": 3,
+            "saving": 0.030887403969144467
+          }
+        },
+        "passed": true,
+        "binary_sha": {
+          "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f",
+          "EdgeHist": "d2d1e494d1ab3d374dcdbb24aed0911c6172fffca912b2acc4af5ffc385b6e25",
+          "HistZero": "816eb84804651f6cb9441cc2e61fbc152f41e900615d39ca5ffc7c4fb5bccd0f"
+        }
+      }
+    },
+    "tags": [
+      "fullside32joint44g0b0p0-00-Df32",
+      "fullside32joint44g0b0p1-00-EdgeHist32",
+      "fullside32joint44g0b0p2-00-HistZero32",
+      "fullside32joint44g0b1p0-00-HistZero32",
+      "fullside32joint44g0b1p1-00-Df32",
+      "fullside32joint44g0b1p2-00-EdgeHist32",
+      "fullside32joint44g0b2p0-00-EdgeHist32",
+      "fullside32joint44g0b2p1-00-HistZero32",
+      "fullside32joint44g0b2p2-00-Df32",
+      "fullside32joint44g1b0p0-00-HistZero32",
+      "fullside32joint44g1b0p1-00-EdgeHist32",
+      "fullside32joint44g1b0p2-00-Df32",
+      "fullside32joint44g1b1p0-00-EdgeHist32",
+      "fullside32joint44g1b1p1-00-Df32",
+      "fullside32joint44g1b1p2-00-HistZero32",
+      "fullside32joint44g1b2p0-00-Df32",
+      "fullside32joint44g1b2p1-00-HistZero32",
+      "fullside32joint44g1b2p2-00-EdgeHist32"
+    ]
+  },
+  "hydro": {
+    "early": {
+      "serial": "traceref-00-11",
+      "candidates": [
+        "sidev44early-00-EdgeHistE32",
+        "sidev44fallback-00-EdgeHistF32"
+      ],
+      "frames": 5,
+      "fields": 25
+    },
+    "late": {
+      "serial": "deepref-00-81",
+      "candidates": [
+        "deepsidev44late-00-EdgeHistL32"
+      ],
+      "frames": 7,
+      "fields": 25
+    }
+  },
+  "status": "evidence_complete",
+  "report_sha": {
+    "v6-reference.json": "2345be452bf11086d152f7ccfbce9cf1b42a9bdff5a94bd44ea6bb8b806263d1",
+    "v44-native/manifest.json": "b036119d3e22bc1784b06ffccbf4955ffbb1cbe9059516c002ccbfa57060c293",
+    "joint44-side32-timing-files.json": "a88aae2f20c0cb2b34dd2f30bfefd903c9dd6fc4903edc55f65e359b81b742e0",
+    "joint44-side32-screen.json": "7a90fcbcdb91b4b41c1750967a31e722ac99ea976d40ddd962458494236f1c22",
+    "joint44-side32-confirm.json": "63828919b6a09fe09e2ef77d2666997b781bd884fcd102e71a6e8bee77d854fb",
+    "fullside32joint44g0b0p0-00-Df32.json": "1ec701587b7f7f8894b04ec947459ada4fa864d644b9f02fd3af1e4715b6feb6",
+    "joint44-side32-timing-ledger/fullside32joint44g0b0p0-00-Df32.affinity.json": "c03070e7bdeae56f104711b715250b8c600e672d1d6dd81b136292e023f08d23",
+    "fullside32joint44g0b0p1-00-EdgeHist32.json": "d4fcf13632c5c8e634189a29a890ad8f0cfb3722bc4fa468a2a31ba1cc7c84d8",
+    "joint44-side32-timing-ledger/fullside32joint44g0b0p1-00-EdgeHist32.affinity.json": "a5211fe08f9e88739467aaac3a30fc5f14dd1013ecff29e99eef0a72d7a83dc2",
+    "fullside32joint44g0b0p2-00-HistZero32.json": "7f3824b6bf1d2e21d2dbab1710a1ed5c0b0dcfba5b211432b8fba2047cbcaf34",
+    "joint44-side32-timing-ledger/fullside32joint44g0b0p2-00-HistZero32.affinity.json": "41ada2a51aafbb284386cec0d99fa252487ad7297895c0408905a8d65aa348b6",
+    "fullside32joint44g0b1p0-00-HistZero32.json": "205a4ccf5400ea50c51800e9e32aa108a7286671872572263cb673b5351a6f03",
+    "joint44-side32-timing-ledger/fullside32joint44g0b1p0-00-HistZero32.affinity.json": "756461a55b20e16c1caa71ec2623b9b943eda2b681aedcaa08862be152cfc982",
+    "fullside32joint44g0b1p1-00-Df32.json": "50c0cfe6f1048fe0b516392fb74bd174275c69a0518dccb7d6e90efdd0a93a5a",
+    "joint44-side32-timing-ledger/fullside32joint44g0b1p1-00-Df32.affinity.json": "08bf76c889c5901d44152dbf8f4a9b662af90a87834ff1b2557f1c10063692ae",
+    "fullside32joint44g0b1p2-00-EdgeHist32.json": "6f621212bc5b233e83aa7514e69d13ed6f48fc6e896d8ad9c288b3c9cd683a7b",
+    "joint44-side32-timing-ledger/fullside32joint44g0b1p2-00-EdgeHist32.affinity.json": "a497e81f5497e8f74de64af6c120f2e44db1ef5730546730defb82ab37f7a193",
+    "fullside32joint44g0b2p0-00-EdgeHist32.json": "d9d7400b5be0012745b7f74fde40cb849143b1e0cfc6ed10a4971b54f49888f3",
+    "joint44-side32-timing-ledger/fullside32joint44g0b2p0-00-EdgeHist32.affinity.json": "69423ec6b799e5fbac46b7708c4d18e52e191ae68161c3574f7a2dc8a3800d64",
+    "fullside32joint44g0b2p1-00-HistZero32.json": "d28feed322230cc4cd9f3e46da1fd4cc425ca383b614c80dc26d4189cb19e981",
+    "joint44-side32-timing-ledger/fullside32joint44g0b2p1-00-HistZero32.affinity.json": "2396b8c9d6c66d756b3c802eb32c0437ccb1a038aacb1a4ba5e7ba77939451f1",
+    "fullside32joint44g0b2p2-00-Df32.json": "26add80130b7a3a79b50c7872b16483a097df3a5731297613948d21436e67b51",
+    "joint44-side32-timing-ledger/fullside32joint44g0b2p2-00-Df32.affinity.json": "4a15d779c8b573f4f3d823d1cb798bbbdaa3d954ec5042cc30f3b0945c52518a",
+    "fullside32joint44g1b0p0-00-HistZero32.json": "60e00ea5517285a56c05be5aa7ea01af6525d5c74d5e6ab4e24f23cf64980966",
+    "joint44-side32-timing-ledger/fullside32joint44g1b0p0-00-HistZero32.affinity.json": "9aeaf89879b513b85b14862d9c7ff056f4a4618638b86fea7e221cb819cf9740",
+    "fullside32joint44g1b0p1-00-EdgeHist32.json": "96f19b0e2e3784030a24700ce6a7fb2c8946926e7744c435f088e105fed069cd",
+    "joint44-side32-timing-ledger/fullside32joint44g1b0p1-00-EdgeHist32.affinity.json": "f071707ccd0720e2dd10d5e8615a8041d9f765a007501bf46f8fd1447dfbec0f",
+    "fullside32joint44g1b0p2-00-Df32.json": "b5d892aa3eefe8a085bde1a89f067720910d4a2a0c8a00c0b06aa2e16be2a391",
+    "joint44-side32-timing-ledger/fullside32joint44g1b0p2-00-Df32.affinity.json": "b25ffe32abb035da4dbff51aeb32f0de9d9b5ec6343b651b802c0f4f28f14c23",
+    "fullside32joint44g1b1p0-00-EdgeHist32.json": "15c54de68e16ba519ed5b3b5e5e3dcc87e0211766f81ea5bc54c71da70277f4a",
+    "joint44-side32-timing-ledger/fullside32joint44g1b1p0-00-EdgeHist32.affinity.json": "ca8d90c593dcca0ec23ed32ce03cd6575db4a34db9cb98e1fefa4c5c773c77ad",
+    "fullside32joint44g1b1p1-00-Df32.json": "68470b6061f53a3a2fc452470f25868d9bf88011593b3be026ffa4e889e4f228",
+    "joint44-side32-timing-ledger/fullside32joint44g1b1p1-00-Df32.affinity.json": "f3bb05bcd514e7ae8d5eba240d6f10d6416937616985231ab399b108a85c7862",
+    "fullside32joint44g1b1p2-00-HistZero32.json": "b43f6c30daf389b4488cdbc2be0cdbcdb497ba0d7f62cf76a634045a9a34c86b",
+    "joint44-side32-timing-ledger/fullside32joint44g1b1p2-00-HistZero32.affinity.json": "aead54ee65bf84bb7787c1c56bff57e0a51eed8b29890bc9d39907715f0d4ed4",
+    "fullside32joint44g1b2p0-00-Df32.json": "22e32fe7b600df488bcd39164342a1fd20edfe50a98cca14cd7a69b9316f21da",
+    "joint44-side32-timing-ledger/fullside32joint44g1b2p0-00-Df32.affinity.json": "08b9af4382afe6d5f5715c3c838ba7adb1d5ceefc9e3867fc4309a5c35e66ec1",
+    "fullside32joint44g1b2p1-00-HistZero32.json": "03eb293c817ae2c50bda2f81947b069ccf381744c553c96557a180acfe489f13",
+    "joint44-side32-timing-ledger/fullside32joint44g1b2p1-00-HistZero32.affinity.json": "d803645630707b6275332f673b85528ae7273bbc0931f820580bf3fd014bd293",
+    "fullside32joint44g1b2p2-00-EdgeHist32.json": "b1d146f67061c9f17c96bedae578aefcb811d15621624f8b9ce91793a0d3793f",
+    "joint44-side32-timing-ledger/fullside32joint44g1b2p2-00-EdgeHist32.affinity.json": "2ec7a04b8a92a2db9e17ea548c1701093e0e9d8218b06ccdf5260c6c4f1522ba",
+    "v44-traces/manifest.json": "96b8ba36e9f4c4a14c17f27ad0963498fe401d8518b5590c126ef10d54ef4933",
+    "traceref-00-11.json": "df5f1084577930038e9b22e90a416cabaf7a0fd3922dd0c2fdbe0a72ad7913be",
+    "joint44-side32-early-files.json": "2594f8a25b05583d9e88b7d46b019785cef99964d11e5b8656e33f83337fdb60",
+    "joint44-side32-early-fields.json": "f185fa4ec8bce7f0592c1b5c7d3a437339dbdf12e6875d244202e42197ff8162",
+    "sidev44early-00-EdgeHistE32.json": "c24cbaf81f3ce059af548f6163b21fb70b86ee094d663bb22de8fb7de190130d",
+    "joint44-side32-hydro-ledger/sidev44early-00-EdgeHistE32.affinity.json": "4cbc54f1f6ab24d832169af9b9b5d3dc4d0210fa68de4a1c449b560da1e9af51",
+    "sidev44fallback-00-EdgeHistF32.json": "86e7c07d0d6f5ee0c68f6852e2cd132dffb82ca832931283938bd7c7ea9686f0",
+    "joint44-side32-hydro-ledger/sidev44fallback-00-EdgeHistF32.affinity.json": "60e4ecad7ae74c8b564dd1fd486d2f96ce158c07c5fcbc2dee513cae44e21e19",
+    "deepref-00-81.json": "5c51696da42fc49ab097c76ed2ab7d0f98eb8607fbeba815a6c5584be9d7efb1",
+    "joint44-side32-late-files.json": "57597f1c9854da82297f5b570b894e7a5f72e92c4cbabbfc6da76017425eac5a",
+    "joint44-side32-late-fields.json": "1916e5b27c944598fae460fca70741cf2459ba0bf3e04d2ef027ce63a6081782",
+    "deepsidev44late-00-EdgeHistL32.json": "fc0a1e62f45e273e0cfc1a1d3f50139c5699e91ae59c05506c3e3ec9d1594ef2",
+    "joint44-side32-hydro-ledger/deepsidev44late-00-EdgeHistL32.affinity.json": "3b495369aba917083bf1860699c9ad70486fb3e5f6a295b622cfcd041c3c56ba"
+  }
+}
