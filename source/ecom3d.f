@@ -1810,72 +1810,77 @@
 !
      
       VAMAX=-1.E10
-!     Store per-row extrema and combine rows in the *original* order.
-!     Speed picks the LAST tie (>=). Elevation picks the FIRST (<).
-!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,VMAXTMP)
+! First reduce only values, making the per-cell loop vectorizable.
+! Recover indices only on the two winning rows, preserving the legacy
+! tie order and speed-before-minimum abort behavior (including all-land).
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,VMAXTMP,VROWMAX,ZROWMIN)
 !$OMP DO SCHEDULE(STATIC)
-      DO 442 J=1,JMM1
-      ROWVMAX(J)=-1.E10
-      ROWIMAX(J)=0
-      DO I=1,IMM1
+      DO J=1,JMM1
+        VROWMAX=-1.E10
+!$OMP SIMD REDUCTION(MAX:VROWMAX) PRIVATE(VMAXTMP)
+        DO I=1,IMM1
       VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
      .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
      .             (0.5*DVMWAD(I,J)*VAF(I,J)+
      .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
-      IF(VMAXTMP.GE.ROWVMAX(J)) THEN
-        ROWIMAX(J)=I
-        ROWVMAX(J)=VMAXTMP
-      END IF
+          IF(VMAXTMP.GT.VROWMAX) VROWMAX=VMAXTMP
+        ENDDO
+        ROWVMAX(J)=VROWMAX
       ENDDO
-  442 CONTINUE
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
       DO J=1,JM
-        ROWEMIN(J)=1.E10
-        ROWIMIN(J)=0
+        ZROWMIN=1.E10
+!$OMP SIMD REDUCTION(MIN:ZROWMIN)
         DO I=1,IM
-          IF(ELF(I,J).LT.ROWEMIN(J).AND.FSM(I,J).NE.0.) THEN
-            ROWIMIN(J)=I
-            ROWEMIN(J)=ELF(I,J)
-          ENDIF
+          IF(FSM(I,J).NE.0..AND.ELF(I,J).LT.ZROWMIN)
+     &      ZROWMIN=ELF(I,J)
         ENDDO
+        ROWEMIN(J)=ZROWMIN
       ENDDO
 !$OMP END DO
 !$OMP END PARALLEL
+      JVMAX=0
       DO J=1,JMM1
-        IF(ROWVMAX(J).GE.VAMAX.AND.ROWIMAX(J).GT.0) THEN
-          IAMAX=ROWIMAX(J)
-          JAMAX=J
+        IF(ROWVMAX(J).GE.VAMAX.AND.ROWVMAX(J).GE.0.) THEN
+          JVMAX=J
           VAMAX=ROWVMAX(J)
         ENDIF
       ENDDO
-!NG      write(*,*) 'Max Cur:',TIME,IAMAX,JAMAX,VAMAX,ELF(IAMAX,JAMAX)
-!NG      write(*,*)'Wave/am:',WVHT(IAMAX,JAMAX),AAM2D(IAMAX,JAMAX)
+      IF(JVMAX.NE.0) THEN
+        J=JVMAX
+        DO I=IMM1,1,-1
+      VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
+     .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
+     .             (0.5*DVMWAD(I,J)*VAF(I,J)+
+     .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
+          IF(VMAXTMP.EQ.VAMAX) THEN
+            IAMAX=I
+            JAMAX=J
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
       IF(VAMAX.GT.100.) GO TO 9100
-!start, check elevation minimum, jeff Ji, 1/17/96
-! elevation
       ELMINX=1.E10
-      DO 443 J=1,JM
-!wad      elminx=1.0+elf(i,j)*fsm(i,j)/(h(i,j)+1.0e-5)
-!wad      IF(elminx.lt.0.1) THEN ! 10 percent !!
+      JWATER=0
+      DO J=1,JM
         IF(ROWEMIN(J).LT.ELMINX) THEN
-        IAMAX=ROWIMIN(J)
-        JAMAX=J
-!wad        elmin=elf(I,J)
-        ELMINX=ROWEMIN(J)
-!wad        go to 9100
-!wad      write(*,*) 'Max:',TIME,IAMAX,JAMAX,VAMAX,ELF(IAMAX,JAMAX)
-        END IF
-! Khan
-!wad      IF(elminx.lt.0.20) THEN ! 20 percent !! Warning
-!wad        IAMAX=I
-!wad        JAMAX=J
-!wad        elmin=elf(I,J)
-!wad        WRITE(IUPRT,7501)IAMAX,JAMAX,elmin,TIME  
-!wad      END IF
-
-  443 CONTINUE
-!NG      write(*,*)'MinElev:',TIME,IAMAX,JAMAX,ELMINX,ELMINX+H(IAMAX,JAMAX)
+          JWATER=J
+          ELMINX=ROWEMIN(J)
+        ENDIF
+      ENDDO
+      IF(JWATER.NE.0) THEN
+        J=JWATER
+        DO I=1,IM
+          IF(FSM(I,J).NE.0..AND.ELF(I,J).EQ.ELMINX) THEN
+            IAMAX=I
+            JAMAX=J
+            ELMINX=ELF(I,J)
+            EXIT
+          ENDIF
+        ENDDO
+      ENDIF
 !end,   check elevation minimum, jeff ji, 1/17/96
 
       IF(TOR.EQ.'BAROTROPIC') GO TO 8000
