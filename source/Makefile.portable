@@ -14,6 +14,7 @@ ifeq ($(MODE),omp)
 OMP_LINK = -fopenmp
 $(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o $(OBJDIR)/ecom3d.o $(OBJDIR)/wandd_kky.o: EXTRA_FFLAGS = -fopenmp
 $(OBJDIR)/bcond.o $(OBJDIR)/bottau.o $(OBJDIR)/update_cbc_mannings.o: EXTRA_FFLAGS = -fopenmp
+$(OBJDIR)/putcdf.o: EXTRA_FFLAGS = -fopenmp
 else ifneq ($(MODE),serial)
 $(error MODE must be serial or omp)
 endif
