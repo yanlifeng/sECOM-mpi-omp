@@ -3170,9 +3170,12 @@
 ! that publishes the extrema. IEXT keeps its original exit value.
       SUBROUTINE BARO_SUBCYCLE(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,
      &                         VAMAX,ELMINX,IAMAX,JAMAX)
+      USE ISO_FORTRAN_ENV, ONLY: INT32
       INCLUDE 'comdeck'
       REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL ROWVMAX(JM),ROWEMIN(JM)
+! Bounded shared scratch. Extra words separate writers on a 64B cache line.
+      INTEGER(INT32) SEAM37((IMM1+31)/32+16,JM)
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
 ! Restore all face masks exactly once per outer step, after SMAG. Use
 ! the same row owners as the stencil; the first fluxes use only D,
@@ -3192,7 +3195,7 @@
         IEXT=ISEQ
 !$OMP END MASTER
         CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,.TRUE.)
-        CALL WANDD_TEAM(EL,D)
+        CALL WANDD_SEAM37(SEAM37)
         CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
         IF(VAMAX.GT.100.) EXIT
       ENDDO
