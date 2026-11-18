@@ -1,0 +1,183 @@
+{
+  "original_reference_s": 325.5552825294435,
+  "official64_s": 14.074089211411774,
+  "side32": {
+    "v37": {
+      "screen": {
+        "candidate": [
+          12.571315679699183,
+          12.434676954522729
+        ],
+        "control": [
+          12.660769521258771,
+          12.664128574542701
+        ],
+        "wins": 2,
+        "candidate_median": 12.502996317110956,
+        "control_median": 12.662449047900736,
+        "time_reduction": 0.012592566429020735,
+        "against_original": 26.038181110547505
+      },
+      "confirmation": {
+        "candidate": [
+          12.574412216432393,
+          12.506447113119066,
+          12.50924922246486
+        ],
+        "control": [
+          12.576448067091405,
+          12.788811582140625,
+          12.739691472612321
+        ],
+        "wins": 3,
+        "candidate_median": 12.50924922246486,
+        "control_median": 12.739691472612321,
+        "time_reduction": 0.018088526762431,
+        "against_original": 26.025165598650943
+      }
+    },
+    "v38": {
+      "screen": {
+        "candidate": [
+          12.676632890477777,
+          12.554152452386916
+        ],
+        "control": [
+          12.712673001922667,
+          12.696528191678226
+        ],
+        "wins": 2,
+        "candidate_median": 12.615392671432346,
+        "control_median": 12.704600596800447,
+        "time_reduction": 0.007021702468204105,
+        "against_original": 25.806194940460788
+      }
+    },
+    "runtime30": {
+      "screen": {
+        "candidate": [
+          12.678492999635637,
+          13.055620872415602
+        ],
+        "control": [
+          12.693539822474122,
+          12.757012819871306
+        ],
+        "wins": 1,
+        "candidate_median": 12.86705693602562,
+        "control_median": 12.725276321172714,
+        "time_reduction": -0.011141653137779484,
+        "against_original": 25.30145659167349
+      }
+    },
+    "v39": {
+      "screen": {
+        "candidate": [
+          12.305042922496796,
+          12.263283256441355
+        ],
+        "control": [
+          12.677466792985797,
+          12.711535451002419
+        ],
+        "wins": 2,
+        "candidate_median": 12.284163089469075,
+        "control_median": 12.694501121994108,
+        "time_reduction": 0.03232407706153129,
+        "against_original": 26.502031938059698
+      },
+      "confirmation": {
+        "candidate": [
+          12.241825074888766,
+          12.241020685993135,
+          12.227187054231763
+        ],
+        "control": [
+          12.624540653079748,
+          12.668697204440832,
+          12.758515669964254
+        ],
+        "wins": 3,
+        "candidate_median": 12.241020685993135,
+        "control_median": 12.668697204440832,
+        "time_reduction": 0.03375852398601664,
+        "against_original": 26.59543602454346
+      }
+    }
+  },
+  "distinct_internal_evidence": {
+    "v37": "12 times x 25 hydrodynamic fields/headers against serial; plus 5 fallback times.",
+    "v39": "16 actual archive stages x 11 fields against v30. All 10 timed runs: six files against original serial.",
+    "v40": "20 sampled RHS entries, both axes 100% safe rows. Not a speedup."
+  },
+  "cpu_cycle_diagnostic": {
+    "samples": 15194,
+    "confirmed_poll_percent": 27.270752408641464
+  },
+  "dram_diagnostic": {
+    "memory_kib": {
+      "Rss": 265696,
+      "Anonymous": 255776,
+      "AnonHugePages": 241664
+    },
+    "socket_aggregate": {
+      "1": {
+        "cycles:u": 494120909922,
+        "instructions:u": 614873074797,
+        "mem_load_l3_miss_retired.local_dram:u": 16973044,
+        "mem_load_l3_miss_retired.remote_dram:u": 13947,
+        "remote_share": 0.0008210400535327299,
+        "ipc": 1.2443777675671759
+      }
+    }
+  },
+  "source_record_sha256": {
+    "v6-reference.json": "2345be452bf11086d152f7ccfbce9cf1b42a9bdff5a94bd44ea6bb8b806263d1",
+    "final64-results.json": "91aa374604694c6f46466c2dc1bfab0acfa85979938ad4205464318cd529e1cc",
+    "variant-v37-build.json": "fb97bda76c42aa943587716659e8bccd53ddec129d6c2b0a89688a37394f4ace",
+    "variant-v38-build-r2.json": "b7b552d9f8095df24de6fea34a557fb14824abf09449888a61776e5086d89817",
+    "v39-native-manifest.json": "4f134302fc6a45a1e219d0aea1c784d1eaa949c1bbe4a09e33101f130157d510",
+    "side32-v37.json": "68dadc51fd9af26db3c63a8b87008995a7af96b7e5f639e38fe9312159f916b3",
+    "fullside32v37p0-00-Sm32.json": "c14c2004ca0156704f89b630190817c87e2b8f37da8d0649d6a6010414f4bb94",
+    "fullside32v37p1-00-Cj32.json": "6d648f5408da8b2efc96b0f74bc436e3127047294f8e8d3fe14277f1bb997c26",
+    "fullside32v37p2-00-Cj32.json": "53884fdaffefa02f5a18f7658ca13ab1110ca640f9dfdef213b55201870635a7",
+    "fullside32v37p3-00-Sm32.json": "e12649ec403052b0bd999f4cac41bead98516d58646f534f802e59b2c041eb6c",
+    "side32-v37-confirmation.json": "6e17632c18f8124759838948f956067c1470d50b4441da94f6b03e7787d5e80d",
+    "fullside32v37fresh0-00-Cj32.json": "afaf410501b05ad4e1d3ecd043cc7af7495666ac0ed66aa2a5fb97343d0a70db",
+    "fullside32v37fresh1-00-Sm32.json": "dd8a9e9e8a5302c6853da54452f44ac177401bf3fd80277a8ed956ef0b03c091",
+    "fullside32v37fresh2-00-Sm32.json": "1626fcccbbcdb9df8f6706ddae3ca35e7ec0409c721fc209f1de861cbdb776c0",
+    "fullside32v37fresh3-00-Cj32.json": "977341bf4d8afa157d1669fe524ec0690693fcc768b0ab0263a0488678e9b70c",
+    "fullside32v37fresh4-00-Cj32.json": "bf6824be4754e6aa5a1a8dee110b15ebb514f74d09cff33c611b0f60e63d9ab3",
+    "fullside32v37fresh5-00-Sm32.json": "1ba92b692ed74198044dd286abddc9e46772e2435811212f65b1d1d775adf90a",
+    "side32-v37-transient-v1-timing-files.json": "1f7188d4e710fedf9aee141bba31702427e0ea317740961a4e3a28f03529afb7",
+    "side32-v38.json": "27a7fc2a794a06cd300f97aeeab331cc1ce8c5599e88ad17222e355fcb7cc975",
+    "fullside32v38p0-00-Rs32.json": "61bd5a398eb5293269e2c6552045364562248993b0d40f7df123eb18bdcb5ba7",
+    "fullside32v38p1-00-Cj32.json": "558e1a371e2e08f781dd4187c6b96231222d359897984366e1264be67136999d",
+    "fullside32v38p2-00-Cj32.json": "2f4594ff517174fa8d6bf7468aff7e810a1b8cf39d68d5cfa7e82e291183ba41",
+    "fullside32v38p3-00-Rs32.json": "5b7e32063c5454090fe4c1a9110401dce8ec9dafb21cfe13117f3928b2d064ef",
+    "side32-runtime30.json": "494af038f13b981067779795f0d0eff2bbe95370787a1ab7615bb86f5f342884",
+    "fullside32runtime30p0-00-LlvmJoin32.json": "82294c29d229b3c7e40b7c365f215e469dd06c2bbfb8e25023fff003097c6a12",
+    "fullside32runtime30p1-00-Cj32.json": "08506fc2175cb17d950af639aaaa1ea79770e1f2cf2c3d15664bb7599fc0b3c3",
+    "fullside32runtime30p2-00-Cj32.json": "3c2996efa3a900f846f201c767920e718119696b9223c48debaa06f19eb77884",
+    "fullside32runtime30p3-00-LlvmJoin32.json": "59d847902536498c884dea174ce9db8ac7d433fee16f33c123acd8bd53c5ecff",
+    "side32-v39.json": "d80b80926d97848d5710f0d26907ebb389e90760c0ae84230d5e234585c87db9",
+    "fullside32v39p0-00-HistZero32.json": "c051aa15138e2aa2cfa52df4e01b361231f71c4f9bec9ccbc259b5d13bd554c6",
+    "fullside32v39p1-00-Cj32.json": "fc730546adc00d08e18301e37efdbf8736ed1e668eb558512bdedd1a31356092",
+    "fullside32v39p2-00-Cj32.json": "a2e69f3c91f13cd0496fb8ae9e93e391b3c5844591ffb86299f731e2fad9be19",
+    "fullside32v39p3-00-HistZero32.json": "7b84ba835c7b6f87d2e68baac1c0aad481fdf3c1cd9bf2805903408fc02ccfbb",
+    "side32-v39-confirmation.json": "21c47e04179d444ec4e6a2a9cfd1cfb2f97d02e651992a1cb8f451e1a30ca116",
+    "fullside32v39fresh0-00-Cj32.json": "7a07f03c2cfce1ddca4696ddffa65d4f800484b2ed450c41b3d788ddbc67bf5d",
+    "fullside32v39fresh1-00-HistZero32.json": "61c0db682074eb54b08659c93254030f6abd0ee561689fceca271a1aeec46d48",
+    "fullside32v39fresh2-00-HistZero32.json": "3cf016f164ba7bb13d733a2e0dea80c951044d6de2b5c28847f359f4fc3d12b7",
+    "fullside32v39fresh3-00-Cj32.json": "b6857a9f2d1ce952c37e9587a3134e3f0b972342c9131850107df5f0e415e001",
+    "fullside32v39fresh4-00-Cj32.json": "becd5c8848f4b661539db02bbd613ac57d1bc2f685b46ff4665386f4ac3636bd",
+    "fullside32v39fresh5-00-HistZero32.json": "865c6d510dec54711e865b5ffe9f591f15d426f2d53874fde3ec1d46fc65da81",
+    "side32-v39-independent-files.json": "51d11e2d1eeb79182f51d526e452b5690fbd4906d1efff976066c34942d72f5c",
+    "side32-v37-transient-v1-early.json": "1f25577e1c74c55631ae5fba256998ea24e6ecf87a87d160d1f9858c55e107fa",
+    "side32-v37-transient-v1-late.json": "0fa964e10257bf999ac21583f4259fc13205fa4f449516f553c9618d11b41e2d",
+    "history39-real-audit.json": "05d3d8b344b96c16c6a3fc90295a1597e8a1d328edc8947fcaab554657ddefe7",
+    "cold40-full-audit.json": "a2fc7dd93cf72c90f53d5d1aaaf62949bc1d93599ee5f32ed0f3455de31c9326",
+    "pmu-attribution-32.json": "bbed2e7433f0ad7747c02a236b48c07b6ef9a5c8d5f9a73369c65535156fec74",
+    "dram-window-32.json": "9031ec7618329f430fd1ce8b1c7634073b42ba5f05cd7bff618dc0a163f56f71"
+  }
+}
