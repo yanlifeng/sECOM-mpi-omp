@@ -1,0 +1,57 @@
+{
+  "screen": {
+    "phase": "screen",
+    "key": "T",
+    "binaries": {
+      "T": "208a0524b8a99adbe2cc7f26a085f77259537ae4ca0920f7c4e9c80d63794ffb",
+      "S": "d43df7b355877db33ce56ca80433ada1e8bcfa21998fa2850d4ea9ea9bf769a9"
+    },
+    "source_tags": [
+      "fullwindtext0-00-T32",
+      "fullwindtext1-00-S32",
+      "fullwindtext2-00-S32",
+      "fullwindtext3-00-T32"
+    ],
+    "candidate_s": [
+      16.06443999428302,
+      16.82009495049715
+    ],
+    "v21_s": [
+      16.934559638611972,
+      16.835731777362525
+    ],
+    "win_pairs": 2,
+    "reduction": 0.026228866677038276,
+    "passed": true
+  },
+  "confirmed": true,
+  "confirmation": {
+    "phase": "confirmation",
+    "key": "T",
+    "binaries": {
+      "S": "d43df7b355877db33ce56ca80433ada1e8bcfa21998fa2850d4ea9ea9bf769a9",
+      "T": "208a0524b8a99adbe2cc7f26a085f77259537ae4ca0920f7c4e9c80d63794ffb"
+    },
+    "source_tags": [
+      "fullconfirmnewwindtext0-00-S32",
+      "fullconfirmnewwindtext1-00-T32",
+      "fullconfirmnewwindtext2-00-T32",
+      "fullconfirmnewwindtext3-00-S32",
+      "fullconfirmnewwindtext4-00-S32",
+      "fullconfirmnewwindtext5-00-T32"
+    ],
+    "candidate_s": [
+      15.047414040192962,
+      14.92783018015325,
+      14.950247683562338
+    ],
+    "v21_s": [
+      15.790677423588932,
+      15.785754974931479,
+      15.7691152645275
+    ],
+    "win_pairs": 3,
+    "reduction": 0.05292792727975093,
+    "passed": true
+  }
+}

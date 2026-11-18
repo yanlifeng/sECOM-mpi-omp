@@ -33,3 +33,11 @@ check-extrema: $(OBJDIR)/check-extrema
 $(OBJDIR)/check-extrema: ../validation/check_extrema.f baro_check.f comdeck Makefile.portable
 	mkdir -p $(@D)
 	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -fcheck=bounds -I. ../validation/check_extrema.f baro_check.f -o $@
+.PHONY: check-windtext
+check-windtext: $(OBJDIR)/check-windtext
+	cd "$$(mktemp -d '$(abspath $(OBJDIR))/windcheck.XXXXXX')" && \
+	'$(abspath $(OBJDIR))/check-windtext' && \
+	for n in 1 2 3 4; do cmp "reference-$$n.dat" "candidate-$$n.dat" || exit 1; done
+$(OBJDIR)/check-windtext: ../validation/check_windtext.f windtext.f
+	mkdir -p $(@D)
+	$(FC) $(FFLAGS) -fcheck=all $^ -o $@
