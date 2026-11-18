@@ -21,6 +21,9 @@
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
       LOGICAL ROTATE
 !
+      IF(ROTATE.AND.BCTYPE.EQ.'CLAMPED') THEN
+        CALL EXTRNL_SURF38(DTE2)
+      ELSE
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
       DO 400 I=2,IM
@@ -56,6 +59,7 @@
 !         IMPOSE MASS FLUX BOUNDARY CONDITIONS
 !-----------------------------------------------------------------------
 !$OMP END DO
+      ENDIF
 !$OMP SINGLE
       DO 406 N=1,NUMDBC
       ID=IDD(N)
@@ -388,4 +392,49 @@
 !
 !hli      print *,'returning from EXTRNL'
       RETURN
+      END
+!
+! Strict surface predictor for the persistent CLAMPED branch. No consumer
+! observes the old mass-flux scratch before ADVAVE clears both full arrays.
+! Each owner uses private face rows; only its first V row is duplicated
+! at a band seam. All four terms keep the original REAL assignment and order.
+      RECURSIVE SUBROUTINE EXTRNL_SURF38(DTE2)
+!$    USE OMP_LIB, ONLY: OMP_GET_NUM_THREADS,OMP_GET_THREAD_NUM
+      INCLUDE 'comdeck'
+      INTEGER NT38,ID38,Q38,R38,JLO38,JHI38,LO38,HI38
+      REAL U38(IM),V38(IM,2)
+      NT38=1
+      ID38=0
+!$    NT38=OMP_GET_NUM_THREADS()
+!$    ID38=OMP_GET_THREAD_NUM()
+      Q38=(JM-2)/NT38
+      R38=MOD(JM-2,NT38)
+      JLO38=2+ID38*Q38+MIN(ID38,R38)
+      JHI38=JLO38+Q38-1
+      IF(ID38.LT.R38) JHI38=JHI38+1
+      IF(JLO38.LE.JHI38) THEN
+       LO38=1
+       J=JLO38
+       DO I=2,IMM1
+        V38(I,LO38)=.25*(D(I,J)+D(I,J-1))*(H1(I,J)+H1(I,J-1))*VA(I,J)
+       ENDDO
+       DO J=JLO38,JHI38
+        HI38=3-LO38
+        DO I=2,IM
+         U38(I)=.25*(D(I,J)+D(I-1,J))*(H2(I,J)+H2(I-1,J))*UA(I,J)
+        ENDDO
+        DO I=2,IMM1
+         V38(I,HI38)=.25*(D(I,J+1)+D(I,J))*(H1(I,J+1)+H1(I,J))*VA(I,J+1)
+        ENDDO
+        DO I=2,IMM1
+         ELF(I,J)=ELB(I,J)-DTE2*
+     .   (U38(I+1)-U38(I)+V38(I,HI38)-V38(I,LO38))/ART(I,J)
+     .   -DTE2*(QEVAP2D(I,J)-QPREC2D(I,J))*RAMP*FSM(I,J)
+        ENDDO
+        LO38=HI38
+       ENDDO
+      ENDIF
+! Even workers without interior rows must join before the serial source
+! and boundary corrections read ELF. Do not use a NOWAIT here.
+!$OMP BARRIER
       END
