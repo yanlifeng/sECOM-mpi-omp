@@ -1,0 +1,95 @@
+{
+  "version": "v34",
+  "commit": "0491f453d80c1ccb69cd8e65cf738df271454771",
+  "frozen_serial_seconds": 325.5552825294435,
+  "screen": {
+    "status": "complete",
+    "note": "Diagnostic 32-core screen only; neither release nor rejection at 64.",
+    "rev": "v34",
+    "tags": [
+      "fullside32v34p0-00-Df32",
+      "fullside32v34p1-00-Cj32",
+      "fullside32v34p2-00-Cj32",
+      "fullside32v34p3-00-Df32"
+    ],
+    "candidate": [
+      12.31446321401745,
+      12.322206066921353
+    ],
+    "control": [
+      12.643146650865674,
+      12.656040823087096
+    ],
+    "binary_sha": {
+      "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f",
+      "Cj": "57470e8c96c0f8133cde7ffb37e422b64b98251a1f200b0ba331173447a5e5e9"
+    },
+    "wins": 2,
+    "reduction": 0.02618733086570757
+  },
+  "confirmation": {
+    "status": "complete",
+    "note": "Independent 32-core confirmation; requires transient audit, not 64-core evidence.",
+    "rev": "v34",
+    "tags": [
+      "fullside32v34fresh0-00-Cj32",
+      "fullside32v34fresh1-00-Df32",
+      "fullside32v34fresh2-00-Df32",
+      "fullside32v34fresh3-00-Cj32",
+      "fullside32v34fresh4-00-Cj32",
+      "fullside32v34fresh5-00-Df32"
+    ],
+    "candidate": [
+      12.359419104643166,
+      12.443146026693285,
+      12.303749822080135
+    ],
+    "control": [
+      12.722812227904797,
+      12.662267654202878,
+      12.680566322989762
+    ],
+    "binary_sha": {
+      "Cj": "57470e8c96c0f8133cde7ffb37e422b64b98251a1f200b0ba331173447a5e5e9",
+      "Df": "0485410c0438d12b77b83fcb8c4cfc7a2b2f0d83f895d95b30737984d322f55f"
+    },
+    "wins": 3,
+    "reduction": 0.025325936568334373
+  },
+  "solver_output_sha": {
+    "fort.1002": "19f62481961523cbbbbf956e34a591ffc7bdbd824f2c3a693a9432fcd2b3078d",
+    "fort.1006": "3f93cd801fac8be8b778a1479df36a84db11bfff0ca8d3cac4d50daacd47cb8e",
+    "gcmplt.cdf": "a418252846041daef852a549bf55b27dccea5f621cf8a9ddb7e319b50c344eb2",
+    "gcmprt": "cd38a7b9585f89544a7f17b3bb494d1846e9188f437960511bd4fa12e20953d0",
+    "heat.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "startup": "b315f124a452c70661b517b53e68bb4eecc90a07c8cdb1bac322eb672423d93e"
+  },
+  "verified_by": {
+    "files": [
+      "fullside32v34p0-00-Df32",
+      "fullside32v34p1-00-Cj32",
+      "fullside32v34p2-00-Cj32",
+      "fullside32v34p3-00-Df32",
+      "fullside32v34fresh0-00-Cj32",
+      "fullside32v34fresh1-00-Df32",
+      "fullside32v34fresh2-00-Df32",
+      "fullside32v34fresh3-00-Cj32",
+      "fullside32v34fresh4-00-Cj32",
+      "fullside32v34fresh5-00-Df32"
+    ],
+    "early": [
+      "sidev34early-00-DfE32",
+      "sidev34fallback-00-DfF32"
+    ],
+    "late": [
+      "deepsidev34late-00-DfL32"
+    ],
+    "checkout": {
+      ".text": true,
+      ".rodata": true,
+      ".data": true,
+      ".bss": true
+    }
+  },
+  "scope": "p3, 32 physical cores only. Outside this JSON: standalone native kernel fault-injection and selected early/late transient readbacks. No 64-core speed inferred."
+}
