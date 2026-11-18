@@ -1,0 +1,500 @@
+--- a/Makefile.portable
++++ b/Makefile.portable
+@@ -12,7 +12,8 @@
+ OBJECTS = $(addprefix $(OBJDIR)/,$(OBJECT_NAMES))
+ ifeq ($(MODE),omp)
+ OMP_LINK = -fopenmp
+-$(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o: EXTRA_FFLAGS = -fopenmp
++$(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o $(OBJDIR)/ecom3d.o $(OBJDIR)/wandd_kky.o: EXTRA_FFLAGS = -fopenmp
++$(OBJDIR)/bcond.o $(OBJDIR)/bottau.o $(OBJDIR)/update_cbc_mannings.o: EXTRA_FFLAGS = -fopenmp
+ else ifneq ($(MODE),serial)
+ $(error MODE must be serial or omp)
+ endif
+--- a/archive.f
++++ b/archive.f
+@@ -6,6 +6,7 @@
+ !  FOR PARTICLE TRACKING
+ !
+       REAL XOUTP(NPARTM),YOUTP(NPARTM),ZOUTP(NPARTM)
++      REAL ENER_E(IM,JM),ENER_A(IM,JM),ENER_K(IM,JM)
+ !
+       SAVE
+ !
+@@ -490,6 +491,8 @@
+ !
+  5700 CONTINUE
+ !
++!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,K,LL)
++!$OMP DO SCHEDULE(STATIC)
+       DO 570 J=1,JM
+         DO 570 I=1,IM
+           ARCET (I,J)=0.0
+@@ -513,7 +516,9 @@
+           DO 570 LL=1,NCHEMLAY
+             ARCPBED(LL,I,J) = 0.0
+  570  CONTINUE
+-!
++!$OMP END DO NOWAIT
++!
++!$OMP DO COLLAPSE(2) SCHEDULE(STATIC)
+       DO 580 K=1,KB
+       DO 580 J=1,JM
+       DO 580 I=1,IM
+@@ -539,6 +544,8 @@
+       ARCHEM1(I,J,K) = 0.0
+       ARCHEM2(I,J,K) = 0.0
+  580  CONTINUE
++!$OMP END DO
++!$OMP END PARALLEL
+  560  CONTINUE
+ !
+  8300 CONTINUE
+@@ -792,17 +799,37 @@
+        TKE=0.
+        IF(INTX.GT.0) THEN
+        IF(.NOT.(AREA.GT.0.)) STOP 95
++!      These three LOCAL diagnostics are reset on every ARCHIVE call;
++!      they are not the running station/history averages. Their only
++!      consumer in this branch is the skill-record writer below.
++!      Keep the input/area guard above on every step. All sampled sums
++!      retain both the arithmetic and original serial fold order.
++       IF(ISKILL.EQ.0) GOTO 7100
++       IF(MOD(INTX,ISKILL).NE.0) GOTO 7100
++!      Evaluate independent contributions in parallel. Fold original
++!      single-precision accumulators in the original i-fastest order.
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
++       DO J=1,JM
++        DO I=1,IM
++         ENER_E(I,J)=EL(I,J)*ART(I,J)*FSM(I,J)/AREA*SKILLI
++         ENER_A(I,J)=.5*GRAV*EL(I,J)*EL(I,J)*FSM(I,J)*ART(I,J)/
++     2      AREA*SKILLI
++         IF(I.LT.IM.AND.J.LT.JM)
++     1    ENER_K(I,J)=0.125*D(I,J)*((UA(I,J)+UA(I+1,J))**2+
++     2     (VA(I,J)+VA(I,J+1))**2)*FSM(I,J)*ART(I,J)/
++     3     AREA*SKILLI
++        ENDDO
++       ENDDO
++!$OMP END PARALLEL DO
+        DO 100 J=1,JM
+        DO 100 I=1,IM
+-       ESUM=ESUM+EL(I,J)*ART(I,J)*FSM(I,J)/AREA*SKILLI
+-       APE=APE+.5*GRAV*EL(I,J)*EL(I,J)*FSM(I,J)*ART(I,J)/
+-     2     AREA*SKILLI
++       ESUM=ESUM+ENER_E(I,J)
++       APE=APE+ENER_A(I,J)
+        IF(I.LT.IM.AND.J.LT.JM) THEN
+-       TKE=TKE+0.125*D(I,J)*((UA(I,J)+UA(I+1,J))**2+
+-     2     (VA(I,J)+VA(I,J+1))**2)*FSM(I,J)*ART(I,J)/
+-     3     AREA*SKILLI
++       TKE=TKE+ENER_K(I,J)
+        ENDIF
+  100   CONTINUE
++ 7100  CONTINUE
+        ENDIF
+       ELSE
+ !$doacross local(i,j),reduction(volume)
+@@ -835,7 +862,8 @@
+       ENDIF
+ !
+       TMIDDLE=TIME-(0.5*DTI*DAYI/SKILLI)
+-      IF(ISKILL.EQ.0.OR.MOD(INTX,ISKILL).NE.0.OR.INTX.EQ.0) GO TO 8450 ! CNG03182010 also skip cold start IC from printing
++      IF(ISKILL.EQ.0) GO TO 8450
++      IF(MOD(INTX,ISKILL).NE.0.OR.INTX.EQ.0) GO TO 8450
+ !NG02192010      IF (CDFOUT) THEN
+       IF ((CDFOUT).AND.((EPTS+VPTS+FPTS).NE.0)) THEN ! NG02192010 DO NOT CREATE tsepic.cdf IF NONE REQUESTED
+ !         print *, 'tmiddle:', tmiddle
+--- a/bcond.f
++++ b/bcond.f
+@@ -89,7 +89,9 @@
+            Open (77,file='heat.dat',FORM='FORMATTED')
+         END IF
+ !
+-      GOTO (10,20,30,40,50,60,70,80,81,181,90), IDX
++!     12/13: boundary entries only; an existing external-mode team
++!     applies the identical dense mask immediately afterwards.
++      GOTO (10,20,30,40,50,60,70,80,81,181,90,10,20), IDX
+ !
+ !     ******************************************************************
+ !
+@@ -120,6 +122,7 @@
+       ELF(IC,JC)=ELF(ID,JD)
+ 120   CONTINUE
+ !
++      IF(IDX.EQ.12) RETURN
+       DO 130 J=1,JM
+       DO 130 I=1,IM
+  130  ELF(I,J)=ELF(I,J)*FSM(I,J)
+@@ -181,6 +184,7 @@
+         END IF
+  210   CONTINUE
+       ENDIF
++      IF(IDX.EQ.13) RETURN
+       DO 135 J=1,JM
+       DO 135 I=1,IM
+       TXBOT(I,J)=TXBOT(I,J)*DUM(I,J) ! CNG03022009 REGARDLESS, Not in original NYHOPS
+@@ -1450,12 +1454,14 @@
+ !      End Quamrul QA 10/17/98
+ !NG2014
+        IF(CREADPET) THEN
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
+         DO 4114 J=1,JM
+          DO 4114 I=1,IM
+            WSX2D(I,J) = UWIND
+            WSY2D(I,J) = VWIND
+ 4114    CONTINUE
+        ELSE
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
+         DO 4115 J=1,JM
+          DO 4115 I=1,IM
+ !NG04092008           WU(I,J) = UWIND
+@@ -1497,6 +1503,7 @@
+ !
+ !  ADDED RAMPING TO WIND STRESSES AND HEAT FLUX
+ !
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J,K) SCHEDULE(STATIC)
+        DO 4120 J=1,JM
+          DO 4120 I=1,IM
+ !NG12162010 INCLUDE RAIN/EVAP VELOCITY
+--- a/bottau.f
++++ b/bottau.f
+@@ -13,6 +13,7 @@
+ !  CALC. BOTTOM SHEAR STRESS
+ !
+       IF(TOR.EQ.'BAROTROPIC') THEN
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
+        DO 10 J=2,JMM1
+         DO 10 I=2,IMM1
+ !         UBAR(I,J,KBM1)=(DUMWAD(I,J)*UA(I,J)+DUMWAD(I+1,J)*UA(I+1,J))/
+@@ -37,6 +38,7 @@
+       ENDIF
+ !
+ !
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
+       DO 20 J=2,JMM1
+         DO 20 I=2,IMM1
+            QBAR(I,J)=SQRT(UBAR(I,J,KBM1)*UBAR(I,J,KBM1)+
+@@ -96,6 +98,7 @@
+         IF (NWAVECNT.EQ.NWAVE) NWAVECNT=0
+ !NG12222010
+       ELSEIF (WAVEDYN.EQ.'NEGLECT ') THEN
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
+         DO 40 J=2,JMM1
+           DO 40 I=2,IMM1
+             IF (FSM(I,J).GT.0.0) THEN
+--- a/ecom3d.f
++++ b/ecom3d.f
+@@ -7,6 +7,8 @@
+ !*********************************************************
+ !
+       INCLUDE 'comdeck'
++      REAL ROWVMAX(JM),ROWEMIN(JM)
++      INTEGER ROWIMAX(JM),ROWIMIN(JM)
+ ! 
+ !----------------------------------------------------------------------|
+ !                  GENERAL CIRCULATION MODEL                           |
+@@ -79,6 +81,10 @@
+ !
+       REAL DUMB1(QBCM),DUMB2(EBCM,KBM1),DUMB3(DBCM)
+       DIMENSION DUMP1(IM,JM),DUMP2(IM,JM,KB)
++!     Main-program grids have process lifetime and are shared by workers.
++!     Keep them off the initial thread stack even in an OpenMP build.
++      SAVE ADVUA,ADVVA,ADVUU,ADVVV,DRHOX,DRHOY,TRNU,TRNV
++      SAVE DUMP1,DUMP2,COHTHK,NCOHTHK
+ !hli
+       INTEGER TMP_IYR,TMP_IMO,TMP_IDA,TMP_IHOUR
+ !hli
+@@ -1753,6 +1759,24 @@
+ !         APPLY FILTER TO REMOVE TIME SPLIT AND RESET TIME SEQUENCE
+ !-----------------------------------------------------------------------
+ !
++!     Without an intervening transport call these operations are all
++!     pointwise. Read the filtered value at its original precision and
++!     rotate immediately. Retain the original path when tracers exist.
++      IF (TOR.NE.'BAROTROPIC'.OR.JTM.EQ.0) THEN
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
++        DO J=1,JM
++          DO I=1,IM
++            UAB(I,J)=UA(I,J)+.5*NU*(UAB(I,J)-2.*UA(I,J)+UAF(I,J))
++            VAB(I,J)=VA(I,J)+.5*NU*(VAB(I,J)-2.*VA(I,J)+VAF(I,J))
++            ELB(I,J)=EL(I,J)+.5*NU*(ELB(I,J)-2.*EL(I,J)+ELF(I,J))
++            EL(I,J)=ELF(I,J)
++            D(I,J)=H(I,J)+EL(I,J)
++            UA(I,J)=UAF(I,J)
++            VA(I,J)=VAF(I,J)
++          ENDDO
++        ENDDO
++!$OMP END PARALLEL DO
++      ELSE
+       DO 150 J=1,JM 
+       DO 150 I=1,IM 
+       UA(I,J)=UA(I,J)+.5*NU*(UAB(I,J)-2.*UA(I,J)+UAF(I,J)) 
+@@ -1775,6 +1799,7 @@
+       UA(I,J)=UAF(I,J)
+       VAB(I,J)=VA(I,J)
+  160  VA(I,J)=VAF(I,J)
++      ENDIF
+ !
+ !
+ !     INTRODUCE WET/DRY SCHEME BASED ON KKY's DISSERTATION (hli, 08/03/05).
+@@ -1785,18 +1810,45 @@
+ !
+      
+       VAMAX=-1.E10
++!     Store per-row extrema and combine rows in the *original* order.
++!     Speed picks the LAST tie (>=). Elevation picks the FIRST (<).
++!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,VMAXTMP)
++!$OMP DO SCHEDULE(STATIC)
+       DO 442 J=1,JMM1
+-      DO 442 I=1,IMM1
++      ROWVMAX(J)=-1.E10
++      ROWIMAX(J)=0
++      DO I=1,IMM1
+       VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
+      .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
+      .             (0.5*DVMWAD(I,J)*VAF(I,J)+
+      .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
+-      IF(VMAXTMP.GE.VAMAX) THEN
+-        IAMAX=I
+-        JAMAX=J
+-        VAMAX=VMAXTMP
++      IF(VMAXTMP.GE.ROWVMAX(J)) THEN
++        ROWIMAX(J)=I
++        ROWVMAX(J)=VMAXTMP
+       END IF
++      ENDDO
+   442 CONTINUE
++!$OMP END DO NOWAIT
++!$OMP DO SCHEDULE(STATIC)
++      DO J=1,JM
++        ROWEMIN(J)=1.E10
++        ROWIMIN(J)=0
++        DO I=1,IM
++          IF(ELF(I,J).LT.ROWEMIN(J).AND.FSM(I,J).NE.0.) THEN
++            ROWIMIN(J)=I
++            ROWEMIN(J)=ELF(I,J)
++          ENDIF
++        ENDDO
++      ENDDO
++!$OMP END DO
++!$OMP END PARALLEL
++      DO J=1,JMM1
++        IF(ROWVMAX(J).GE.VAMAX.AND.ROWIMAX(J).GT.0) THEN
++          IAMAX=ROWIMAX(J)
++          JAMAX=J
++          VAMAX=ROWVMAX(J)
++        ENDIF
++      ENDDO
+ !NG      write(*,*) 'Max Cur:',TIME,IAMAX,JAMAX,VAMAX,ELF(IAMAX,JAMAX)
+ !NG      write(*,*)'Wave/am:',WVHT(IAMAX,JAMAX),AAM2D(IAMAX,JAMAX)
+       IF(VAMAX.GT.100.) GO TO 9100
+@@ -1804,14 +1856,13 @@
+ ! elevation
+       ELMINX=1.E10
+       DO 443 J=1,JM
+-      DO 443 I=1,IM
+ !wad      elminx=1.0+elf(i,j)*fsm(i,j)/(h(i,j)+1.0e-5)
+ !wad      IF(elminx.lt.0.1) THEN ! 10 percent !!
+-        IF(ELF(I,J).LT.ELMINX.AND.FSM(I,J).NE.0.) THEN
+-        IAMAX=I
++        IF(ROWEMIN(J).LT.ELMINX) THEN
++        IAMAX=ROWIMIN(J)
+         JAMAX=J
+ !wad        elmin=elf(I,J)
+-        ELMINX=ELF(I,J)
++        ELMINX=ROWEMIN(J)
+ !wad        go to 9100
+ !wad      write(*,*) 'Max:',TIME,IAMAX,JAMAX,VAMAX,ELF(IAMAX,JAMAX)
+         END IF
+--- a/extrnl.f
++++ b/extrnl.f
+@@ -11,13 +11,14 @@
+ !-----------------------------------------------------------------------
+ !
+       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
++      REAL GEOMX(IM,JM),GEOMY(IM,JM)
+ !
+ !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J)
+ !$OMP DO SCHEDULE(STATIC)
+       DO 400 J=2,JMM1
+       DO 400 I=2,IM
+  400  FLUXUA(I,J)=.25*(D(I,J)+D(I-1,J))*(H2(I,J)+H2(I-1,J))*UA(I,J)
+-!$OMP END DO
++!$OMP END DO NOWAIT
+ !$OMP DO SCHEDULE(STATIC)
+       DO 405 J=2,JM
+       DO 405 I=2,IMM1
+@@ -106,7 +107,16 @@
+        ENDDO
+       ENDIF
+ ! 
+-      CALL BCOND(1,DTI2,0)
++      CALL BCOND(12,DTI2,0)
++!$OMP END SINGLE
++!$OMP DO SCHEDULE(STATIC)
++      DO J=1,JM
++        DO I=1,IM
++          ELF(I,J)=ELF(I,J)*FSM(I,J)
++        ENDDO
++      ENDDO
++!$OMP END DO
++!$OMP SINGLE
+ !
+ !     Introduced Inverted Reid and Bodine (IRANDB) and Optimized Clamped 
+ !     and MIXED TYPE BOUNDARY CONDITIONS In Barotropic or external Mode
+@@ -142,20 +152,31 @@
+ !$OMP END DO
+       IF(TOR.NE.'BAROTROPIC') GO TO 5000
+ !
++!     The reference's permanent grid metrics and FSM cannot change
++!     within this external subcycle. Dynamic wet masks are NOT cached.
++!     Refresh on every outer step (also works on hot starts).
++      IF(IEXT.EQ.1) THEN
++!$OMP DO SCHEDULE(STATIC)
++       DO J=2,JMM1
++        DO I=2,IMM1
++         GEOMX(I,J)=(H2(I+1,J)*FSM(I+1,J)+H2(I,J)*FSM(I,J))/
++     .          (FSM(I+1,J)+FSM(I,J)+1.E-30)-
++     .      (H2(I,J)*FSM(I,J)+H2(I-1,J)*FSM(I-1,J))/
++     .          (FSM(I,J)+FSM(I-1,J)+1.E-30)
++         GEOMY(I,J)=(H1(I,J+1)*FSM(I,J+1)+H1(I,J)*FSM(I,J))/
++     .          (FSM(I,J+1)+FSM(I,J)+1.E-30)-
++     .      (H1(I,J)*FSM(I,J)+H1(I,J-1)*FSM(I,J-1))/
++     .          (FSM(I,J)+FSM(I,J-1)+1.E-30)
++        ENDDO
++       ENDDO
++!$OMP END DO
++      ENDIF
+ !$OMP DO SCHEDULE(STATIC)
+       DO 60 J=2,JMM1
+       DO 60 I=2,IMM1
+       CURV42D(I,J)= CURV42D(I,J)
+-     .  +.125*((VA(I,J+1)+VA(I,J))*
+-     .     ((H2(I+1,J)*FSM(I+1,J)+H2(I,J)*FSM(I,J))/
+-     .          (FSM(I+1,J)+FSM(I,J)+1.E-30)-
+-     .      (H2(I,J)*FSM(I,J)+H2(I-1,J)*FSM(I-1,J))/
+-     .          (FSM(I,J)+FSM(I-1,J)+1.E-30)) 
+-     .  -(UA(I+1,J)+UA(I,J))*
+-     .     ((H1(I,J+1)*FSM(I,J+1)+H1(I,J)*FSM(I,J))/
+-     .          (FSM(I,J+1)+FSM(I,J)+1.E-30)-
+-     .      (H1(I,J)*FSM(I,J)+H1(I,J-1)*FSM(I,J-1))/
+-     .          (FSM(I,J)+FSM(I,J-1)+1.E-30)) )
++     .  +.125*((VA(I,J+1)+VA(I,J))*GEOMX(I,J)
++     .    -(UA(I+1,J)+UA(I,J))*GEOMY(I,J))
+      .                /ART(I,J)
+  60   CONTINUE
+ !
+@@ -172,7 +193,7 @@
+      .     *SQRT(UAB(I,J)**2+(.25*(VAB(I,J)
+      .     +VAB(I,J+1)+VAB(I-1,J)+VAB(I-1,J+1)))**2)*UAB(I,J)
+  100  CONTINUE
+-!$OMP END DO
++!$OMP END DO NOWAIT
+ !$OMP DO SCHEDULE(STATIC)
+       DO 102 J=2,JMM1
+       DO 102 I=2,IMM1
+@@ -247,9 +268,9 @@
+ 
+ !$OMP END SINGLE
+ !$OMP DO SCHEDULE(STATIC)
+-      DO 420 J=2,JMM1
+-      DO 420 I=3,IMM1
+- 420  UAF(I,J)=ADVUA(I,J)
++      DO 425 J=2,JMM1
++      DO 425 I=3,IMM1
++      UAF(I,J)=ADVUA(I,J)
+      .    -ARU(I,J)*( CURV42D(I,J)*D(I,J)*(VA(I,J+1)+VA(I,J))
+      .              +CURV42D(I-1,J)*D(I-1,J)*(VA(I-1,J+1)+VA(I-1,J)) )
+      .         +.25*GRAV*(H2(I,J)+H2(I-1,J))*(D(I,J)+D(I-1,J))
+@@ -269,10 +290,6 @@
+ !NG     *             /RHO0/(H1(I,J)+H1(I-1,J))
+      *            *RAMP*PATMOPT/RHO0/(H1(I,J)+H1(I-1,J))
+ 
+-!$OMP END DO
+-!$OMP DO SCHEDULE(STATIC)
+-      DO 425 J=2,JMM1
+-      DO 425 I=3,IMM1
+  425  UAF(I,J)=
+      .         ((H(I,J)+ELB(I,J)+H(I-1,J)+ELB(I-1,J))*ARU(I,J)*UAB(I,J)
+      .                -4.*DTE*UAF(I,J))
+@@ -284,9 +301,9 @@
+ !
+ !$OMP END DO
+ !$OMP DO SCHEDULE(STATIC)
+-      DO 430 J=3,JMM1
+-      DO 430 I=2,IMM1
+- 430  VAF(I,J)=ADVVA(I,J)  
++      DO 435 J=3,JMM1
++      DO 435 I=2,IMM1
++      VAF(I,J)=ADVVA(I,J)  
+      .    +ARV(I,J)*( CURV42D(I,J)*D(I,J)*(UA(I+1,J)+UA(I,J))
+      .                +CURV42D(I,J-1)*D(I,J-1)*(UA(I+1,J-1)+UA(I,J-1)) )
+      .           +.25*GRAV*(H1(I,J)+H1(I,J-1))*(D(I,J)+D(I,J-1))
+@@ -305,10 +322,6 @@
+      *            +ARV(I,J)*(D(I,J)+D(I,J-1))*(PATM(I,J)-PATM(I,J-1))
+ !NG     *             /RHO0/(H2(I,J)+H2(I,J-1))
+      *            *RAMP*PATMOPT/RHO0/(H2(I,J)+H2(I,J-1))
+-!$OMP END DO
+-!$OMP DO SCHEDULE(STATIC)
+-      DO 435 J=3,JMM1
+-      DO 435 I=2,IMM1
+  435  VAF(I,J)=
+      .        ((H(I,J)+ELB(I,J)+H(I,J-1)+ELB(I,J-1))*VAB(I,J)*ARV(I,J)
+      .              -4.*DTE*VAF(I,J))
+@@ -321,8 +334,18 @@
+       IF(BCTYPE.EQ.'MIXED  ') CALL MIXED(1)
+ !JKL
+ 
+-      CALL BCOND(2,DTI2,0)
+-!$OMP END SINGLE
++      CALL BCOND(13,DTI2,0)
++!$OMP END SINGLE
++!$OMP DO SCHEDULE(STATIC)
++      DO J=1,JM
++        DO I=1,IM
++          TXBOT(I,J)=TXBOT(I,J)*DUM(I,J)
++          TYBOT(I,J)=TYBOT(I,J)*DVM(I,J)
++          UAF(I,J)=UAF(I,J)*DUM(I,J)
++          VAF(I,J)=VAF(I,J)*DVM(I,J)
++        ENDDO
++      ENDDO
++!$OMP END DO
+ !$OMP END PARALLEL
+ !
+ !hli      print *,'returning from EXTRNL'
+--- a/update_cbc_mannings.f
++++ b/update_cbc_mannings.f
+@@ -3,6 +3,7 @@
+       INCLUDE 'comdeck'
+       SAVE
+ 
++!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J,CBCMIN) SCHEDULE(STATIC)
+       Do 6030 J = 1, JM
+         Do 6020 I = 1, IM
+           If (FSM(I,J).NE.0.0) Then
+--- a/wandd_kky.f
++++ b/wandd_kky.f
+@@ -9,7 +9,14 @@
+ !
+       DIMENSION ELEV(IM,JM),TD(IM,JM)
+ !
+-      DO J = 1, JMM1
++!     Owner (i,j) handles both tests of its east and north faces. Its
++!     ET/ETF scatter may also touch row j+1. Alternate row colors with
++!     a barrier so there are no concurrent writes (even equal writes).
++!     The sole caller supplies EL,D, neither aliases the written fields.
++!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ICOLOR)
++      DO ICOLOR=1,2
++!$OMP DO SCHEDULE(STATIC)
++      DO J = ICOLOR, JMM1, 2
+          DO I = 1, IMM1
+                IF(TD(I,J).LE.WETMIN.AND.FSM(I,J).NE.0) THEN
+                   IF((0.5*(TD(I,J)+TD(I+1,J)).LE.WETMIN).OR.
+@@ -61,5 +68,8 @@
+          ENDDO 
+       ENDDO 
+ 
++!$OMP END DO
++      ENDDO
++!$OMP END PARALLEL
+       RETURN
+       END

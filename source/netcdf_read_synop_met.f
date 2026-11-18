@@ -1,0 +1,46 @@
+      SUBROUTINE NETCDF_READ_SYNOP_MET(M)
+! Read synoptic wind and heat flux netcdf file
+! A. Jordi (Jan 30, 2015)
+
+      INCLUDE 'comdeck'
+      INCLUDE 'netcdf.inc'
+      
+      INTEGER START(3),COUNT(3)
+      
+      ! Open file
+      ID_NC=NCOPN('synop_met.nc',NCNOWRIT,IERR)
+      
+      ! Read variables
+      START(1) = M
+      COUNT(1) = 1
+      ID_VAR=NCVID(ID_NC,'TIME',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,T2M,IERR)
+
+      START(1) = 1
+      START(2) = 1
+      START(3) = M
+      COUNT(1) = IM
+      COUNT(2) = JM
+      COUNT(3) = 1
+      ID_VAR=NCVID(ID_NC,'DWSX2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DWSX2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DWSY2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DWSY2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DSWOBS2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DSWOBS2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DAIRTM2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DAIRTM2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DRELHU2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DRELHU2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DPATM',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DPATM(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DCLD2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DCLD2D(:,:,2),IERR)
+      ID_VAR=NCVID(ID_NC,'DEXTC2D',IERR)
+      CALL NCVGT(ID_NC,ID_VAR,START,COUNT,DEXTC2D(:,:,2),IERR)
+
+      ! Close file
+      CALL NCCLOS(ID_NC,IERR)
+      
+      RETURN
+      END

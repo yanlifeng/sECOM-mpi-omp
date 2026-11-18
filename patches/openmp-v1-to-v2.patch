@@ -1,0 +1,145 @@
+--- a/Makefile.portable
++++ b/Makefile.portable
+@@ -12,7 +12,7 @@
+ OBJECTS = $(addprefix $(OBJDIR)/,$(OBJECT_NAMES))
+ ifeq ($(MODE),omp)
+ OMP_LINK = -fopenmp
+-$(OBJDIR)/extrnl.o: EXTRA_FFLAGS = -fopenmp
++$(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o: EXTRA_FFLAGS = -fopenmp
+ else ifneq ($(MODE),serial)
+ $(error MODE must be serial or omp)
+ endif
+--- a/advave.f
++++ b/advave.f
+@@ -13,6 +13,7 @@
+ !-------- CALCULATE U-ADVECTION & DIFFUSION ----------------------------
+ !
+ !-------- ADVECTIVE FLUXES ---------------------------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 10 J=1,JM
+       DO 10 I=1,IM
+       FLUXUA(I,J)=0.0
+@@ -22,11 +23,13 @@
+       IF (ADVECT.EQ.'NON-LINEAR') THEN
+ !
+ !-------- ADVECTIVE FLUXES ---------------------------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 300 J=2,JMM1
+       DO 300 I=2,IMM1
+  300  FLUXUA(I,J)=.125*((D(I+1,J)+D(I,J))*UA(I+1,J)
+      .                 +(D(I,J)+D(I-1,J))*UA(I,J))
+      .                  *(UA(I+1,J)+UA(I,J))
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 400 J=2,JM
+       DO 400 I=2,IMM1
+  400  FLUXVA(I,J)=.125*((D(I,J)+D(I,J-1))*VA(I,J)
+@@ -35,10 +38,12 @@
+       END IF
+ !
+ !-------- ADD VISCOUS FLUXES -------------------------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 460 J=2,JMM1
+       DO 460 I=2,IMM1
+  460  FLUXUA(I,J)=FLUXUA(I,J)
+      .         -D(I,J)*2.*AAM2D(I,J)*(UAB(I+1,J)-UAB(I,J))/H1(I,J)
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 470 J=2,JM
+       DO 470 I=2,IMM1
+       TPS(I,J)=.25*(D(I,J)+D(I-1,J)+D(I,J-1)+D(I-1,J-1))
+@@ -56,12 +61,14 @@
+      .            *.25*(H1(I,J)+H1(I-1,J)+H1(I,J-1)+H1(I-1,J-1))
+  470  CONTINUE
+ !
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 480 J=2,JMM1
+       DO 480 I=3,IMM1
+  480  ADVUA(I,J)=FLUXUA(I,J)-FLUXUA(I-1,J)
+      .           +FLUXVA(I,J+1)-FLUXVA(I,J)
+ !
+ !-------- CALCULATE V-ADVECTION & DIFFUSION ----------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 20 J=1,JM
+       DO 20 I=1,IM
+       FLUXUA(I,J)=0.0
+@@ -70,11 +77,13 @@
+       IF (ADVECT.EQ.'NON-LINEAR') THEN
+ !
+ !-------- ADVECTIVE FLUXES ---------------------------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 700 J=3,JMM1
+       DO 700 I=2,IM
+  700  FLUXUA(I,J)=.125*((D(I,J)+D(I-1,J))*UA(I,J)
+      .         +(D(I,J-1)+D(I-1,J-1))*UA(I,J-1))*
+      .                        (VA(I-1,J)+VA(I,J))
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 800 J=2,JMM1
+       DO 800 I=2,IMM1
+  800  FLUXVA(I,J)=.125*((D(I,J+1)+D(I,J))
+@@ -83,10 +92,12 @@
+       END IF
+ !
+ !-------- ADD VISCOUS FLUXES -------------------------------------------
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 860 J=2,JMM1
+       DO 860 I=2,IMM1
+  860  FLUXVA(I,J)=FLUXVA(I,J)
+      .        -D(I,J)*2.*AAM2D(I,J)*(VAB(I,J+1)-VAB(I,J))/H2(I,J)
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 870 J=2,JMM1
+       DO 870 I=2,IM
+       FLUXVA(I,J)=FLUXVA(I,J)*H1(I,J)
+@@ -96,11 +107,14 @@
+      .                                 *DUM(I,J)*DUM(I,J-1))! THIN DAMS NG08192008
+      .             *.25*(H2(I,J)+H2(I-1,J)+H2(I,J-1)+H2(I-1,J-1))
+ !
++!$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
+       DO 880 J=3,JMM1
+       DO 880 I=2,IMM1
+  880  ADVVA(I,J)=FLUXUA(I+1,J)-FLUXUA(I,J)
+      .          +FLUXVA(I,J)-FLUXVA(I,J-1)
+ !
++! Keep potentially overlapping boundary entries in original order.
++!$OMP SINGLE
+       IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
+        DO 309 N=1,NUMEBC
+         IE=IETA(N)
+@@ -138,6 +152,7 @@
+         ENDIF
+  310   CONTINUE
+       ENDIF
++!$OMP END SINGLE
+ !
+       RETURN
+       END
+--- a/archive.f
++++ b/archive.f
+@@ -107,6 +107,8 @@
+         ENDIF
+ !
+       ELSE
++! Distinct history cells; preserve the time/layer summation order.
++!$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,I,LL)
+        DO 530 J=1,JM
+          DO 530 I=1,IM
+ !NG03312009           ARCUX(I,J,1)=ARCUX(I,J,1)+UAF(I,J)*DEI*
+@@ -172,6 +174,7 @@
+  62        CONTINUE
+ !
+  530  CONTINUE
++!$OMP END PARALLEL DO
+       ENDIF
+ !
+       IF(INTX.NE.IHIST(JHIST,2)) GO TO 560
+--- a/extrnl.f
++++ b/extrnl.f
+@@ -125,8 +125,9 @@
+      +    BCTYPE.EQ.'MIXED  ') CALL OCLAMP(CLAM)
+       IF (BCTYPE.EQ.'PCLAMP ') CALL PCLAMP
+ !
++!$OMP END SINGLE
++! ADVAVE uses the existing EXTRNL team; all workers must call it.
+       CALL ADVAVE(ADVUA,ADVVA)
+-!$OMP END SINGLE
+ !
+ !$OMP DO SCHEDULE(STATIC)
+       DO 95 J=1,JM

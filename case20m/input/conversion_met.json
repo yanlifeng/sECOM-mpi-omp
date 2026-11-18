@@ -1,0 +1,7 @@
+{
+  "source_sha256": "15f871ac610e0a65d4f56349e81beaffd3ada5c22e39e4b6484bd1e14caaa48a",
+  "derived_sha256": "95c95bea9d1b02b224bbfa7d7b0091a484850280fcd775e90949a415c2534f45",
+  "all_existing_variables_exact": true,
+  "new_TR": 0,
+  "scope": "TR is consumed only by PROFT; BAROTROPIC skips PROFT. Do not use this default to enable baroclinic heat transport."
+}

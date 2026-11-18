@@ -1,0 +1,192 @@
+--- a/archive.f
++++ b/archive.f
+@@ -114,10 +114,14 @@
+ !NG03312009           ARCVX(I,J,1)=ARCVX(I,J,1)+VAF(I,J)*DEI*
+ !NG03312009     2       0.5*(H(I,J)+EL(I,J)+H(I,J-1)+EL(I,J-1))
+            ARCAM(I,J,1)=ARCAM(I,J,1)+AAM2D(I,J)*DEI
++           IF(I.GT.1) THEN
+            ARCUX(I,J,1)=ARCUX(I,J,1)+UAF(I,J)*DEI*(H2(I,J)+H2(I-1,J))*
+      2       0.25*(H(I,J)+EL(I,J)+H(I-1,J)+EL(I-1,J))
++           ENDIF
++           IF(J.GT.1) THEN
+            ARCVX(I,J,1)=ARCVX(I,J,1)+VAF(I,J)*DEI*(H1(I,J)+H1(I,J-1))*
+      2       0.25*(H(I,J)+EL(I,J)+H(I,J-1)+EL(I,J-1))
++           ENDIF
+            ARCU (I,J,1)=ARCU (I,J,1)+UAF(I,J)*DEI 
+            ARCV (I,J,1)=ARCV (I,J,1)+VAF(I,J)*DEI 
+            ARCET (I,J)=ARCET (I,J)+EL (I,J)*DEI
+@@ -783,15 +787,20 @@
+        ESUM=0.
+        APE=0.
+        TKE=0.
++       IF(INTX.GT.0) THEN
++       IF(.NOT.(AREA.GT.0.)) STOP 95
+        DO 100 J=1,JM
+        DO 100 I=1,IM
+        ESUM=ESUM+EL(I,J)*ART(I,J)*FSM(I,J)/AREA*SKILLI
+        APE=APE+.5*GRAV*EL(I,J)*EL(I,J)*FSM(I,J)*ART(I,J)/
+      2     AREA*SKILLI
++       IF(I.LT.IM.AND.J.LT.JM) THEN
+        TKE=TKE+0.125*D(I,J)*((UA(I,J)+UA(I+1,J))**2+
+      2     (VA(I,J)+VA(I,J+1))**2)*FSM(I,J)*ART(I,J)/
+      3     AREA*SKILLI
++       ENDIF
+  100   CONTINUE
++       ENDIF
+       ELSE
+ !$doacross local(i,j),reduction(volume)
+ !jah   INITIALIZE VARIABLES
+--- a/bcdata.f
++++ b/bcdata.f
+@@ -20,6 +20,7 @@
+ !
+       REAL C1D(KSL),C2D(KBM1),WTEMP1(IM,JM),WTEMP2(IM,JM),WTEMP3(IM,JM)
+       REAL*4 THZERO
++      REAL WDS,WDD
+ !   TS BOUNDARY OPTION (EITHER BLANK (KSL) OR 'SIGMA')
+       CHARACTER TBCOPT*5
+       CHARACTER STR1*80,STR2*80 !A.Jordi: temporary strings
+@@ -1602,7 +1603,7 @@
+ !
+ ! A.Jordi: Read meteorological boundary condition from netcdf file
+       NT_T2M=1
+-      CALL NETCDF_READ_BC_MET(NT_T2M,NT_T2M_MAX,STR1)
++      CALL NETCDF_READ_BC_MET(NT_T2M,NT_T2M_MAX,STR1,WDS,WDD)
+       WRITE(IUPRT,'(/1X,A80/)') STR1
+ !svv080326 added 2d heatflux
+       WRITE(IUPRT,7734) OPTMBC,ALAT,ALON,TR,WNDSH,REFL,OPTEXTC,
+@@ -1650,7 +1651,7 @@
+       IF(OPTMBC(1:8).EQ.'AVERAGED') THEN
+ ! A.Jordi: Read meteorological boundary condition from netcdf file
+         DO M = 1,NT_T2M_MAX
+-          CALL NETCDF_READ_BC_MET(M,M_MAX,STR1)
++          CALL NETCDF_READ_BC_MET(M,M_MAX,STR1,WDS,WDD)
+           WRITE(IUPRT,'(8F10.1)') T2M
+           OTIME=T2M
+           WRITE(IUPRT,'(8F10.1)') WDS,WDD,HFLUX,QPREC,QEVAP
+@@ -1729,7 +1730,7 @@
+      &       ' THE HIGHEST AIR TEMPERATURE ALLOWED: ',f10.2)
+ ! A.Jordi: Read meteorological boundary condition from netcdf file
+         DO M = 1,NT_T2M_MAX
+-          CALL NETCDF_READ_BC_MET(M,M_MAX,STR1)
++          CALL NETCDF_READ_BC_MET(M,M_MAX,STR1,WDS,WDD)
+           WRITE(IUPRT,'(8F10.1)') T2M
+           OTIME=T2M
+ ! A.Jordi: end
+--- a/ecom3d.f
++++ b/ecom3d.f
+@@ -1785,8 +1785,8 @@
+ !
+      
+       VAMAX=-1.E10
+-      DO 442 J=1,JM
+-      DO 442 I=1,IM
++      DO 442 J=1,JMM1
++      DO 442 I=1,IMM1
+       VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
+      .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
+      .             (0.5*DVMWAD(I,J)*VAF(I,J)+
+--- a/netcdf_read_bc_met.f
++++ b/netcdf_read_bc_met.f
+@@ -1,4 +1,4 @@
+-      SUBROUTINE NETCDF_READ_BC_MET(M,M_MAX,STR)
++      SUBROUTINE NETCDF_READ_BC_MET(M,M_MAX,STR,WDS,WDD)
+ ! Read meteorological boundary conditions netcdf file
+ ! A. Jordi (Feb 5, 2015)
+ 
+@@ -7,6 +7,7 @@
+       
+       CHARACTER STR*80,STR_JUNK*31
+       INTEGER START(2),COUNT(2)
++      REAL WDS,WDD
+       
+       ! Open file
+       ID_NC=NCOPN('run_data_bc_met.nc',NCNOWRIT,IERR)
+@@ -44,6 +45,7 @@
+         COUNT(1) = 1
+         ID_VAR=NCVID(ID_NC,'TIME',IERR)
+         CALL NCVGT(ID_NC,ID_VAR,START,COUNT,TIME,IERR)
++        T2M=TIME
+         ID_VAR=NCVID(ID_NC,'WDS',IERR)
+         CALL NCVGT(ID_NC,ID_VAR,START,COUNT,WDS,IERR)
+         ID_VAR=NCVID(ID_NC,'WDD',IERR)
+@@ -67,6 +69,7 @@
+          COUNT(1) = 1
+          ID_VAR=NCVID(ID_NC,'TIME',IERR)
+          CALL NCVGT(ID_NC,ID_VAR,START,COUNT,TIME,IERR)
++        T2M=TIME
+          ID_VAR=NCVID(ID_NC,'WDS',IERR)
+          CALL NCVGT(ID_NC,ID_VAR,START,COUNT,WDS,IERR)
+          ID_VAR=NCVID(ID_NC,'WDD',IERR)
+--- a/netcdf_read_bc_ts.f
++++ b/netcdf_read_bc_ts.f
+@@ -7,9 +7,10 @@
+       
+       CHARACTER STR*80,STR_JUNK*31
+       
+-      INTEGER START(2),COUNT(2)
++      INTEGER START(3),COUNT(3)
+       
+       CHARACTER TBCOPT*5
++      SAVE TBCOPT
+       DIMENSION ZM(KBM1),T1(KSL),T2(KBM1),S1(KSL),S2(KBM1)
+       
+       ! Open file
+--- a/putcdf.f
++++ b/putcdf.f
+@@ -1603,8 +1603,9 @@
+         End Do
+       End Do
+       If (PTU.EQ.'Y'.OR.PTU.EQ.'y') Then
++        WA1 = IFILLVAL
+         Do K = 1, KBot
+-          Do J = 1, JM
++          Do J = 1, JM-1
+             Do I = 1, IM-1
+               WA1(I,J,K) = NINT((VELU(I,J,K)-VELOF)/VELSC) ! AT THE CENTER OF GRID 
+ !            IF((H(I,J)+ARCET(I,J)).LE.(WETMIN+1.E-5))WA1(I,J,K)=IFILLVAL ! to short out
+@@ -1617,14 +1618,15 @@
+         Call NCVPT(CDFID,UID,CORNER,EDGES,WA1,IRET)
+       End If
+       If (PTV.EQ.'Y'.OR.PTV.EQ.'y') Then
++        WA1 = IFILLVAL
+         Do K = 1, KBot
+           Do J = 1, JM-1
+-            Do I = 1, IM
++            Do I = 1, IM-1
+               WA1(I,J,K) = NINT((VELV(I,J,K)-VELOF)/VELSC) ! AT THE CENTER OF GRID 
+ !            IF((H(I,J)+ARCET(I,J)).LE.(WETMIN+1.E-5))WA1(I,J,K)=IFILLVAL ! to short out
+             IF((HOUT(I,J)+ARCET(I,J)).LE.(1.E-5)) WA1(I,J,K)=IFILLVAL ! to short out
+             End Do
+-            WA1(I,JM,K)=IFILLVAL ! to short out
++! Entire outer frame initialized to fill above.
+           End Do
+         End Do
+         VID = NCVID(CDFID,'v',IRET)
+--- a/setdom_corners.f
++++ b/setdom_corners.f
+@@ -12,11 +12,11 @@
+       FSM(INGX,INGY)=0.0
+       DUM(INGX,INGY)=0.0
+       DVM(INGX,INGY)=0.0
+-      DUM(INGX+1,JNGY)=0.0
++      DUM(INGX+1,INGY)=0.0
+       DVM(INGX,INGY+1)=0.0
+       DUMWAD(INGX,INGY)=0.0
+       DVMWAD(INGX,INGY)=0.0
+-      DUMWAD(INGX+1,JNGY)=0.0
++      DUMWAD(INGX+1,INGY)=0.0
+       DVMWAD(INGX,INGY+1)=0.0
+       COR(INGX,INGY)=0.0
+ ! 
+--- a/comdeck
++++ b/comdeck
+@@ -2,7 +2,7 @@
+ !
+ ! >>>> PARAMETERS
+ !
+-      PARAMETER (IM=147,JM=452,KB=11,KSL=10,KSMAX=2,LAYMAX=7) ! NYHOPS-HIGHRES MODEL
++      PARAMETER (IM=372,JM=479,KB=2,KSL=2,KSMAX=2,LAYMAX=7) ! NYHOPS-HIGHRES MODEL
+ !
+ ! >>>> OTHER PARAMETERS
+ !

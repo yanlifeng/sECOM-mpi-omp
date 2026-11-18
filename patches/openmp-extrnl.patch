@@ -1,0 +1,151 @@
+--- a/extrnl.f
++++ b/extrnl.f
+@@ -12,9 +12,13 @@
+ !
+       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
+ !
++!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J)
++!$OMP DO SCHEDULE(STATIC)
+       DO 400 J=2,JMM1
+       DO 400 I=2,IM
+  400  FLUXUA(I,J)=.25*(D(I,J)+D(I-1,J))*(H2(I,J)+H2(I-1,J))*UA(I,J)
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 405 J=2,JM
+       DO 405 I=2,IMM1
+  405  FLUXVA(I,J)=.25*(D(I,J)+D(I,J-1))*(H1(I,J)+H1(I,J-1))*VA(I,J)
+@@ -32,6 +36,8 @@
+ !wad            ENDIF
+ !wad         ENDDO
+ !wad      ENDDO
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 410 J=2,JMM1
+       DO 410 I=2,IMM1
+  410  ELF(I,J)=ELB(I,J)-DTE2*
+@@ -41,6 +47,8 @@
+ !-----------------------------------------------------------------------
+ !         IMPOSE MASS FLUX BOUNDARY CONDITIONS
+ !-----------------------------------------------------------------------
++!$OMP END DO
++!$OMP SINGLE
+       DO 406 N=1,NUMDBC
+       ID=IDD(N)
+       JD=JDD(N)
+@@ -118,7 +126,9 @@
+       IF (BCTYPE.EQ.'PCLAMP ') CALL PCLAMP
+ !
+       CALL ADVAVE(ADVUA,ADVVA)
+-!
++!$OMP END SINGLE
++!
++!$OMP DO SCHEDULE(STATIC)
+       DO 95 J=1,JM
+       DO 95 I=1,IM
+  95   CURV42D(I,J)=.25*COR(I,J)
+@@ -128,8 +138,10 @@
+ !            IF RUN IS BAROTROPIC MODE ONLY
+ !-----------------------------------------------------------------------
+ !
++!$OMP END DO
+       IF(TOR.NE.'BAROTROPIC') GO TO 5000
+ !
++!$OMP DO SCHEDULE(STATIC)
+       DO 60 J=2,JMM1
+       DO 60 I=2,IMM1
+       CURV42D(I,J)= CURV42D(I,J)
+@@ -146,6 +158,8 @@
+      .                /ART(I,J)
+  60   CONTINUE
+ !
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 100 J=2,JMM1
+       DO 100 I=2,IMM1
+ !NG04232008      TXBOT(I,J)=-BFRIC
+@@ -157,6 +171,8 @@
+      .     *SQRT(UAB(I,J)**2+(.25*(VAB(I,J)
+      .     +VAB(I,J+1)+VAB(I-1,J)+VAB(I-1,J+1)))**2)*UAB(I,J)
+  100  CONTINUE
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 102 J=2,JMM1
+       DO 102 I=2,IMM1
+ !NG04232008      TYBOT(I,J)=-BFRIC
+@@ -171,6 +187,8 @@
+ 
+ !NG INCLUDE SIMILARLY TO 3D TREATMENT 
+ !NG WHETHER THIS IS A GOOD IDEA NEEDS FURTHER INVESTIGATION!
++!$OMP END DO
++!$OMP SINGLE
+       DO 310 N=1,NUMEBC
+       IE=IETA(N)
+       JE=JETA(N)
+@@ -190,6 +208,7 @@
+         TXBOT(IE,JE)=TXBOT(IE,JE+1) ! NG same as internal bcond, cosmetic
+       ENDIF
+  310  CONTINUE
++!$OMP END SINGLE
+ 
+  5000 CONTINUE
+ 
+@@ -200,6 +219,7 @@
+ !
+ 
+ !NG2012 CORNERS FIX - NO NEED TO HARDWIRE ANYMORE
++!$OMP SINGLE
+       DO N=1,NUMECR
+        IF(NCHARD(N).EQ.1) THEN ! Bottom Left Corner
+         Va(ICHARD(N),JCHARD(N)+1) =
+@@ -224,6 +244,8 @@
+        ENDIF
+       ENDDO
+ 
++!$OMP END SINGLE
++!$OMP DO SCHEDULE(STATIC)
+       DO 420 J=2,JMM1
+       DO 420 I=3,IMM1
+  420  UAF(I,J)=ADVUA(I,J)
+@@ -246,6 +268,8 @@
+ !NG     *             /RHO0/(H1(I,J)+H1(I-1,J))
+      *            *RAMP*PATMOPT/RHO0/(H1(I,J)+H1(I-1,J))
+ 
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 425 J=2,JMM1
+       DO 425 I=3,IMM1
+  425  UAF(I,J)=
+@@ -257,6 +281,8 @@
+ !     CALCULATE V COMPONENT OF VELOCITY
+ !-----------------------------------------------------------------------
+ !
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 430 J=3,JMM1
+       DO 430 I=2,IMM1
+  430  VAF(I,J)=ADVVA(I,J)  
+@@ -278,6 +304,8 @@
+      *            +ARV(I,J)*(D(I,J)+D(I,J-1))*(PATM(I,J)-PATM(I,J-1))
+ !NG     *             /RHO0/(H2(I,J)+H2(I,J-1))
+      *            *RAMP*PATMOPT/RHO0/(H2(I,J)+H2(I,J-1))
++!$OMP END DO
++!$OMP DO SCHEDULE(STATIC)
+       DO 435 J=3,JMM1
+       DO 435 I=2,IMM1
+  435  VAF(I,J)=
+@@ -286,11 +314,15 @@
+      .       /((H(I,J)+ELF(I,J)+H(I,J-1)+ELF(I,J-1))*ARV(I,J))
+ !
+ !JKL
++!$OMP END DO
++!$OMP SINGLE
+       IF(BCTYPE.EQ.'RANDB  ') CALL RANDB
+       IF(BCTYPE.EQ.'MIXED  ') CALL MIXED(1)
+ !JKL
+ 
+       CALL BCOND(2,DTI2,0)
++!$OMP END SINGLE
++!$OMP END PARALLEL
+ !
+ !hli      print *,'returning from EXTRNL'
+       RETURN

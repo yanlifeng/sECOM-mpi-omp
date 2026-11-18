@@ -1,0 +1,9 @@
+{
+  "source_sha256": "3fa0b4f1146c06340276520b7be9cb71ebd617f7bcdabe490e0b16849c18e368",
+  "derived_sha256": "86edb7dce621046100f3abc17d64cf03600a9cba498b1382ce45221a806503d4",
+  "before_hex": "4441544120202020202020204c494e4541520000",
+  "after_hex": "44415441202020202020202020204c494e454152",
+  "tokens_unchanged": true,
+  "all_boundary_values_and_times_unchanged": true,
+  "reason": "EXTRNL/ADVAVE/BCOND inspect columns 15:20 for LINEAR; original NetCDF used columns 13:18 plus two NUL bytes."
+}

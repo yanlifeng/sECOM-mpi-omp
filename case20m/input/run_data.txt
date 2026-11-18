@@ -1,0 +1,27 @@
+MACAU - macau peninsula
+   HYDTYPE   WAVEDYN    TRACER   SEDTRAN  CHEMTRAN   SEDTYPE  PARTICLE
+  INTERNAL  NEGLECT    NEGLECT   NEGLECT   NEGLECT      SAND   NEGLECT
+       DTI SPLT RAMP   YR   MO   DA   HR NHYD  SGW    WETEPS    WETMIN
+    1.0000   10 1800 2017   08   23   00   10   1.      0.03      0.30
+    NSTEPS    IPRINT IPRTSTART RESTART    TOR        ADVECT     SCHEME
+      4800     21600         0 COLD START BAROTROPIC NON-LINEAR SMOLAR_R  
+  DEV  VSX JROW  VSY ICOL  PUT  PTV  PTW PTAM  PTS  PTT PRHO PTQ2  PTL PTKM PTKH
+  SCR    Y   50    Y   50    Y    Y    N    N    N    N    N    N    N    N    N
+     BFRIC       ZOB        NU     THETA     ALPHA      TLAG     NWAVE    BCTYPE
+MANNINGS-N 0.100E+00 0.100E+00 0.225E+00 0.000E+00 0.000E+00         1   CLAMPED
+HOR MIX  HORCON/VALUE  HPRNU   VARH
+CONSTANT   0.100E+01 0.100E+01 N
+VERTMIX    UMOL/VALUE  VPRNU   VARU
+CONSTANT   0.500E-02 0.100E+01 N
+Write out time histories for graphics,(gcmplt),JHM,IAVGE...IHIST(JHM)
+       720 1200.0000      AUTO      0.00 NDTI  CDF
+Write out time series output for skill assessment in gcmtsr,ISKILL
+    999999
+Grid information for computed elevation time series
+    0
+Grid information for t,s,velocity series for skill assessment
+    0
+Grid information for flux time series for skill assessment
+    0
+Hydrodynamic information for RCA(gcm_tran),JTM,NPLPF,ITRNFOR,IZERO,IWET
+         0      600.      AUTO        0. NDTI    1

@@ -1,0 +1,11 @@
+{
+  "source_sha256": "85f0c75d2bd4ccb30e196cadfc1a95b4ed516a08e4e9b2b6a285d5754f1ed95b",
+  "ascii_sha256": "f247f1835c5846e284c124576aac89cc905563932efc9f750a71d2980b470e86",
+  "float32_roundtrip_exact": true,
+  "active_nonfinite_count": 0,
+  "inactive_nan_preserved": 1698,
+  "shape": [
+    479,
+    372
+  ]
+}

@@ -1,0 +1,19 @@
+      SUBROUTINE MAXMIN (F, FMASK, IX, JY, FMAX , FMIN)
+!     VERSION(09/27/90)
+!
+      SAVE
+      DIMENSION F(IX,JY),FMASK(IX,JY)
+!
+      BIG=1.E20
+!
+      FMAX=-BIG
+      FMIN=BIG
+      DO 220 J=1, JY
+      DO 220 I=1, IX
+      IF(FMASK(I,J).EQ.0.) GO TO 220
+      FMAX=AMAX1(FMAX,F(I,J))
+      FMIN=AMIN1(FMIN,F(I,J))
+  220 CONTINUE
+!
+      RETURN
+      END

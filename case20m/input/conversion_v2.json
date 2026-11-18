@@ -1,0 +1,20 @@
+{
+  "model_grid.nc": {
+    "source": "0d064fb1a5fa87d1228f4a109f35bfe4b8286b6f409b5a8f46ce88259a4e74eb",
+    "derived": "06ad4303e032710bc080fd392f66fec3fb18fa4841b67aad14cc4d1fc7c79d9c",
+    "all_retained_numerical_variables_exact": true,
+    "omitted": "unused NEGLECT thin-dam sentinel and dimension"
+  },
+  "run_data_ic_ts.nc": {
+    "source": "f07e3ae48ada8c5357616d5e33907ea31161c31ed9db1c64cff7207a95bdcd9c",
+    "derived": "7d954acb4464a06fee2db44f6d96a630b6ce764f567110b77ef5d70fad3170e6",
+    "all_retained_numerical_variables_exact": true,
+    "omitted": null
+  },
+  "init_tands": {
+    "source": "9c9ddea07193eec934e22903c8f5685e5b0d3d6fa7cbdd4ea9cbb8c27907e217",
+    "derived": "0553bf004bffad6101db51b9cfec08ba18125febef2b867ffb06aa20af3713c0",
+    "float32_roundtrip_exact": true,
+    "mapping": "NC [j,i,k] -> Fortran indexed I,J,K; all T=20 and S=30"
+  }
+}

@@ -1,0 +1,485 @@
+      SUBROUTINE PRINTS(DRHOX,DRHOY,TRNU,TRNV)
+!     VERSION(05/29/91)
+!
+      INCLUDE 'comdeck'
+      SAVE
+!
+      DIMENSION DRHOX(IM,JM,KB),DRHOY(IM,JM,KB),TRNU(IM,JM),TRNV(IM,JM)
+      DIMENSION IVAR(IM,JM),PRT(IM,KB),BMASK(IM,JM)
+      REAL HOUT2(IM,JM)
+      EQUIVALENCE (IVAR,C),(PRT,A)
+      kp1=1
+      kp2=2
+!-------- KP1=SURFACE LAYER, KP2=NEXT LOWER LEVEL ----------------------
+!
+      IF(INTX.EQ.0) THEN
+!
+!-------- PRINT INITIAL FIELDS -----------------------------------------
+       WRITE(IUPRT,900)
+       DO 2100 J=1,JM
+         DO 2100 I=1,IM
+           IF(FSM(I,J).EQ.0) THEN
+            HOUT2(I,J)=H(I,J)
+           ELSE
+            HOUT2(I,J)=H(I,J)-WETMIN
+           ENDIF
+ 2100  CONTINUE
+       CALL PRINT  (HOUT2,FSM,IM,JM,IVAR,10.0,IUPRT,DEV)
+!
+!  MODIFIED BY C.K.Z. ON 4/4/97
+!
+      DO 2200 J=1,JM
+        DO 2200 I=1,IM
+          BMASK(I,J)=FLOAT(IBMSK(I,J))
+ 2200 CONTINUE
+!
+       IF(SEDTRAN.EQ.'INCLUDE') THEN
+        WRITE(IUPRT,9011)
+        CALL PRINT  (BMASK,FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       END IF
+!
+       WRITE(IUPRT,913)
+       CALL PRINT(FSM,FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       WRITE(IUPRT,914)
+       CALL PRINT(DUM,DUM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       WRITE(IUPRT,915)
+       CALL PRINT(DVM,DVM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       WRITE(IUPRT,901)
+       CALL PRINT (H1,FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       WRITE(IUPRT,902)
+       CALL PRINT (H2,FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+       WRITE(IUPRT,903)
+       CALL PRINT(ANG,FSM,IM,JM,IVAR,1.0E2,IUPRT,DEV)
+       WRITE(IUPRT,904)
+       CALL PRINT(COR,FSM,IM,JM,IVAR,1.0E8,IUPRT,DEV)
+       WRITE(IUPRT,905)
+       CALL PRINT(CBC,FSM,IM,JM,IVAR,1.0E4,IUPRT,DEV)
+       WRITE(IUPRT,953)
+       CALL PRTXY  (S,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+       WRITE(IUPRT,954)
+       CALL PRTXY  (T,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+!
+!  FOR CONSERVATIVE TRACER
+!
+      IF (TRACER.EQ.'INCLUDE') THEN
+        WRITE(IUPRT,1954)
+        CALL PRTXY  (CONC1,FSM,IM,JM,KB,KP1,IVAR,1.0E4,IUPRT,DEV)
+      ENDIF
+!
+!-------- COMPUTE TIME STEP RESTRICTIONS -------------------------------
+       DO 500 J=1,JM
+       DO 500 I=1,IM
+ 500   A(I,J,1)=.5/SQRT(GRAV*D(I,J)*(1./H1(I,J)**2 ! NG H->D FOR WAD
+     2   +1./H2(I,J)**2))*FSM(I,J)
+!
+       WRITE(IUPRT,502)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,10.0,IUPRT,DEV)
+!
+!------- SPLIT INTO TWO DIRECTIONS FOR CHANNEL MODEL -------------------
+       DO 510 J=1,JM
+       DO 510 I=1,IM
+ 510   A(I,J,1)=.5/SQRT(GRAV*D(I,J))*H1(I,J)*FSM(I,J) ! NG H->D FOR WAD
+!
+       WRITE(IUPRT,512)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+!
+       DO 520 J=1,JM
+       DO 520 I=1,IM
+ 520   A(I,J,1)=.5/SQRT(GRAV*D(I,J))*H2(I,J)*FSM(I,J) ! NG H->D FOR WAD
+!
+       WRITE(IUPRT,522)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+!
+!-------- INTERNAL MODE ------------------------------------------------
+       DO 530 J=1,JM
+       DO 530 I=1,IM
+ 530   A(I,J,1)=.5/(1.75*SQRT(1./H1(I,J)**2
+     2   +1./H2(I,J)**2))*FSM(I,J)
+!
+       WRITE(IUPRT,532)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,10.0,IUPRT,DEV)
+!
+       DO 540 J=1,JM
+       DO 540 I=1,IM
+ 540   A(I,J,1)=1./1.75*H1(I,J)*FSM(I,J)
+!
+       WRITE(IUPRT,542)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+!
+       DO 550 J=1,JM
+       DO 550 I=1,IM
+ 550   A(I,J,1)=1./1.75*H2(I,J)*FSM(I,J)
+!
+       WRITE(IUPRT,552)
+       CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0,IUPRT,DEV)
+!
+!-----------------------------------------------------------------------
+      ELSE
+!
+       WRITE(IUPRT,910) TIME 
+       CALL PRINT(EL,FSM,IM,JM,IVAR,1.0E3,IUPRT,DEV)
+       WRITE(IUPRT,920) TIME 
+       CALL PRINT(UA,DUM,IM,JM,IVAR,1.0E2,IUPRT,DEV)   !jeff ji
+       WRITE(IUPRT,930) TIME 
+       CALL PRINT(VA,DVM,IM,JM,IVAR,1.0E2,IUPRT,DEV)   !jeff ji
+       WRITE(IUPRT,931) TIME
+       CALL PRINT(CBC,FSM,IM,JM,IVAR,1.0E4,IUPRT,DEV)
+!NG FOR WAVES
+       IF(PTWAVE.EQ.'Y') THEN
+        WRITE(IUPRT,1000) TIME 
+        CALL PRINT(WVHT,FSM,IM,JM,IVAR,1.0E2,IUPRT,DEV)
+        WRITE(IUPRT,1010) TIME 
+        CALL PRINT(WVPD,FSM,IM,JM,IVAR,1.0E2,IUPRT,DEV)
+        WRITE(IUPRT,1020) TIME 
+        CALL PRINT(WVDR,FSM,IM,JM,IVAR,1.0E1,IUPRT,DEV)
+       ENDIF
+!
+       IF(TOR.EQ.'BAROTROPIC') RETURN
+!
+       IF(PTU.EQ.'Y') THEN
+        WRITE(IUPRT,935) TIME 
+        CALL PRTXY(U,DUM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+        IF(VSX.EQ.'Y') CALL SLICEXZ(U,DUM,IM,JM,KB,JROW,PRT,1.0E2,IUPRT)
+        IF(VSY.EQ.'Y') CALL SLICEYZ(U,DUM,IM,JM,KB,IROW,PRT,1.0E2,IUPRT)
+       ENDIF
+!
+       IF(PTV.EQ.'Y') THEN
+        WRITE(IUPRT,940) TIME 
+        CALL PRTXY (V,DVM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV) 
+        IF(VSX.EQ.'Y') CALL SLICEXZ(V,DVM,IM,JM,KB,JROW,PRT,1.0E2,IUPRT)
+        IF(VSY.EQ.'Y') CALL SLICEYZ(V,DVM,IM,JM,KB,IROW,PRT,1.0E2,IUPRT)
+       ENDIF
+!
+       IF(PTW.EQ.'Y') THEN
+        WRITE(IUPRT,945) TIME
+        CALL PRTXY (WR,FSM,IM,JM,KB,KP2,IVAR,1.0E4,IUPRT,DEV) 
+        IF(VSX.EQ.'Y')
+     .     CALL SLICEXZ(WR,FSM,IM,JM,KB,JROW,PRT,1.0E4,IUPRT)
+        IF(VSY.EQ.'Y')
+     .     CALL SLICEYZ(WR,FSM,IM,JM,KB,IROW,PRT,1.0E4,IUPRT)
+       ENDIF
+!
+       IF(PTAM.EQ.'Y') THEN
+        WRITE(IUPRT,985) TIME 
+        CALL PRTXY (AAM,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+        IF(VSX.EQ.'Y') CALL SLICEXZ(AAM,FSM,IM,JM,KB,JROW,PRT,1.0,IUPRT)
+        IF(VSY.EQ.'Y') CALL SLICEYZ(AAM,FSM,IM,JM,KB,IROW,PRT,1.0,IUPRT)
+       ENDIF
+!
+!  FOR CONSERVATIVE TRACER
+!
+       IF (TRACER.EQ.'INCLUDE') THEN
+        WRITE(IUPRT,1951) TIME 
+        CALL PRTXY (CONC1,FSM,IM,JM,KB,KP1,IVAR,1.0E4,IUPRT,DEV)
+        IF(VSX.EQ.'Y') 
+     +     CALL SLICEXZ(CONC1,FSM,IM,JM,KB,JROW,PRT,1.0E4,IUPRT)
+        IF(VSY.EQ.'Y') 
+     +     CALL SLICEYZ(CONC1,FSM,IM,JM,KB,IROW,PRT,1.0E4,IUPRT)
+       ENDIF
+!
+       IF (SEDTRAN.EQ.'INCLUDE') THEN
+         IF (SEDTYPE.EQ.'MUD '.OR.SEDTYPE.EQ.'BOTH') THEN
+           WRITE (IUPRT,1901)TIME
+           CALL PRTXY(WSET1,FSM,IM,JM,KB,KP1,IVAR,1.0E6,IUPRT,DEV)
+           IF (VSX.EQ.'Y') THEN
+             CALL SLICEXZ(WSET1,FSM,IM,JM,KB,JROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           IF (VSY.EQ.'Y') THEN 
+             CALL SLICEYZ(WSET1,FSM,IM,JM,KB,IROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           WRITE (IUPRT,1902)TIME
+           CALL PRTXY(TAU,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+           IF (VSX.EQ.'Y') THEN
+             CALL SLICEXZ(TAU,FSM,IM,JM,KB,JROW,PRT,1.0E2,IUPRT)
+           ENDIF
+           IF (VSY.EQ.'Y') THEN 
+             CALL SLICEYZ(TAU,FSM,IM,JM,KB,IROW,PRT,1.0E2,IUPRT)
+           ENDIF           
+           WRITE (IUPRT,1900)TIME
+           CALL PRTXY(CSED1,FSM,IM,JM,KB,KP1,IVAR,1.0E6,IUPRT,DEV)
+           IF (VSX.EQ.'Y') THEN
+             CALL SLICEXZ(CSED1,FSM,IM,JM,KB,JROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           IF (VSY.EQ.'Y') THEN 
+             CALL SLICEYZ(CSED1,FSM,IM,JM,KB,IROW,PRT,1.0E6,IUPRT)
+           ENDIF
+         ENDIF
+!
+         IF (SEDTYPE.EQ.'SAND'.OR.SEDTYPE.EQ.'BOTH') THEN
+           WRITE (IUPRT,1903)TIME
+           CALL PRTXY(WSET2,FSM,IM,JM,KB,KP1,IVAR,1.0E6,IUPRT,DEV)
+           IF (VSX.EQ.'Y') THEN
+             CALL SLICEXZ(WSET2,FSM,IM,JM,KB,JROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           IF (VSY.EQ.'Y') THEN 
+             CALL SLICEYZ(WSET2,FSM,IM,JM,KB,IROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           WRITE (IUPRT,1910)TIME
+           CALL PRTXY(CSED2,FSM,IM,JM,KB,KP1,IVAR,1.0E6,IUPRT,DEV)
+           IF (VSX.EQ.'Y') THEN
+             CALL SLICEXZ(CSED2,FSM,IM,JM,KB,JROW,PRT,1.0E6,IUPRT)
+           ENDIF
+           IF (VSY.EQ.'Y') THEN
+             CALL SLICEYZ(CSED2,FSM,IM,JM,KB,IROW,PRT,1.0E6,IUPRT)
+           ENDIF
+         ENDIF
+!
+!  PRINTS OUTPUT FOR SEDIMENT BED THICKNESS
+!
+!  DETERMINE INITIAL SED. THICKNESS
+! 
+!
+ 9500  FORMAT (I3,2X,20F5.2)
+ 9501  FORMAT (I3,2X,20F6.2)
+ 9502  FORMAT (I3,2X,20F6.3)
+ 9510  FORMAT (20F6.3)
+ 9940  FORMAT (I4,15F5.1)
+!
+!  CALC. FINAL SEDIMENT THICKNESS, INITIAL SEDIMENT-WATER INTERFACE
+!  IS AT ZERO
+!
+      DO 8120 J=1,JM
+       DO 8120 I=1,IM
+!
+        A(I,J,1)=0.0
+!
+        IF (D(I,J).LE.0.0) GOTO 8120 ! NG H->D FOR WAD
+!
+        TSET0T=0.0
+        DO 8110 LL=1,LAYMAX
+          TSET0T=TSET0T+TSED0(LL,I,J)
+ 8110   CONTINUE
+!
+        TSEDT(I,J)=0.0
+        DO 8130 LL=1,LAYMAX
+          TSEDT(I,J)=TSEDT(I,J)+TSED(LL,I,J)
+ 8130   CONTINUE
+!
+        IF (IBMSK(I,J).EQ.0) THEN
+          THICK(I,J)=TSEDT(I,J)-TSET0T
+!
+!  CONVERT FROM g/cm**2 TO cm
+!
+          THICK(I,J)=THICK(I,J)/CBED(I,J)
+!
+          IF (SEDTYPE.EQ.'SAND') THICK(I,J)=0.0
+        ELSE
+          IF (IBMSK(I,J).EQ.1) THEN
+!
+            THICK(I,J)=BEDTH(1,I,J)/((CBED(I,J)/2.65)*H1(I,J)*H2(I,J))
+     +                       -BEDTHI
+!
+!  CONVERT FROM m TO cm
+!
+            THICK(I,J)=100.*THICK(I,J)
+!
+            IF (SEDTYPE.EQ.'MUD ') THICK(I,J)=0.0
+          ELSE
+            THICK(I,J)=0.0
+          ENDIF
+        ENDIF
+!
+!  CONVERT THICKNESS FROM cm TO mm
+!
+         A(I,J,1)=THICK(I,J)*10.
+ 8120  CONTINUE
+!
+!  OUTPUT AS mm
+!
+        WRITE (IUPRT,9140)TIME
+        CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0E0,IUPRT,DEV)
+!
+!  OUTPUT BOTTOM SHEAR STRESS
+!
+      DO 8140 J=1,JM
+       DO 8140 I=1,IM
+        A(I,J,1)=0.0
+        IF (D(I,J).LE.0.0) GOTO 8140 ! NG H->D FOR WAD
+        A(I,J,1)=TAU(I,J,KB)
+ 8140 CONTINUE
+!
+!  OUTPUT AS dyne/cm**2
+!
+        WRITE (IUPRT,9150)TIME
+        CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0E0,IUPRT,DEV)
+        ENDIF
+!
+!******************************************************************
+!
+       IF (CHEMTRAN.EQ.'INCLUDE') THEN
+         IF (SEDTYPE.EQ.'MUD '.OR.SEDTYPE.EQ.'BOTH') THEN
+            Write (IUPRT,7203) TIME
+            Call PRTXY(CHEM1,FSM,IM,JM,KB,KP1,IVAR,1.0E3,IUPRT,DEV)
+            If (VSX.EQ.'Y') Call 
+     *        SLICEXZ(CHEM1,FSM,IM,JM,KB,JROW,PRT,1.0E3,IUPRT)
+            If (VSY.EQ.'Y') Call 
+     *        SLICEYZ(CHEM1,FSM,IM,JM,KB,IROW,PRT,1.0E3,IUPRT)
+         ENDIF
+!
+         IF (SEDTYPE.EQ.'SAND'.OR.SEDTYPE.EQ.'BOTH') THEN
+            Write (IUPRT,7204) TIME
+            Call PRTXY(CHEM2,FSM,IM,JM,KB,KP1,IVAR,1.0E3,IUPRT,DEV)
+            If (VSX.EQ.'Y') Call 
+     *        SLICEXZ(CHEM2,FSM,IM,JM,KB,JROW,PRT,1.0E3,IUPRT)
+            If (VSY.EQ.'Y') Call 
+     *        SLICEYZ(CHEM2,FSM,IM,JM,KB,IROW,PRT,1.0E3,IUPRT)
+         ENDIF
+!
+!
+         DO 8125 J=1,JM
+           DO 8125 I=1,IM
+             A(I,J,1)=0.0
+             IF (D(I,J).LE.0.0) GOTO 8125 ! NG H->D FOR WAD
+             A(I,J,1)=CBEDCHEM(1,I,J)
+ 8125    CONTINUE
+!
+!  OUTPUT TOP LAYER CONCENTRATION (UNITS ARE ppm)
+!
+         WRITE (IUPRT,9141)TIME
+         CALL PRINT(A(1,1,1),FSM,IM,JM,IVAR,1.0E0,IUPRT,DEV)
+!
+ 9651   CONTINUE
+          ENDIF
+!
+       IF(TOR.EQ.'PROGNOSTIC'.OR.TOR.EQ.'TEMP_ONLY '.OR.
+     .    TOR.EQ.'SALT_ONLY ') THEN
+!
+        IF(PTS.EQ.'Y') THEN
+         WRITE(IUPRT,951) TIME 
+         CALL PRTXY (S,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+         IF(VSX.EQ.'Y') CALL SLICEXZ(S,FSM,IM,JM,KB,JROW,PRT,1.0,IUPRT)
+         IF(VSY.EQ.'Y') CALL SLICEYZ(S,FSM,IM,JM,KB,IROW,PRT,1.0,IUPRT)
+        ENDIF
+!
+        IF(PTT.EQ.'Y') THEN
+         WRITE(IUPRT,950) TIME 
+         CALL PRTXY (T,FSM,IM,JM,KB,KP1,IVAR,1.0E2,IUPRT,DEV)
+         IF(VSX.EQ.'Y') CALL SLICEXZ(T,FSM,IM,JM,KB,JROW,PRT,1.0,IUPRT)
+         IF(VSY.EQ.'Y') CALL SLICEYZ(T,FSM,IM,JM,KB,IROW,PRT,1.0,IUPRT)
+        ENDIF
+!
+        IF(PRHO.EQ.'Y') THEN
+         WRITE(IUPRT,952) TIME 
+         CALL PRTXY (RHO,FSM,IM,JM,KB,KP1,IVAR,1.0E5,IUPRT,DEV)
+         IF(VSX.EQ.'Y')
+     .      CALL SLICEXZ(RHO,FSM,IM,JM,KB,JROW,PRT,1.0E3,IUPRT)
+         IF(VSY.EQ.'Y')
+     .      CALL SLICEYZ(RHO,FSM,IM,JM,KB,IROW,PRT,1.0E3,IUPRT)
+        ENDIF
+       ENDIF
+!
+       IF(VERTMIX.EQ.'CLOSURE   '.OR.VERTMIX.EQ.'EMPIRICAL ') THEN
+!
+        IF(PTQ2.EQ.'Y') THEN
+         WRITE(IUPRT,955) TIME 
+         CALL PRTXY (Q2,FSM,IM,JM,KB,KP2,IVAR,1.0E6,IUPRT,DEV)
+         IF(VSX.EQ.'Y')
+     .      CALL SLICEXZ(Q2,FSM,IM,JM,KB,JROW,PRT,1.0E6,IUPRT)
+         IF(VSY.EQ.'Y')
+     .      CALL SLICEYZ(Q2,FSM,IM,JM,KB,IROW,PRT,1.0E6,IUPRT)
+        ENDIF
+!
+        IF(PTL.EQ.'Y') THEN
+         WRITE(IUPRT,960) TIME 
+         CALL PRTXY (L,FSM,IM,JM,KB,KP2,IVAR,1.0E2,IUPRT,DEV)
+         IF(VSX.EQ.'Y') CALL SLICEXZ(L,FSM,IM,JM,KB,JROW,PRT,1.0,IUPRT)
+         IF(VSY.EQ.'Y') CALL SLICEYZ(L,FSM,IM,JM,KB,IROW,PRT,1.0,IUPRT)
+        ENDIF
+!
+        IF(PTKM.EQ.'Y') THEN
+         WRITE(IUPRT,965) TIME 
+         CALL PRTXY (KM,FSM,IM,JM,KB,KP2,IVAR,1.0E4,IUPRT,DEV)
+         IF(VSX.EQ.'Y')
+     .      CALL SLICEXZ(KM,FSM,IM,JM,KB,JROW,PRT,1.0E4,IUPRT)
+         IF(VSY.EQ.'Y')
+     .      CALL SLICEYZ(KM,FSM,IM,JM,KB,IROW,PRT,1.0E4,IUPRT)
+        ENDIF
+!
+        IF(PTKH.EQ.'Y') THEN
+         WRITE(IUPRT,970) TIME 
+         CALL PRTXY (KH,FSM,IM,JM,KB,KP2,IVAR,1.0E4,IUPRT,DEV)
+         IF(VSX.EQ.'Y')
+     .      CALL SLICEXZ(KH,FSM,IM,JM,KB,JROW,PRT,1.0E4,IUPRT)
+         IF(VSY.EQ.'Y')
+     .      CALL SLICEYZ(KH,FSM,IM,JM,KB,IROW,PRT,1.0E4,IUPRT)
+        ENDIF
+!
+       ENDIF
+! 
+      ENDIF
+! 
+ 900  FORMAT(///' .......... DEPTH (m) ..........'/)
+ 9011 FORMAT(///' .......... SEDIMENT BED MASK ..........'/)
+ 901  FORMAT(///' .......... METRIC H1 (m) ..........'/)
+ 902  FORMAT(///' .......... METRIC H2 (m) ..........'/)
+ 903  FORMAT(///' .......... ANGLE (radians) ..........'/)
+ 904  FORMAT(///' .......... CORIOLIS PARAMETER (1/sec) ..........'/)
+ 905  FORMAT(///' .......... BOTTOM DRAG COEFFICIENT ..........'/)
+ 913  FORMAT(///' .......... ELEVATION MASK ..........'/)
+ 914  FORMAT(///' .......... U  VEL MASK ..........'/)
+ 915  FORMAT(///' .......... V  VEL MASK ..........'/)
+ 953  FORMAT(///' ..... SALINITY (ppt) INITIALIZATION .....'/)
+ 954  FORMAT(///' ..... TEMPERATURE (degC) INITIALIZATION .....'/)
+ 1954 FORMAT(///' ..... CONSERVATIVE TRACER INITIALIZATION .....'/)
+!
+ 502  FORMAT(///' MAXIMUM TIME STEP(sec) EXTERNAL MODE'/)
+ 512  FORMAT(///' MAXIMUM TIME STEP(sec) EXTERNAL MODE XI 1 DIRECTION'/)
+ 522  FORMAT(///' MAXIMUM TIME STEP(sec) EXTERNAL MODE XI 2 DIRECTION'/)
+ 532  FORMAT(///' MAXIMUM TIME STEP(sec) INTERNAL MODE'/)
+ 542  FORMAT(///' MAXIMUM TIME STEP(sec) INTERNAL MODE XI 1 DIRECTION'/)
+ 552  FORMAT(///' MAXIMUM TIME STEP(sec) INTERNAL MODE XI 2 DIRECTION'/)
+!
+ 910  FORMAT(///' SURFACE ELEVATION (m) '    ,F9.4,' DAYS AFTER T=0 '/)
+ 920  FORMAT(///' AVERAGED U VELOCITY (m/s) ',F9.4,' DAYS AFTER T=0 '/)
+ 930  FORMAT(///' AVERAGED V VELOCITY (m/s) ',F9.4,' DAYS AFTER T=0 '/)
+ 931  FORMAT(///' BOTTOM DRAG COEFFICIENT   ',F9.4,' DAYS AFTER T=0 '/)
+ 933  FORMAT(///' U-INTEGRALS '              ,F9.4,' DAYS AFTER T=0 '/)
+ 934  FORMAT(///' V-INTEGRALS '              ,F9.4,' DAYS AFTER T=0 '/)
+ 935  FORMAT(///' U VELOCITY(m/s) '          ,F9.4,' DAYS AFTER T=0 '/) 
+ 940  FORMAT(///' V VELOCITY(m/s) '          ,F9.4,' DAYS AFTER T=0 '/)
+ 945  FORMAT(///' W VELOCITY(m/s) '          ,F9.4,' DAYS AFTER T=0 '/)
+ 950  FORMAT(///' TEMPERATURE (degC) '       ,F9.4,' DAYS AFTER T=0 '/)
+ 951  FORMAT(///' SALINITY (ppt) '           ,F9.4,' DAYS AFTER T=0 '/)
+1951  FORMAT(///' DISSOLVED TRACER '         ,F9.4,' DAYS AFTER T=0 '/)
+ 952  FORMAT(///' DENSITY - 1.0 (gm/cm**3) ' ,F9.4,' DAYS AFTER T=0 '/)
+ 955  FORMAT(///' TURBULENT K.E. '           ,F9.4,' DAYS AFTER T=0 '/)
+ 960  FORMAT(///' MIXING LENGTH (m) '        ,F9.4,' DAYS AFTER T=0 '/)
+ 965  FORMAT(///' MIXING KM (m**2/s) '       ,F9.4,' DAYS AFTER T=0 '/)
+ 970  FORMAT(///' MIXING KH (m**2/s) '       ,F9.4,' DAYS AFTER T=0 '/)
+ 971  FORMAT(///' BAROCLINIC PRESSURE DRHOX ',F9.4,' DAYS AFTER T=0 '/)
+ 972  FORMAT(///' BAROCLINIC PRESSURE DRHOY ',F9.4,' DAYS AFTER T=0 '/)
+ 975  FORMAT(///' U BOTTOM STRESS ((m/s)**2)',F9.4,' DAYS AFTER T=0 '/)
+ 980  FORMAT(///' V BOTTOM STRESS ((m/s)**2)',F9.4,' DAYS AFTER T=0 '/)
+ 985  FORMAT(///' HORIZONTAL MIXING '        ,F9.4,' DAYS AFTER T=0 '/)
+!
+ 7203 Format(///' COHESIVE PARTICLE-BOUND CONCENTRATION (ug/L)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 7204 Format(///' NON-COHESIVE PARTICLE-BOUND CONCENTRATION (ug/L)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 1901 Format(///' COHESIVE SEDIMENT SETTLING VELOCITY (m/s)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 1902 Format(///' SHEAR STRESS IN WATER COLUMN (dyne/cm**2)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 1903 Format(///' NON-COHESIVE SEDIMENT SETTLING VELOCITY (m/s)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 1900 Format(///' COHESIVE SEDIMENT CONCENTRATION (mg/L)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 1910 Format(///' NON-COHESIVE SEDIMENT CONCENTRATION (mg/L)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 9140 Format(///' SEDIMENT BED ELEVATION CHANGE (mm)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 9141 Format(///' PARTICLE-BOUND TRACER, BED CONCENTRATION (ppm)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+ 9150 Format(///' BOTTOM SHEAR STRESS (dyne/cm**2)',
+     +                                        F9.4,' DAYS AFTER T=0 '/)
+!NG FOR WAVES
+1000  FORMAT(///' SIGNIFICANT WAVE HEIGHT (m)',F9.4,' DAYS AFTER T=0 '/)
+1010  FORMAT(///' AVERAGE WAVE PERIOD (s)    ',F9.4,' DAYS AFTER T=0 '/)
+1020  FORMAT(///' AVERAGE WAVE DIRECTION (d) ',F9.4,' DAYS AFTER T=0 '/)
+!NG FOR WAVES
+ 9503 FORMAT(I3,2X,20F6.1)
+!
+!******************************************************************
+!
+      RETURN
+      END
