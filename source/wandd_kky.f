@@ -1,11 +1,17 @@
       SUBROUTINE WANDD_KKY(ELEV,TD)
+      INCLUDE 'comdeck'
+      REAL ELEV(IM,JM),TD(IM,JM)
+!$OMP PARALLEL DEFAULT(SHARED)
+      CALL WANDD_TEAM(ELEV,TD)
+!$OMP END PARALLEL
+      END
+      RECURSIVE SUBROUTINE WANDD_TEAM(ELEV,TD)
 !
 !     INTRODUCE WET/DRY SCHEME BASED ON KKY's DIISERTATION (hli, 08/03/05).
 !NGMAR2009   SIMPLIFIED AND ADDED AN EXTRA CONDITION (NO FLOW OUT OF "DRY" CELL).
 !
 !
       INCLUDE 'comdeck'
-      SAVE
 !
       DIMENSION ELEV(IM,JM),TD(IM,JM)
 !
@@ -13,7 +19,6 @@
 !     ET/ETF scatter may also touch row j+1. Alternate row colors with
 !     a barrier so there are no concurrent writes (even equal writes).
 !     The sole caller supplies EL,D, neither aliases the written fields.
-!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ICOLOR)
       DO ICOLOR=1,2
 !$OMP DO SCHEDULE(STATIC)
       DO J = ICOLOR, JMM1, 2
@@ -70,6 +75,5 @@
 
 !$OMP END DO
       ENDDO
-!$OMP END PARALLEL
       RETURN
       END

@@ -1731,6 +1731,12 @@
 !         BEGIN EXTERNAL MODE
 !-----------------------------------------------------------------------
 !
+      IF(TOR.EQ.'BAROTROPIC'.AND.JTM.EQ.0.AND.ISPLIT.GT.0) THEN
+        CALL BARO_SUBCYCLE(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,
+     &                     VAMAX,ELMINX,IAMAX,JAMAX)
+        IF(VAMAX.GT.100.) GO TO 9100
+        GO TO 8001
+      ENDIF
                    DO 8000 IEXT=1,ISPLIT
 !
 !pl      CALL EXTRNL(ADVUA,ADVVA,TRNU,TRNV,DTE2,BFRIC,DTI2)
@@ -1809,78 +1815,10 @@
 !  TEST FOR MODEL BLOWUP. IF SO, PRINT AND STOP
 !
      
-      VAMAX=-1.E10
-! First reduce only values, making the per-cell loop vectorizable.
-! Recover indices only on the two winning rows, preserving the legacy
-! tie order and speed-before-minimum abort behavior (including all-land).
-!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,VMAXTMP,VROWMAX,ZROWMIN)
-!$OMP DO SCHEDULE(STATIC)
-      DO J=1,JMM1
-        VROWMAX=-1.E10
-!$OMP SIMD REDUCTION(MAX:VROWMAX) PRIVATE(VMAXTMP)
-        DO I=1,IMM1
-      VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
-     .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
-     .             (0.5*DVMWAD(I,J)*VAF(I,J)+
-     .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
-          IF(VMAXTMP.GT.VROWMAX) VROWMAX=VMAXTMP
-        ENDDO
-        ROWVMAX(J)=VROWMAX
-      ENDDO
-!$OMP END DO NOWAIT
-!$OMP DO SCHEDULE(STATIC)
-      DO J=1,JM
-        ZROWMIN=1.E10
-!$OMP SIMD REDUCTION(MIN:ZROWMIN)
-        DO I=1,IM
-          IF(FSM(I,J).NE.0..AND.ELF(I,J).LT.ZROWMIN)
-     &      ZROWMIN=ELF(I,J)
-        ENDDO
-        ROWEMIN(J)=ZROWMIN
-      ENDDO
-!$OMP END DO
+!$OMP PARALLEL DEFAULT(SHARED)
+      CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
 !$OMP END PARALLEL
-      JVMAX=0
-      DO J=1,JMM1
-        IF(ROWVMAX(J).GE.VAMAX.AND.ROWVMAX(J).GE.0.) THEN
-          JVMAX=J
-          VAMAX=ROWVMAX(J)
-        ENDIF
-      ENDDO
-      IF(JVMAX.NE.0) THEN
-        J=JVMAX
-        DO I=IMM1,1,-1
-      VMAXTMP=SQRT((0.5*DUMWAD(I,J)*UAF(I,J)+
-     .              0.5*DUMWAD(I+1,J)*UAF(I+1,J))**2+
-     .             (0.5*DVMWAD(I,J)*VAF(I,J)+
-     .              0.5*DVMWAD(I,J+1)*VAF(I,J+1))**2)
-          IF(VMAXTMP.EQ.VAMAX) THEN
-            IAMAX=I
-            JAMAX=J
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF
       IF(VAMAX.GT.100.) GO TO 9100
-      ELMINX=1.E10
-      JWATER=0
-      DO J=1,JM
-        IF(ROWEMIN(J).LT.ELMINX) THEN
-          JWATER=J
-          ELMINX=ROWEMIN(J)
-        ENDIF
-      ENDDO
-      IF(JWATER.NE.0) THEN
-        J=JWATER
-        DO I=1,IM
-          IF(FSM(I,J).NE.0..AND.ELF(I,J).EQ.ELMINX) THEN
-            IAMAX=I
-            JAMAX=J
-            ELMINX=ELF(I,J)
-            EXIT
-          ENDIF
-        ENDDO
-      ENDIF
 !end,   check elevation minimum, jeff ji, 1/17/96
 
       IF(TOR.EQ.'BAROTROPIC') GO TO 8000
@@ -1894,6 +1832,7 @@
  450  VTF(I,J)=VTF(I,J)+VA(I,J)*(D(I,J)+D(I,J-1))*ISP2I
 !
  8000              CONTINUE
+ 8001 CONTINUE
 !
 !-----------------------------------------------------------------------
 !         END EXTERNAL (2-D) MODE CALCULATION
@@ -3224,4 +3163,39 @@
 
 
       STOP
+      END
+!
+! Persistent team for the barotropic, no-transport path only.
+! Every worker takes the same early-abort branch after the SINGLE
+! that publishes the extrema. IEXT keeps its original exit value.
+      SUBROUTINE BARO_SUBCYCLE(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2,
+     &                         VAMAX,ELMINX,IAMAX,JAMAX)
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
+      REAL ROWVMAX(JM),ROWEMIN(JM)
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,ISEQ)
+      DO ISEQ=1,ISPLIT
+!$OMP SINGLE
+        IEXT=ISEQ
+!$OMP END SINGLE
+        CALL EXTRNL_TEAM(ADVUA,ADVVA,TRNU,TRNV,DTE2,DTI2)
+!$OMP DO SCHEDULE(STATIC)
+        DO J=1,JM
+          DO I=1,IM
+            UAB(I,J)=UA(I,J)+.5*NU*(UAB(I,J)-2.*UA(I,J)+UAF(I,J))
+            VAB(I,J)=VA(I,J)+.5*NU*(VAB(I,J)-2.*VA(I,J)+VAF(I,J))
+            ELB(I,J)=EL(I,J)+.5*NU*(ELB(I,J)-2.*EL(I,J)+ELF(I,J))
+            EL(I,J)=ELF(I,J)
+            D(I,J)=H(I,J)+EL(I,J)
+            UA(I,J)=UAF(I,J)
+            VA(I,J)=VAF(I,J)
+          ENDDO
+        ENDDO
+!$OMP END DO
+        CALL WANDD_TEAM(EL,D)
+        CALL SECOM_CHECK_TEAM(VAMAX,ELMINX,IAMAX,JAMAX,ROWVMAX,ROWEMIN)
+        IF(VAMAX.GT.100.) EXIT
+      ENDDO
+!$OMP END PARALLEL
+      IF(.NOT.(VAMAX.GT.100.)) IEXT=ISPLIT+1
       END
