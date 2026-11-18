@@ -16,6 +16,7 @@
 !NG 12162010
       
       CHARACTER STR*80 ! A.Jordi
+      LOGICAL CLEAR_RAIN
       
       SAVE
 !
@@ -1386,12 +1387,21 @@
 !-------- METEOROLOGICAL BOUNDARY CONDITIONS ---------------------------
 !NG09022014 First zero out 2D precipitation and evaporation.
 !NG09022014 Then use synop_pet if it exists, or 1D if it does not and available
+! In the uniform forcing path 4115 overwrites both fields on *all*
+! cells. Keep the old clearing when PET data are used, another mode is
+! active, or a forcing record must be read (including READ/END exits).
+        CLEAR_RAIN=.TRUE.
+        IF(OPTMBC(1:8).EQ.'AVERAGED'.AND..NOT.CREADPET) THEN
+          IF(THOUR.LT.T2M) CLEAR_RAIN=.FALSE.
+        ENDIF
+        IF(CLEAR_RAIN) THEN
         DO J=1,JM
          DO I=1,IM
           QPREC2D(I,J)=0.0
           QEVAP2D(I,J)=0.0
          ENDDO
         ENDDO
+        ENDIF
 !NG09022014 Precipitation and Evapotranspiration from synop_pet... if it exists...
         IF (CREADPET) THEN
          IF (THOUR.GE.T2P) THEN
