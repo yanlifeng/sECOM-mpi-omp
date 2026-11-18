@@ -3,6 +3,7 @@
 FC = gfortran
 NF_CONFIG ?= nf-config
 MODE ?= serial
+TUNE_FLAGS ?=
 FFLAGS = -O3 -fno-fast-math -ffp-contract=off -ffixed-line-length-132 -fallow-argument-mismatch -g -fbacktrace -ffpe-trap=invalid,zero,overflow
 NF_FFLAGS := $(shell $(NF_CONFIG) --fflags)
 NF_LIBS := $(shell $(NF_CONFIG) --flibs)
@@ -22,7 +23,13 @@ endif
 .PHONY: all
 all: $(OBJDIR)/s--pom.x
 $(OBJDIR)/s--pom.x: $(OBJECTS)
-	$(FC) $(FFLAGS) $(OMP_LINK) -o $@ $(OBJECTS) $(NF_LIBS) $(EXTRA_LIBS)
+	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -o $@ $(OBJECTS) $(NF_LIBS) $(EXTRA_LIBS)
 $(OBJDIR)/%.o: %.f comdeck netcdf.inc Makefile.portable
 	mkdir -p $(@D)
-	$(FC) $(FFLAGS) $(NF_FFLAGS) $(EXTRA_FFLAGS) -c $< -o $@
+	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(NF_FFLAGS) $(EXTRA_FFLAGS) -c $< -o $@
+.PHONY: check-extrema
+check-extrema: $(OBJDIR)/check-extrema
+	$(OBJDIR)/check-extrema
+$(OBJDIR)/check-extrema: ../validation/check_extrema.f baro_check.f comdeck Makefile.portable
+	mkdir -p $(@D)
+	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -fcheck=bounds -I. ../validation/check_extrema.f baro_check.f -o $@
