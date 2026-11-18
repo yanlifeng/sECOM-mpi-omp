@@ -17,6 +17,10 @@
       DQEVAP(1)=0.0
       DQEVAP(2)=0.0
 !
+! Give grid rows the same static first-touch placement as the solver.
+! No values are initialized that were not already set by the reference.
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,K)
+!$OMP DO SCHEDULE(STATIC)
       DO 250 J=1,JM
       DO 250 K=1,KB
       DO 250 I=1,IM
@@ -72,6 +76,8 @@
       ARCTAU(I,J,K)=0.0
       TAU(I,J,K)=0.0
   250 CONTINUE
+!$OMP END DO
+!$OMP DO SCHEDULE(STATIC)
       DO 640 J=1,JM
       DO 640 I=1,IM
 !NG04142008
@@ -180,9 +186,11 @@
       DTHICKICE(I,J,2)=0.0
 !NG2011 Ice
   640 CONTINUE
+!$OMP END DO
 !
-      DO 100 K=1,KB
+!$OMP DO SCHEDULE(STATIC)
       DO 100 J=1,JM
+      DO 100 K=1,KB
       DO 100 I=1,IM
       ARCU (I,J,K)=0.0
       ARCV (I,J,K)=0.0
@@ -204,6 +212,8 @@
       ARCQ2(I,J,K)=0.0
          TAU(I,J,K)=0.0
  100  CONTINUE
+!$OMP END DO
+!$OMP DO SCHEDULE(STATIC)
       DO 110 J=1,JM
       DO 110 I=1,IM
       ARCPATM(I,J)=0.0
@@ -219,6 +229,8 @@
       ARCWVHT(I,J)=0.0
       ARCWVDR(I,J)=0.0
  110  ARCET(I,J)=0.0
+!$OMP END DO
+!$OMP END PARALLEL
 !
       DO 200 N=1,EPTS
       ESAVE(N)=0.0
