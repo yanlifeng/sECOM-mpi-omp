@@ -1,0 +1,14 @@
+compiler GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20) affinity [37] flags ['gfortran', '-O3', '-fopenmp', '-std=legacy', '-ffixed-line-length-132', '-fno-fast-math', '-ffp-contract=off', '-ffpe-trap=invalid,zero,overflow', '-fcheck=bounds'] science baf5718f127fa3da4ff808398c3a2a8250f22a4b907a5d59efab0beb129bfe47
+v44 1 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+v44 3 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+science 1 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+science 3 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+witness 1 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+witness 1 0 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+witness 3 1 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+witness 3 0 29c9f8bbe774ea022359c70e4ced8ec85655b67ea6dc67d28daac72a0cf6d570
+delay_join rc 0
+missing_join rc 94
+sNaN old rc -8 phase original DO95
+sNaN new rc -8 phase original DO95
+sNaN premature rc -8 phase early

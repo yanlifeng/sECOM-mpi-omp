@@ -1,0 +1,16 @@
+compiler GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20) affinity [37] flags ['gfortran', '-O3', '-fopenmp', '-std=legacy', '-ffixed-line-length-132', '-fno-fast-math', '-ffp-contract=off', '-ffpe-trap=invalid,zero,overflow', '-fcheck=bounds'] science baf5718f127fa3da4ff808398c3a2a8250f22a4b907a5d59efab0beb129bfe47
+drv.f:95:30:
+
+         COR(1,1)=TRANSFER(INT(Z'80000000'),COR(1,1))
+                              1
+Error: Arithmetic overflow converting INTEGER(16) to INTEGER(4) at (1). This check can be disabled with the option ‘-fno-range-check’
+Traceback (most recent call last):
+  File "check46.py", line 103, in <module>
+    if __name__=='__main__':main()
+  File "check46.py", line 73, in main
+    build(s)
+  File "check46.py", line 65, in build
+    subprocess.run(flags+['ext.f','advave.f','drv.f','-I.','-o','qa'],cwd=d,check=True)
+  File "/opt/python3.7/lib/python3.7/subprocess.py", line 512, in run
+    output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['gfortran', '-O3', '-fopenmp', '-std=legacy', '-ffixed-line-length-132', '-fno-fast-math', '-ffp-contract=off', '-ffpe-trap=invalid,zero,overflow', '-fcheck=bounds', 'ext.f', 'advave.f', 'drv.f', '-I.', '-o', 'qa']' returned non-zero exit status 1.

@@ -1,0 +1,32 @@
+{
+  "case": "Macau Hato 372x479, 4800 internal / 48000 external steps, all I/O included",
+  "date": "2026-11-19",
+  "parent_source": "87490b3a06f85cdafdadce7730ff8547a2deb37a",
+  "candidate_extrnl_sha": "baf5718f127fa3da4ff808398c3a2a8250f22a4b907a5d59efab0beb129bfe47",
+  "candidate_binary_sha": "f4d755a73a71e5e827f496da2d053f4ed9c4c358ec0bf64debe32d2e6cdb6779",
+  "v44_seconds": 11.037943349219859,
+  "v46_seconds": 10.711858517490327,
+  "wall_time_reduction": 0.029542172976687597,
+  "wins": 3,
+  "pairs": 3,
+  "baseline_samples": [
+    11.21560128312558,
+    11.037943349219859,
+    10.855579460971057
+  ],
+  "candidate_samples": [
+    10.711858517490327,
+    10.647882224060595,
+    10.736505097709596
+  ],
+  "speedup_vs_original_frozen": 30.392044666934005,
+  "speedup_vs_same_day_original": 29.204519408675946,
+  "same_elf_one_thread": null,
+  "target_seconds": 8.138882063236087,
+  "target_40x_met": false,
+  "local_timing_receipts_rechecked": 10,
+  "remote_raw_file_run_count": 15,
+  "archive_sha": "c46a5130b2b1fdad626debe0c0367c7558906a9596a2f4712eb35912aee84d7e",
+  "archive_members": 106,
+  "scope": "Local independent statistics/receipt/binding verification; raw field rereads in p3 audit. No new 1-thread performance test; no multi-case accuracy claim"
+}

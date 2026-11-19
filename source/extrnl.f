@@ -20,6 +20,9 @@
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
       LOGICAL ROTATE,EDGE_LATE
+      LOGICAL MODE46,FAST46,ON46,SECOM46_ENABLED
+      SAVE ON46
+      DATA ON46 /.FALSE./
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
@@ -56,6 +59,9 @@
 !         IMPOSE MASS FLUX BOUNDARY CONDITIONS
 !-----------------------------------------------------------------------
 !$OMP END DO
+      MODE46=ROTATE.AND.TOR.EQ.'BAROTROPIC'.AND.BCTYPE.EQ.'CLAMPED'
+      FAST46=.FALSE.
+      IF(MODE46.AND.IEXT.GT.1) FAST46=ON46
 !$OMP SINGLE
       DO 406 N=1,NUMDBC
       ID=IDD(N)
@@ -115,7 +121,19 @@
       ENDIF
 ! 
       CALL BCOND(12,DTI2,0)
-!$OMP END SINGLE
+      IF(MODE46.AND.IEXT.EQ.1) ON46=SECOM46_ENABLED()
+!$OMP END SINGLE NOWAIT
+      IF(FAST46) THEN
+!$OMP DO SCHEDULE(STATIC)
+        DO J=1,JM
+          DO I=1,IM
+            CURV42D(I,J)=.25*COR(I,J)
+          ENDDO
+        ENDDO
+!$OMP END DO
+      ELSE
+!$OMP BARRIER
+      ENDIF
 !$OMP DO SCHEDULE(STATIC)
       DO J=1,JM
         DO I=1,IM
@@ -157,6 +175,7 @@
       CALL ADVAVE(ADVUA,ADVVA)
       ENDIF
 !
+      IF(.NOT.FAST46) THEN
 !$OMP DO SCHEDULE(STATIC)
       DO 95 J=1,JM
       DO 95 I=1,IM
@@ -168,6 +187,7 @@
 !-----------------------------------------------------------------------
 !
 !$OMP END DO
+      ENDIF
       IF(TOR.NE.'BAROTROPIC') GO TO 5000
 !
 !     The reference's permanent grid metrics and FSM cannot change
@@ -404,4 +424,13 @@
       ENDDO
 
       RETURN
+      END
+
+! ON46 is read only at IEXT>1, when unchanged DO95 was actually completed
+! by the same persistent team on substep 1. No extra COR loads or FP work.
+      LOGICAL FUNCTION SECOM46_ENABLED()
+      CHARACTER*1 OPT
+      INTEGER L,STAT
+      CALL GET_ENVIRONMENT_VARIABLE('SECOM_V46_OVERLAP',OPT,LENGTH=L,STATUS=STAT)
+      SECOM46_ENABLED=STAT.EQ.1.OR.(STAT.EQ.0.AND.L.EQ.1.AND.OPT.EQ.'1')
       END
