@@ -267,164 +267,325 @@
        END IF
 * enter define mode
 !NG        CDFID = NCCRE('gcmplt.nc',NCCLOB,IRET) ! NG03312009 changed name to .nc as per CF
+      IF (SMPI_RANK.EQ.0) THEN
         CDFID = NCCRE('gcmplt.cdf',NCCLOB,IRET) ! This is for NYHOPS, too much of a pain otherwise
+      ELSE
+        CDFID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         IFILL = NCSFIL(CDFID,NCNOFILL,IRET)
 * define dimensions
+      ELSE
+        IFILL=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         XPOSDIM = NCDDEF(CDFID,'xpos',IM,IRET)
+      ELSE
+        XPOSDIM=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         YPOSDIM = NCDDEF(CDFID,'ypos',JM,IRET)
+      ELSE
+        YPOSDIM=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         ZSDVDIM = NCDDEF(CDFID,'zpos',KBot,IRET) ! CNG03312009 FOR BACKCOMPATIBILITY WITH SDV
+      ELSE
+        ZSDVDIM=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         ZPOSDIM = NCDDEF(CDFID,'sigma',KBot,IRET) ! CNG03312009 FOR CF  1.4 CONVENTIONS
+      ELSE
+        ZPOSDIM=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         TIMEDIM = NCDDEF(CDFID,'time',NCUNLIM,IRET)
+      ELSE
+        TIMEDIM=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         CBNDDIM = NCDDEF(CDFID,'vertices',4,IRET) ! CNG03312009 4 cell-bounding certices 
 * define variables
 *   1D Vars 
 !        print *, "timedim=", timedim
 !NG03312009 DEFINE CARTESIAN COORDINATES TOO, CF1.4 CONVENTIONS
+      ELSE
+        CBNDDIM=0
+      ENDIF
         DIMS(1) = XPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
         XPOSID = NCVDEF(CDFID,'xpos',NCFLOAT,1,DIMS,IRET)
+      ELSE
+        XPOSID=0
+      ENDIF
         DIMS(1) = YPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
         YPOSID = NCVDEF(CDFID,'ypos',NCFLOAT,1,DIMS,IRET)
 
+      ELSE
+        YPOSID=0
+      ENDIF
         DIMS(1) = TIMEDIM
+      IF (SMPI_RANK.EQ.0) THEN
         TID = NCVDEF(CDFID,'time',NCFLOAT,1,DIMS,IRET)
+      ELSE
+        TID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         DATEID = NCVDEF(CDFID,'date',NCDOUBLE,1,DIMS,IRET)
 !       TXID = NCVDEF(CDFID,'taux',NCFLOAT,1,DIMS,IRET)  !NKIM 1.12.00
 !       TYID = NCVDEF(CDFID,'tauy',NCFLOAT,1,DIMS,IRET)  !NKIM 1.12.00
 !NG02222007
 !NG03092007        IF(WAVEDYN.NE.'DONONLY ')THEN
+      ELSE
+        DATEID=0
+      ENDIF
          DIMS(1) = ZSDVDIM
+      IF (SMPI_RANK.EQ.0) THEN
          ZSDVID = NCVDEF(CDFID,'layer_bnds',NCFLOAT,1,DIMS,IRET)
+      ELSE
+        ZSDVID=0
+      ENDIF
          DIMS(1) = ZPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
          SIGMAID = NCVDEF(CDFID,'sigma',NCFLOAT,1,DIMS,IRET)
 !NG03092007        ENDIF
 *   2D Vars
+      ELSE
+        SIGMAID=0
+      ENDIF
         DIMS(2) = YPOSDIM
         DIMS(1) = XPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
         XID = NCVDEF(CDFID,'x',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        XID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         YID = NCVDEF(CDFID,'y',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        YID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         XCID = NCVDEF(CDFID,'lon',NCFLOAT,2,DIMS,IRET) ! NG04022008
+      ELSE
+        XCID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         YCID = NCVDEF(CDFID,'lat',NCFLOAT,2,DIMS,IRET) ! NG04022008
+      ELSE
+        YCID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         H1ID = NCVDEF(CDFID,'h1',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        H1ID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         H2ID = NCVDEF(CDFID,'h2',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        H2ID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         DEPTHID = NCVDEF(CDFID,'depth',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        DEPTHID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         ANGID = NCVDEF(CDFID,'ang',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        ANGID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         FSMID = NCVDEF(CDFID,'FSM',NCFLOAT,2,DIMS,IRET)
+      ELSE
+        FSMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         DUMID = NCVDEF(CDFID,'DUM',NCFLOAT,2,DIMS,IRET) ! NG08072008
+      ELSE
+        DUMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         DVMID = NCVDEF(CDFID,'DVM',NCFLOAT,2,DIMS,IRET) ! NG08072008
 !       BTYPEID = NCVDEF(CDFID,'btype',NCFLOAT,2,DIMS,IRET)
 *   3D Vars
 !NG03312009 NEW VARS FOR BOUNDS
+      ELSE
+        DVMID=0
+      ENDIF
         DIMS(3) = YPOSDIM
         DIMS(2) = XPOSDIM
         DIMS(1) = CBNDDIM ! This needs to be the fastest-varying dimension in CF-1.7, NG 04/23/2014
 
+      IF (SMPI_RANK.EQ.0) THEN
         LNBNDID = NCVDEF(CDFID,'lon_bnds',NCFLOAT,3,DIMS,IRET)
-        Call NCAPTC(CDFID,LNBNDID,'long_name',NCCHAR,16,
+      ELSE
+        LNBNDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,LNBNDID,'long_name',NCCHAR,16,
      *             'Vertex longitude',IRET)
-        Call NCAPTC(CDFID,LNBNDID,'units',NCCHAR,12,'degrees_east',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,LNBNDID,'units',NCCHAR,12,'degrees_east',IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,LNBNDID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,LNBNDID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,LNBNDID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,LNBNDID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
+      IF (SMPI_RANK.EQ.0) THEN
         LTBNDID = NCVDEF(CDFID,'lat_bnds',NCFLOAT,3,DIMS,IRET)
-        Call NCAPTC(CDFID,LTBNDID,'long_name',NCCHAR,15,
+      ELSE
+        LTBNDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,LTBNDID,'long_name',NCCHAR,15,
      *             'Vertex latitude',IRET)
-        Call NCAPTC(CDFID,LTBNDID,'units',NCCHAR,13,'degrees_north'
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,LTBNDID,'units',NCCHAR,13,'degrees_north'
      *              ,IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,LTBNDID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,LTBNDID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,LTBNDID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,LTBNDID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
         DIMS(3) = TIMEDIM
         DIMS(2) = YPOSDIM
         DIMS(1) = XPOSDIM
 !NG02222007
         IF(WAVEDYN.NE.'DONONLY ')THEN
+      IF (SMPI_RANK.EQ.0) THEN
          ELID = NCVDEF(CDFID,'elev',NCSHORT,3,DIMS,IRET)
+      ELSE
+        ELID=0
+      ENDIF
         ENDIF
 *   1D, 2D, and 3D attributes
-        Call NCAPTC(CDFID,XID,'long_name',NCCHAR,16,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XID,'long_name',NCCHAR,16,
      *             'Corner longitude',IRET)
-        Call NCAPTC(CDFID,XID,'units',NCCHAR,12,'degrees_east',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XID,'units',NCCHAR,12,'degrees_east',IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,XID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,XID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,XID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,XID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
-        Call NCAPTC(CDFID,XCID,'long_name',NCCHAR,11,'center long',IRET)! NG04022008
-        Call NCAPTC(CDFID,XCID,'units',NCCHAR,12,'degrees_east',IRET) ! NG04022008
-        Call NCAPTC(CDFID,XCID,'standard_name',NCCHAR,9,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XCID,'long_name',NCCHAR,11,'center long',IRET)! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XCID,'units',NCCHAR,12,'degrees_east',IRET) ! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XCID,'standard_name',NCCHAR,9,
      *              'longitude',IRET)
-        Call NCAPTC(CDFID,XCID,'bounds',NCCHAR,8,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XCID,'bounds',NCCHAR,8,
      *              'lon_bnds',IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,XCID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,XCID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,XCID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,XCID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
-        Call NCAPTC(CDFID,H1ID,'long_name',NCCHAR,9,'dx metric',IRET)
-        Call NCAPTC(CDFID,H1ID,'units',NCCHAR,6,'meters',IRET)
-        Call NCAPTC(CDFID,H1ID,'coordinates',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H1ID,'long_name',NCCHAR,9,'dx metric',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H1ID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H1ID,'coordinates',NCCHAR,7,
      *              'lat lon',IRET)
 
-        Call NCAPTC(CDFID,YID,'long_name',NCCHAR,15,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YID,'long_name',NCCHAR,15,
      *             'Corner latitude',IRET)
-        Call NCAPTC(CDFID,YID,'units',NCCHAR,13,'degrees_north',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YID,'units',NCCHAR,13,'degrees_north',IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,YID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,YID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,YID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,YID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
-        Call NCAPTC(CDFID,YCID,'long_name',NCCHAR,10,'center lat',IRET) ! NG04022008
-        Call NCAPTC(CDFID,YCID,'units',NCCHAR,13,'degrees_north',IRET) ! NG04022008
-        Call NCAPTC(CDFID,YCID,'standard_name',NCCHAR,8,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YCID,'long_name',NCCHAR,10,'center lat',IRET) ! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YCID,'units',NCCHAR,13,'degrees_north',IRET) ! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YCID,'standard_name',NCCHAR,8,
      *              'latitude',IRET)
-        Call NCAPTC(CDFID,YCID,'bounds',NCCHAR,8,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YCID,'bounds',NCCHAR,8,
      *              'lat_bnds',IRET)
         VRNG(1) = -361.
         VRNG(2) = 361.
-        Call NCAPT(CDFID,YCID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,YCID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,YCID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,YCID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
 
-        Call NCAPTC(CDFID,H2ID,'long_name',NCCHAR,9,'dy metric',IRET)
-        Call NCAPTC(CDFID,H2ID,'units',NCCHAR,6,'meters',IRET)
-        Call NCAPTC(CDFID,H2ID,'coordinates',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H2ID,'long_name',NCCHAR,9,'dy metric',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H2ID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,H2ID,'coordinates',NCCHAR,7,
      *              'lat lon',IRET)
 !NG02222007
 !NG03092007        IF(WAVEDYN.NE.'DONONLY ')THEN
 
-        Call NCAPTC(CDFID,XPOSID,'long_name',NCCHAR,32,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XPOSID,'long_name',NCCHAR,32,
      *              'X-coordinate in Cartesian system',IRET)
-        Call NCAPTC(CDFID,XPOSID,'units',NCCHAR,1,'m',IRET)
-        Call NCAPTC(CDFID,XPOSID,'axis',NCCHAR,1,'X',IRET)
-        Call NCAPTC(CDFID,YPOSID,'long_name',NCCHAR,32,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XPOSID,'units',NCCHAR,1,'m',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,XPOSID,'axis',NCCHAR,1,'X',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YPOSID,'long_name',NCCHAR,32,
      *              'Y-coordinate in Cartesian system',IRET)
-        Call NCAPTC(CDFID,YPOSID,'units',NCCHAR,1,'m',IRET)
-        Call NCAPTC(CDFID,YPOSID,'axis',NCCHAR,1,'Y',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YPOSID,'units',NCCHAR,1,'m',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,YPOSID,'axis',NCCHAR,1,'Y',IRET)
 
 !NG05292009 Store Sigma Levels (bounds) also for back-compatibility
-        Call NCAPTC(CDFID,ZSDVID,'long_name',NCCHAR,46,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ZSDVID,'long_name',NCCHAR,46,
      *       'bounds of stretched vertical coordinate levels',IRET)
-        Call NCAPTC(CDFID,ZSDVID,'units',NCCHAR,1,'1',
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ZSDVID,'units',NCCHAR,1,'1',
      *      IRET)
-        Call NCAPTC(CDFID,ZSDVID,'positive',NCCHAR,2,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ZSDVID,'positive',NCCHAR,2,
      *              'up',IRET)
 
 !NGCF CAREFUL IF COARDS        Call NCAPTC(CDFID,SIGMAID,'units',NCCHAR,11,'sigma_level',
 !NGCF CAREFUL IF COARDS     *      IRET)
-        Call NCAPTC(CDFID,SIGMAID,'long_name',NCCHAR,36,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'long_name',NCCHAR,36,
      *       'stretched vertical coordinate levels',IRET)
-        Call NCAPTC(CDFID,SIGMAID,'units',NCCHAR,1,'1',
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'units',NCCHAR,1,'1',
      *      IRET)
-        Call NCAPTC(CDFID,SIGMAID,'positive',NCCHAR,2,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'positive',NCCHAR,2,
      *              'up',IRET)
-        Call NCAPTC(CDFID,SIGMAID,'standard_name',NCCHAR,22,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'standard_name',NCCHAR,22,
      *              'ocean_sigma_coordinate',IRET)
-        Call NCAPTC(CDFID,SIGMAID,'formula_terms',NCCHAR,35,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'formula_terms',NCCHAR,35,
      *              'sigma: sigma eta: elev depth: depth',IRET)
-        Call NCAPTC(CDFID,SIGMAID,'axis',NCCHAR,1,'Z',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,SIGMAID,'axis',NCCHAR,1,'Z',IRET)
 !NG03312009 The following are IDV specific (?)
 !NG        Call NCAPTC(CDFID,SIGMAID,'_CoordinateAxisType',NCCHAR,4,
 !NG     *              'GeoZ',IRET)
@@ -436,28 +597,41 @@
 !NG     *              'sigma',IRET)
 
 !NG03092007        ENDIF
-        Call NCAPTC(CDFID,DEPTHID,'long_name',NCCHAR,10,'Bathymetry',
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DEPTHID,'long_name',NCCHAR,10,'Bathymetry',
      *      IRET)
-        Call NCAPTC(CDFID,DEPTHID,'units',NCCHAR,6,'meters',IRET)
-        Call NCAPTC(CDFID,DEPTHID,'standard_name',NCCHAR,5,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DEPTHID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DEPTHID,'standard_name',NCCHAR,5,
      *              'depth',IRET)
-        Call NCAPTC(CDFID,DEPTHID,'positive',NCCHAR,4,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DEPTHID,'positive',NCCHAR,4,
      *              'down',IRET)
-        Call NCAPTC(CDFID,DEPTHID,'coordinates',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DEPTHID,'coordinates',NCCHAR,7,
      *              'lat lon',IRET)
-        Call NCAPTC(CDFID,ANGID,'long_name',NCCHAR,10,'grid angle',IRET)
-        Call NCAPTC(CDFID,ANGID,'units',NCCHAR,7,'radians',IRET)
-        Call NCAPTC(CDFID,ANGID,'standard_name',NCCHAR,32,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ANGID,'long_name',NCCHAR,10,'grid angle',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ANGID,'units',NCCHAR,7,'radians',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ANGID,'standard_name',NCCHAR,32,
      *              'angle_of_rotation_from_east_to_x',IRET)
-        Call NCAPTC(CDFID,ANGID,'coordinates',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ANGID,'coordinates',NCCHAR,7,
      *              'lat lon',IRET)
-        Call NCAPTC(CDFID,FSMID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,FSMID,'long_name',NCCHAR,17,
      *       'free surface mask',IRET)
-        Call NCAPTC(CDFID,FSMID,'coordinates',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,FSMID,'coordinates',NCCHAR,7,
      *              'lat lon',IRET)
-        Call NCAPTC(CDFID,DUMID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DUMID,'long_name',NCCHAR,17,
      *       'U1-direction mask',IRET) ! NG08072008
-        Call NCAPTC(CDFID,DVMID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DVMID,'long_name',NCCHAR,17,
      *       'V1-direction mask',IRET) ! NG08072008
 !       Call NCAPTC(CDFID,BTYPEID,'long_name',NCCHAR,12,'bottom types',
 !    *      IRET)
@@ -465,16 +639,24 @@
         VRNG(1) = HMIN ! CAREFUL HERE, ONLY FOR DEPTH NG03312009
         VRNG(2) = HMAX ! CAREFUL HERE, ONLY FOR DEPTH NG03312009
 !        Write (*,*) 'hmin,hmax', HMIN, HMAX
-        Call NCAPT(CDFID,DEPTHID,'valid_range',NCFLOAT,2,VRNG,IRET)
-        Call NCAPT(CDFID,DEPTHID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
-        Call NCAPTC(CDFID,TID,'long_name',NCCHAR,4,'Time',IRET)
-        Call NCAPT(CDFID,TID,'base_date',NCLONG,4,BASE_DATE,IRET)
-        Call NCAPTC(CDFID,TID,'units',NCCHAR,37,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,DEPTHID,'valid_range',NCFLOAT,2,VRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,DEPTHID,'_FillValue',NCFLOAT,1,RFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,TID,'long_name',NCCHAR,4,'Time',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,TID,'base_date',NCLONG,4,BASE_DATE,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,TID,'units',NCCHAR,37,
      *              'days since '//BASEDATE,IRET)
-        Call NCAPTC(CDFID,TID,'standard_name',NCCHAR,4,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,TID,'standard_name',NCCHAR,4,
      *              'time',IRET)
-        Call NCAPTC(CDFID,TID,'axis',NCCHAR,1,'T',IRET)
-        Call NCAPTC(CDFID,DATEID,'long_name',NCCHAR,9,'Date_Time',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,TID,'axis',NCCHAR,1,'T',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,DATEID,'long_name',NCCHAR,9,'Date_Time',IRET)
 !       Call NCAPTC(CDFID,TXID,'long_name',NCCHAR,16,'East Wind Stress',
 !    *      IRET)
 !       Call NCAPTC(CDFID,TXID,'units',NCCHAR,6,'pascal',IRET)
@@ -490,63 +672,95 @@
         IRNG(1) = NINT((ELMIN-ELOF)/ELSC)
         IRNG(2) = NINT((ELMAX-ELOF)/ELSC)
 !        Write (*,*) 'elmin,elmax', ELMIN, ELMAX
-        Call NCAPT(CDFID,ELID,'valid_range',NCSHORT,2,IRNG,IRET) 
-        Call NCAPT(CDFID,ELID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-        Call NCAPTC(CDFID,ELID,'long_name',NCCHAR,9,'Elevation',IRET)
-        Call NCAPTC(CDFID,ELID,'units',NCCHAR,6,'meters',IRET)
-        Call NCAPTC(CDFID,ELID,'standard_name',NCCHAR,34,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,ELID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,ELID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ELID,'long_name',NCCHAR,9,'Elevation',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ELID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ELID,'standard_name',NCCHAR,34,
      *              'sea_surface_height_above_sea_level',IRET)
-        Call NCAPTC(CDFID,ELID,'positive',NCCHAR,2,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ELID,'positive',NCCHAR,2,
      *              'up',IRET)
-        Call NCAPTC(CDFID,ELID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,ELID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
         FLOATVAL(1) = ELSC
-        Call NCAPT(CDFID,ELID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,ELID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
         FLOATVAL(1) = ELOF
-        Call NCAPT(CDFID,ELID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,ELID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         If (PTHF.EQ.'y'.OR.PTHF.EQ.'Y') Then
 * define heatflux
           DIMS(3) = TIMEDIM
           DIMS(2) = YPOSDIM
           DIMS(1) = XPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
           HFID = NCVDEF(CDFID,'heat_flux',NCSHORT,3,DIMS,IRET)
 !         Write (*,*) 'hfmin,hfmax', HFMIN, HFMAX
+      ELSE
+        HFID=0
+      ENDIF
           IRNG(1) = NINT((HFMIN-HFOF)/HFSC)
           IRNG(2) = NINT((HFMAX-HFOF)/HFSC)
-          Call NCAPT(CDFID,HFID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,HFID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,HFID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,HFID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,HFID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,HFID,'long_name',NCCHAR,17,
      *         'heat_flux in W/m2',IRET)
-          Call NCAPTC(CDFID,HFID,'units',NCCHAR,5,'W m-2',IRET)
-          Call NCAPTC(CDFID,HFID,'standard_name',NCCHAR,39,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,HFID,'units',NCCHAR,5,'W m-2',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,HFID,'standard_name',NCCHAR,39,
      *              'surface_downward_heat_flux_in_sea_water',IRET)
-          Call NCAPTC(CDFID,HFID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,HFID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = HFSC
-          Call NCAPT(CDFID,HFID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,HFID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = HFOF
-          Call NCAPT(CDFID,HFID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,HFID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTCD.EQ.'y'.OR.PTCD.EQ.'Y') Then
 * define bottom drag
           DIMS(3) = TIMEDIM
           DIMS(2) = YPOSDIM
           DIMS(1) = XPOSDIM
+      IF (SMPI_RANK.EQ.0) THEN
           BFID = NCVDEF(CDFID,'cbc',NCSHORT,3,DIMS,IRET)
+      ELSE
+        BFID=0
+      ENDIF
           IRNG(1) = NINT((BFMIN-BFOF)/BFSC)
           IRNG(2) = NINT((BFMAX-BFOF)/BFSC)
 !         Write (*,*) 'cdmin,cdmax', BFMIN, BFMAX
-          Call NCAPT(CDFID,BFID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,BFID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,BFID,'long_name',NCCHAR,24,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,BFID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,BFID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,BFID,'long_name',NCCHAR,24,
      &       'Bottom Drag Coefficient',IRET)
-          Call NCAPTC(CDFID,BFID,'units',NCCHAR,4,'none',IRET)
-          Call NCAPTC(CDFID,BFID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,BFID,'units',NCCHAR,4,'none',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,BFID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = BFSC
-          Call NCAPT(CDFID,BFID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,BFID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = BFOF
-          Call NCAPT(CDFID,BFID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,BFID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
 
         ENDIF
@@ -554,201 +768,332 @@
 !   Wind parameter
         If (PTWND.EQ.'y'.OR.PTWND.EQ.'Y') Then
 !   First, EW wind component
+      IF (SMPI_RANK.EQ.0) THEN
           UWNDID = NCVDEF(CDFID,'wu',NCSHORT,3,DIMS,IRET)
+      ELSE
+        UWNDID=0
+      ENDIF
           IRNG(1) = NINT((WNDMIN-WNDOF)/WNDSC)
           IRNG(2) = NINT((WNDMAX-WNDOF)/WNDSC)
-          Call NCAPT(CDFID,UWNDID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,UWNDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,UWNDID,'long_name',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UWNDID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UWNDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UWNDID,'long_name',NCCHAR,12,
      *        'EW Wind Comp',IRET)
-          Call NCAPTC(CDFID,UWNDID,'units',NCCHAR,5,'m s-1',IRET)
-          Call NCAPTC(CDFID,UWNDID,'standard_name',NCCHAR,13,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UWNDID,'units',NCCHAR,5,'m s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UWNDID,'standard_name',NCCHAR,13,
      *              'eastward_wind',IRET)
-          Call NCAPTC(CDFID,UWNDID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UWNDID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = WNDSC
-         Call NCAPT(CDFID,UWNDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,UWNDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WNDOF
-          Call NCAPT(CDFID,UWNDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UWNDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
 !   Second, NS wind component
+      IF (SMPI_RANK.EQ.0) THEN
           VWNDID = NCVDEF(CDFID,'wv',NCSHORT,3,DIMS,IRET)
+      ELSE
+        VWNDID=0
+      ENDIF
           IRNG(1) = NINT((WNDMIN-WNDOF)/WNDSC)
           IRNG(2) = NINT((WNDMAX-WNDOF)/WNDSC)
-          Call NCAPT(CDFID,VWNDID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,VWNDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,VWNDID,'long_name',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VWNDID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VWNDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VWNDID,'long_name',NCCHAR,12,
      *        'NS Wind Comp',IRET)
-          Call NCAPTC(CDFID,VWNDID,'units',NCCHAR,5,'m s-1',IRET)
-          Call NCAPTC(CDFID,VWNDID,'standard_name',NCCHAR,14,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VWNDID,'units',NCCHAR,5,'m s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VWNDID,'standard_name',NCCHAR,14,
      *              'northward_wind',IRET)
-          Call NCAPTC(CDFID,VWNDID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VWNDID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = WNDSC
-         Call NCAPT(CDFID,VWNDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,VWNDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WNDOF
-          Call NCAPT(CDFID,VWNDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VWNDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End if
 !   Atmospheric Pressure NG01172008
         If ((PTPATM.EQ.'y'.OR.PTPATM.EQ.'Y').AND.WAVEDYN.NE.'DONONLY ')
      +   Then
+      IF (SMPI_RANK.EQ.0) THEN
          PATMID = NCVDEF(CDFID,'patm',NCSHORT,3,DIMS,IRET)
+      ELSE
+        PATMID=0
+      ENDIF
          IRNG(1) = NINT((PATMMIN-PATMOF)/PATMSC)
          IRNG(2) = NINT((PATMMAX-PATMOF)/PATMSC)
-         Call NCAPT(CDFID,PATMID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,PATMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,PATMID,'long_name',NCCHAR,20,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,PATMID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,PATMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,PATMID,'long_name',NCCHAR,20,
      *       'Atmospheric pressure',IRET)
-         Call NCAPTC(CDFID,PATMID,'units',NCCHAR,4,'mbar',IRET)
-         Call NCAPTC(CDFID,PATMID,'standard_name',NCCHAR,25,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,PATMID,'units',NCCHAR,4,'mbar',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,PATMID,'standard_name',NCCHAR,25,
      *              'air_pressure_at_sea_level',IRET)
-         Call NCAPTC(CDFID,PATMID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,PATMID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = PATMSC
-         Call NCAPT(CDFID,PATMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,PATMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = PATMOF
-         Call NCAPT(CDFID,PATMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,PATMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End if
 !   Rainfall rate NG09212011
        If ((PTQPREC.EQ.'y'.OR.PTQPREC.EQ.'Y').AND.WAVEDYN.NE.'DONONLY ')
      +   Then
+      IF (SMPI_RANK.EQ.0) THEN
          QPRECID = NCVDEF(CDFID,'qprec',NCSHORT,3,DIMS,IRET)
+      ELSE
+        QPRECID=0
+      ENDIF
          IRNG(1) = NINT((QPRECMIN-QPRECOF)/QPRECSC)
          IRNG(2) = NINT((QPRECMAX-QPRECOF)/QPRECSC)
-         Call NCAPT(CDFID,QPRECID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,QPRECID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,QPRECID,'long_name',NCCHAR,13,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,QPRECID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,QPRECID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,QPRECID,'long_name',NCCHAR,13,
      *       'Rainfall rate',IRET)
-         Call NCAPTC(CDFID,QPRECID,'units',NCCHAR,7,'mm hr-1',IRET)
-         Call NCAPTC(CDFID,QPRECID,'standard_name',NCCHAR,13,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,QPRECID,'units',NCCHAR,7,'mm hr-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,QPRECID,'standard_name',NCCHAR,13,
      *             'rainfall_rate',IRET)
-         Call NCAPTC(CDFID,QPRECID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,QPRECID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = QPRECSC
-        Call NCAPT(CDFID,QPRECID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,QPRECID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = QPRECOF
-         Call NCAPT(CDFID,QPRECID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,QPRECID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End if
 !   Other 2D Met variables NG04072008
         If((PT2DMET.EQ.'y'.OR.PT2DMET.EQ.'Y').AND.WAVEDYN.NE.'DONONLY ')
      +   Then
+      IF (SMPI_RANK.EQ.0) THEN
          AIRTID = NCVDEF(CDFID,'airt',NCSHORT,3,DIMS,IRET)
+      ELSE
+        AIRTID=0
+      ENDIF
          IRNG(1) = NINT((AIRTMIN-AIRTOF)/AIRTSC)
          IRNG(2) = NINT((AIRTMAX-AIRTOF)/AIRTSC)
-         Call NCAPT(CDFID,AIRTID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,AIRTID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,AIRTID,'long_name',NCCHAR,32,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,AIRTID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,AIRTID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,AIRTID,'long_name',NCCHAR,32,
      *       '2m-above-surface Air Temperature',IRET)
-         Call NCAPTC(CDFID,AIRTID,'units',NCCHAR,7,'Celsius',IRET)
-         Call NCAPTC(CDFID,AIRTID,'standard_name',NCCHAR,19,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,AIRTID,'units',NCCHAR,7,'Celsius',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,AIRTID,'standard_name',NCCHAR,19,
      *              'surface_temperature',IRET)
-         Call NCAPTC(CDFID,AIRTID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,AIRTID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = AIRTSC
-         Call NCAPT(CDFID,AIRTID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,AIRTID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = AIRTOF
-         Call NCAPT(CDFID,AIRTID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,AIRTID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0) THEN
          CLDID = NCVDEF(CDFID,'cld',NCSHORT,3,DIMS,IRET)
+      ELSE
+        CLDID=0
+      ENDIF
          IRNG(1) = NINT((CLDMIN-CLDOF)/CLDSC)
          IRNG(2) = NINT((CLDMAX-CLDOF)/CLDSC)
-         Call NCAPT(CDFID,CLDID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,CLDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,CLDID,'long_name',NCCHAR,20,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,CLDID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,CLDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,CLDID,'long_name',NCCHAR,20,
      *       'Cloud Cover fraction',IRET)
-         Call NCAPTC(CDFID,CLDID,'units',NCCHAR,1,'1',IRET)
-         Call NCAPTC(CDFID,CLDID,'standard_name',NCCHAR,19,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,CLDID,'units',NCCHAR,1,'1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,CLDID,'standard_name',NCCHAR,19,
      *              'cloud_area_fraction',IRET)
-         Call NCAPTC(CDFID,CLDID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,CLDID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = CLDSC
-         Call NCAPT(CDFID,CLDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,CLDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = CLDOF
-         Call NCAPT(CDFID,CLDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,CLDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0) THEN
          RHUMID = NCVDEF(CDFID,'rhum',NCSHORT,3,DIMS,IRET)
+      ELSE
+        RHUMID=0
+      ENDIF
          IRNG(1) = NINT((RHUMMIN-RHUMOF)/RHUMSC)
          IRNG(2) = NINT((RHUMMAX-RHUMOF)/RHUMSC)
-         Call NCAPT(CDFID,RHUMID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,RHUMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,RHUMID,'long_name',NCCHAR,34,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,RHUMID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,RHUMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,RHUMID,'long_name',NCCHAR,34,
      *       '2m-above-surface Relative Humidity',IRET)
-         Call NCAPTC(CDFID,RHUMID,'units',NCCHAR,7,'percent',IRET)
-         Call NCAPTC(CDFID,RHUMID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,RHUMID,'units',NCCHAR,7,'percent',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,RHUMID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = RHUMSC
-         Call NCAPT(CDFID,RHUMID,'scale_factor',
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,RHUMID,'scale_factor',
      +              NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = RHUMOF
-         Call NCAPT(CDFID,RHUMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,RHUMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0) THEN
          SWOBSID = NCVDEF(CDFID,'swobs',NCSHORT,3,DIMS,IRET)
+      ELSE
+        SWOBSID=0
+      ENDIF
          IRNG(1) = NINT((SWOBSMIN-SWOBSOF)/SWOBSSC)
          IRNG(2) = NINT((SWOBSMAX-SWOBSOF)/SWOBSSC)
-         Call NCAPT(CDFID,SWOBSID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,SWOBSID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,SWOBSID,'long_name',NCCHAR,27,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,SWOBSID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,SWOBSID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,SWOBSID,'long_name',NCCHAR,27,
      *       'Shortwave Radiation in W/m2',IRET)
-         Call NCAPTC(CDFID,SWOBSID,'units',NCCHAR,5,'W m-2',IRET)
-         Call NCAPTC(CDFID,SWOBSID,'standard_name',NCCHAR,41,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,SWOBSID,'units',NCCHAR,5,'W m-2',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,SWOBSID,'standard_name',NCCHAR,41,
      *               'surface_downwelling_shortwave_flux_in_air',IRET)
-         Call NCAPTC(CDFID,SWOBSID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,SWOBSID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
          FLOATVAL(1) = SWOBSSC
-         Call NCAPT(CDFID,SWOBSID,'scale_factor',
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,SWOBSID,'scale_factor',
      +              NCFLOAT,1,FLOATVAL,IRET)
          FLOATVAL(1) = SWOBSOF
-         Call NCAPT(CDFID,SWOBSID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,SWOBSID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End if
 !   Wave parameters
         If (PTWAVE.EQ.'Y'.OR.PTWAVE.EQ.'y') Then
 !    First, Wave Heights
+      IF (SMPI_RANK.EQ.0) THEN
           WHID = NCVDEF(CDFID,'wh',NCSHORT,3,DIMS,IRET)
+      ELSE
+        WHID=0
+      ENDIF
           IRNG(1) = NINT((WHMIN-WHOF)/WHSC)
           IRNG(2) = NINT((WHMAX-WHOF)/WHSC)
-          Call NCAPT(CDFID,WHID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,WHID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,WHID,'long_name',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WHID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WHID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WHID,'long_name',NCCHAR,12,
      *        'wave heights',IRET)
-          Call NCAPTC(CDFID,WHID,'units',NCCHAR,6,'meters',IRET)
-          Call NCAPTC(CDFID,WHID,'standard_name',NCCHAR,40,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WHID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WHID,'standard_name',NCCHAR,40,
      *               'sea_surface_wind_wave_significant_height',IRET)
-          Call NCAPTC(CDFID,WHID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WHID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = WHSC
-          Call NCAPT(CDFID,WHID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WHID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WHOF
-          Call NCAPT(CDFID,WHID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WHID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
 !    Second, Wave Periods
+      IF (SMPI_RANK.EQ.0) THEN
           WPID = NCVDEF(CDFID,'wp',NCSHORT,3,DIMS,IRET)
+      ELSE
+        WPID=0
+      ENDIF
           IRNG(1) = NINT((WPMIN-WPOF)/WPSC)
           IRNG(2) = NINT((WPMAX-WPOF)/WPSC)
-          Call NCAPT(CDFID,WPID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,WPID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,WPID,'long_name',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WPID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WPID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WPID,'long_name',NCCHAR,12,
      *        'wave periods',IRET)
-          Call NCAPTC(CDFID,WPID,'units',NCCHAR,3,'sec',IRET)
-          Call NCAPTC(CDFID,WPID,'standard_name',NCCHAR,28,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WPID,'units',NCCHAR,3,'sec',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WPID,'standard_name',NCCHAR,28,
      *               'sea_surface_wind_wave_period',IRET)
-          Call NCAPTC(CDFID,WPID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WPID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = WPSC
-          Call NCAPT(CDFID,WPID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WPID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WPOF
-          Call NCAPT(CDFID,WPID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WPID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
 !    Third, Wave Direction
+      IF (SMPI_RANK.EQ.0) THEN
           WDID = NCVDEF(CDFID,'wd',NCSHORT,3,DIMS,IRET)
+      ELSE
+        WDID=0
+      ENDIF
           IRNG(1) = NINT((WDMIN-WDOF)/WDSC)
           IRNG(2) = NINT((WDMAX-WDOF)/WDSC)
-          Call NCAPT(CDFID,WDID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,WDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,WDID,'long_name',NCCHAR,54,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WDID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WDID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WDID,'long_name',NCCHAR,54,
      *    'Significant Wave Direction in Oceanographic Convention',IRET)
-          Call NCAPTC(CDFID,WDID,'units',NCCHAR,13,'degrees_north',IRET)
-          Call NCAPTC(CDFID,WDID,'standard_name',NCCHAR,34,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WDID,'units',NCCHAR,13,'degrees_north',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WDID,'standard_name',NCCHAR,34,
      *               'sea_surface_wind_wave_to_direction',IRET)
-          Call NCAPTC(CDFID,WDID,'coordinates',NCCHAR,12,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WDID,'coordinates',NCCHAR,12,
      *              'lat lon time',IRET)
           FLOATVAL(1) = WDSC
-          Call NCAPT(CDFID,WDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WDID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WDOF
-          Call NCAPT(CDFID,WDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WDID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
 *   4D Vars
         
@@ -761,267 +1106,428 @@
 !NG03312009 The following are IDV specific for depth mapping
 !NG03312009 IDV does not recognize the CF sigma.positive.up convention.
         If (PTD.EQ.'y') Then
+      IF (SMPI_RANK.EQ.0) THEN
          DEPTHTID = NCVDEF(CDFID,'depth_t',NCSHORT,4,DIMS,IRET)
+      ELSE
+        DEPTHTID=0
+      ENDIF
          IRNG(1) = NINT((DPMIN-DPOF)/DPSC)
          IRNG(2) = NINT((DPMAX-DPOF)/DPSC)
-         Call NCAPT(CDFID,DEPTHTID,'valid_range',NCSHORT,2,IRNG,IRET)
-         Call NCAPT(CDFID,DEPTHTID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-         Call NCAPTC(CDFID,DEPTHTID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,DEPTHTID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,DEPTHTID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,DEPTHTID,'long_name',NCCHAR,17,
      *       'vertical_position',IRET)
-         Call NCAPTC(CDFID,DEPTHTID,'units',NCCHAR,6,'meters',IRET)
-         Call NCAPTC(CDFID,DEPTHTID,'positive',NCCHAR,2,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,DEPTHTID,'units',NCCHAR,6,'meters',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,DEPTHTID,'positive',NCCHAR,2,
      *             'up',IRET)
-         Call NCAPTC(CDFID,DEPTHTID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,DEPTHTID,'coordinates',NCCHAR,18,
      *               'lat lon sigma time',IRET)
          FLOATVAL(1) = DPSC
-         Call NCAPT(CDFID,DEPTHTID,'scale_factor',NCFLOAT,1
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,DEPTHTID,'scale_factor',NCFLOAT,1
      *             ,FLOATVAL,IRET)
          FLOATVAL(1) = DPOF
-         Call NCAPT(CDFID,DEPTHTID,'add_offset',NCFLOAT,1
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPT(CDFID,DEPTHTID,'add_offset',NCFLOAT,1
      *             ,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0) THEN
          EXPLTID= NCVDEF(CDFID,'ExplicitField',NCCHAR,0,0,IRET)
-         Call NCAPTC(CDFID,EXPLTID,'standard_name',NCCHAR,14,
+      ELSE
+        EXPLTID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,EXPLTID,'standard_name',NCCHAR,14,
      *               'explicit_field',IRET)
-         Call NCAPTC(CDFID,EXPLTID,'existingDataField',NCCHAR,7,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,EXPLTID,'existingDataField',NCCHAR,7,
      *               'depth_t',IRET)
-         Call NCAPTC(CDFID,EXPLTID,'_CoordinateTransformType',NCCHAR
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,EXPLTID,'_CoordinateTransformType',NCCHAR
      *               ,8,'vertical',IRET)
-         Call NCAPTC(CDFID,EXPLTID,'_CoordinateAxes',NCCHAR,5,
+      IF (SMPI_RANK.EQ.0)
+     &   Call NCAPTC(CDFID,EXPLTID,'_CoordinateAxes',NCCHAR,5,
      *               'sigma',IRET)
         Endif
     
         If (PTU.EQ.'Y'.OR.PTU.EQ.'y') Then
 !   u velocity
+      IF (SMPI_RANK.EQ.0) THEN
           UID = NCVDEF(CDFID,'u',NCSHORT,4,DIMS,IRET)
+      ELSE
+        UID=0
+      ENDIF
           IRNG(1) = NINT((VELMIN-VELOF)/VELSC)
           IRNG(2) = NINT((VELMAX-VELOF)/VELSC)
 !           Write (*,*) 'umin,umax', VELMIN, VELMAX, VRNG
-          Call NCAPT(CDFID,UID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,UID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,UID,'long_name',NCCHAR,27,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UID,'long_name',NCCHAR,27,
      *              'eastward_sea_water_velocity',IRET)
-          Call NCAPTC(CDFID,UID,'units',NCCHAR,5,'m s-1',IRET)
-          Call NCAPTC(CDFID,UID,'standard_name',NCCHAR,27,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UID,'units',NCCHAR,5,'m s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UID,'standard_name',NCCHAR,27,
      *              'eastward_sea_water_velocity',IRET)
-          Call NCAPTC(CDFID,UID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = VELSC
-          Call NCAPT(CDFID,UID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = VELOF
-          Call NCAPT(CDFID,UID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTUF.EQ.'Y'.OR.PTUF.EQ.'y') Then
 !   u flux
+      IF (SMPI_RANK.EQ.0) THEN
           UFLXID = NCVDEF(CDFID,'uflux',NCSHORT,4,DIMS,IRET)
-          Call NCAPTC(CDFID,UFLXID,'type',NCCHAR,6,'scalar',IRET)
+      ELSE
+        UFLXID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UFLXID,'type',NCCHAR,6,'scalar',IRET)
           IRNG(1) = NINT((FLXMIN-FLXOF)/FLXSC)
           IRNG(2) = NINT((FLXMAX-FLXOF)/FLXSC)
 !          Write (*,*) 'flxmin,flxmax', FLXMIN, FLXMAX, VRNG
-          Call NCAPT(CDFID,UFLXID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,UFLXID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,UFLXID,'long_name',NCCHAR,38
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UFLXID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UFLXID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UFLXID,'long_name',NCCHAR,38
      *                ,'U1 advective transport per sigma layer',IRET)
-          Call NCAPTC(CDFID,UFLXID,'units',NCCHAR,6,'m3 s-1',IRET)
-          Call NCAPTC(CDFID,UFLXID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UFLXID,'units',NCCHAR,6,'m3 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,UFLXID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = FLXSC
-          Call NCAPT(CDFID,UFLXID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UFLXID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET
      *        )
           FLOATVAL(1) = FLXOF
-          Call NCAPT(CDFID,UFLXID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,UFLXID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTV.EQ.'Y'.OR.PTV.EQ.'y') Then
 !   v velocity
+      IF (SMPI_RANK.EQ.0) THEN
           VID = NCVDEF(CDFID,'v',NCSHORT,4,DIMS,IRET)
+      ELSE
+        VID=0
+      ENDIF
           IRNG(1) = NINT((VELMIN-VELOF)/VELSC)
           IRNG(2) = NINT((VELMAX-VELOF)/VELSC)
 !          Write (*,*) 'vmin,vmax', VELMIN, VELMAX, VRNG
-          Call NCAPT(CDFID,VID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,VID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,VID,'long_name',NCCHAR,28,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VID,'long_name',NCCHAR,28,
      *              'northward_sea_water_velocity',IRET)
-          Call NCAPTC(CDFID,VID,'units',NCCHAR,5,'m s-1',IRET)
-          Call NCAPTC(CDFID,VID,'standard_name',NCCHAR,28,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VID,'units',NCCHAR,5,'m s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VID,'standard_name',NCCHAR,28,
      *              'northward_sea_water_velocity',IRET)
-          Call NCAPTC(CDFID,VID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = VELSC
-          Call NCAPT(CDFID,VID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = VELOF
-          Call NCAPT(CDFID,VID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTVF.EQ.'Y'.OR.PTVF.EQ.'y') Then
 !   v flux
+      IF (SMPI_RANK.EQ.0) THEN
           VFLXID = NCVDEF(CDFID,'vflux',NCSHORT,4,DIMS,IRET)
-          Call NCAPTC(CDFID,VFLXID,'type',NCCHAR,6,'scalar',IRET)
+      ELSE
+        VFLXID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VFLXID,'type',NCCHAR,6,'scalar',IRET)
           IRNG(1) = NINT((FLXMIN-FLXOF)/FLXSC)
           IRNG(2) = NINT((FLXMAX-FLXOF)/FLXSC)
 !         Write (*,*) 'flxmin,flxmax', FLXMIN, FLXMAX, VRNG
-          Call NCAPT(CDFID,VFLXID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,VFLXID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,VFLXID,'long_name',NCCHAR,38
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VFLXID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VFLXID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VFLXID,'long_name',NCCHAR,38
      *               ,'V1 advective transport per sigma layer',IRET)
-          Call NCAPTC(CDFID,VFLXID,'units',NCCHAR,6,'m3 s-1',IRET)
-          Call NCAPTC(CDFID,VFLXID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VFLXID,'units',NCCHAR,6,'m3 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,VFLXID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = FLXSC
-          Call NCAPT(CDFID,VFLXID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VFLXID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET
      *        )
           FLOATVAL(1) = FLXOF
-          Call NCAPT(CDFID,VFLXID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,VFLXID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTW.EQ.'Y'.OR.PTW.EQ.'y') Then
 !   w velocity
+      IF (SMPI_RANK.EQ.0) THEN
           WID = NCVDEF(CDFID,'w',NCSHORT,4,DIMS,IRET)
+      ELSE
+        WID=0
+      ENDIF
           IRNG(1) = NINT((WTMIN-WTOF)/WTSC)
           IRNG(2) = NINT((WTMAX-WTOF)/WTSC)
 !          Write (*,*) 'wmin,wmax', WTMIN, WTMAX, VRNG
-          Call NCAPT(CDFID,WID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,WID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,WID,'long_name',NCCHAR,10,'W velocity',IRET)
-          Call NCAPTC(CDFID,WID,'units',NCCHAR,5,'m s-1',IRET)
-          Call NCAPTC(CDFID,WID,'standard_name',NCCHAR,25,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WID,'long_name',NCCHAR,10,'W velocity',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WID,'units',NCCHAR,5,'m s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WID,'standard_name',NCCHAR,25,
      *              'upward_sea_water_velocity',IRET)
-          Call NCAPTC(CDFID,WID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,WID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = WTSC
-          Call NCAPT(CDFID,WID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = WTOF
-          Call NCAPT(CDFID,WID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,WID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTC.EQ.'Y'.OR.PTC.EQ.'y') Then
 !   concentration
+      IF (SMPI_RANK.EQ.0) THEN
           CCID = NCVDEF(CDFID,'conc',NCSHORT,4,DIMS,IRET)
+      ELSE
+        CCID=0
+      ENDIF
           IRNG(1) = NINT((CTMIN-CTOF)/CTSC)
           IRNG(2) = NINT((CTMAX-CTOF)/CTSC)
 !         Write (*,*) 'cmin,cmax', CTMIN, CTMAX, VRNG
-          Call NCAPT(CDFID,CCID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,CCID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,CCID,'long_name',NCCHAR,13,'Concentration',
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,CCID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,CCID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,CCID,'long_name',NCCHAR,13,'Concentration',
      *        IRET)
-          Call NCAPTC(CDFID,CCID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,CCID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = CTSC
-          Call NCAPT(CDFID,CCID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,CCID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = CTOF
-          Call NCAPT(CDFID,CCID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
-          Call NCAPTC(CDFID,CCID,'units',NCCHAR,4,'none',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,CCID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,CCID,'units',NCCHAR,4,'none',IRET)
         End If
         If (PTS.EQ.'Y'.OR.PTS.EQ.'y') Then
 !   salinity
+      IF (SMPI_RANK.EQ.0) THEN
           SALID = NCVDEF(CDFID,'salt',NCSHORT,4,DIMS,IRET)
+      ELSE
+        SALID=0
+      ENDIF
           IRNG(1) = NINT((SALMIN-SALOF)/SALSC)
           IRNG(2) = NINT((SALMAX-SALOF)/SALSC)
 !          Write (*,*) 'salmin,salmax', SALMIN, SALMAX, VRNG
-          Call NCAPT(CDFID,SALID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,SALID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,SALID,'long_name',NCCHAR,15,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,SALID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,SALID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,SALID,'long_name',NCCHAR,15,
      *         'Salinity in psu',IRET)
-          Call NCAPTC(CDFID,SALID,'standard_name',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,SALID,'standard_name',NCCHAR,18,
      *              'sea_water_salinity',IRET)
-          Call NCAPTC(CDFID,SALID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,SALID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = SALSC
-          Call NCAPT(CDFID,SALID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,SALID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = SALOF
-          Call NCAPT(CDFID,SALID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
-          Call NCAPTC(CDFID,SALID,'units',NCCHAR,4,'1e-3',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,SALID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,SALID,'units',NCCHAR,4,'1e-3',IRET)
         End If
         If (PTT.EQ.'Y'.OR.PTT.EQ.'y') Then
 !   temperature
+      IF (SMPI_RANK.EQ.0) THEN
           TMPID = NCVDEF(CDFID,'temp',NCSHORT,4,DIMS,IRET)
+      ELSE
+        TMPID=0
+      ENDIF
           IRNG(1) = NINT((TMPMIN-TMPOF)/TMPSC)
           IRNG(2) = NINT((TMPMAX-TMPOF)/TMPSC)
 !          Write (*,*) 'tmpmin,tmpmax', TMPMIN, TMPMAX, VRNG
-          Call NCAPT(CDFID,TMPID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,TMPID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,TMPID,'long_name',NCCHAR,17,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,TMPID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,TMPID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,TMPID,'long_name',NCCHAR,17,
      *        'Water Temperature',IRET)
-          Call NCAPTC(CDFID,TMPID,'units',NCCHAR,7,'Celsius',IRET)
-          Call NCAPTC(CDFID,TMPID,'standard_name',NCCHAR,21,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,TMPID,'units',NCCHAR,7,'Celsius',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,TMPID,'standard_name',NCCHAR,21,
      *              'sea_water_temperature',IRET)
-          Call NCAPTC(CDFID,TMPID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,TMPID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = TMPSC
-          Call NCAPT(CDFID,TMPID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,TMPID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = TMPOF
-          Call NCAPT(CDFID,TMPID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,TMPID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTKH.EQ.'Y'.OR.PTKH.EQ.'y') Then
 !    vertical diffusivity
+      IF (SMPI_RANK.EQ.0) THEN
           KHID = NCVDEF(CDFID,'kh',NCSHORT,4,DIMS,IRET)
+      ELSE
+        KHID=0
+      ENDIF
           IRNG(1) = NINT((RKHMIN-KHOF)/KHSC)
           IRNG(2) = NINT((RKHMAX-KHOF)/KHSC)
 !         Write (*,*) 'khmin,khmax', RKHMIN, RKHMAX, VRNG
-          Call NCAPT(CDFID,KHID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,KHID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,KHID,'long_name',NCCHAR,20,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KHID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KHID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KHID,'long_name',NCCHAR,20,
      *        'vertical diffusivity',IRET)
-          Call NCAPTC(CDFID,KHID,'units',NCCHAR,6,'m2 s-1',IRET)
-          Call NCAPTC(CDFID,KHID,'standard_name',NCCHAR,31,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KHID,'units',NCCHAR,6,'m2 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KHID,'standard_name',NCCHAR,31,
      *              'ocean_vertical_heat_diffusivity',IRET)
-          Call NCAPTC(CDFID,KHID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KHID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = KHSC
-          Call NCAPT(CDFID,KHID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KHID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = KHOF
-          Call NCAPT(CDFID,KHID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KHID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTKM.EQ.'Y'.OR.PTKM.EQ.'y') Then
 !    vertical viscosity
+      IF (SMPI_RANK.EQ.0) THEN
           KMID = NCVDEF(CDFID,'km',NCSHORT,4,DIMS,IRET)
+      ELSE
+        KMID=0
+      ENDIF
           IRNG(1) = NINT((RKMMIN-KMOF)/KMSC)
           IRNG(2) = NINT((RKMMAX-KMOF)/KMSC)
 !         Write (*,*) 'kmmin,kmmax', RKMMIN, RKMMAX, VRNG
-          Call NCAPT(CDFID,KMID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,KMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,KMID,'long_name',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KMID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KMID,'long_name',NCCHAR,18,
      *        'vertical viscosity',IRET)
-          Call NCAPTC(CDFID,KMID,'units',NCCHAR,6,'m2 s-1',IRET)
-          Call NCAPTC(CDFID,KMID,'standard_name',NCCHAR,35,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KMID,'units',NCCHAR,6,'m2 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KMID,'standard_name',NCCHAR,35,
      *              'ocean_vertical_momentum_diffusivity',IRET)
-          Call NCAPTC(CDFID,KMID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,KMID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = KMSC
-          Call NCAPT(CDFID,KMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = KMOF
-          Call NCAPT(CDFID,KMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,KMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTAM.EQ.'Y'.OR.PTAM.EQ.'y') Then
 !    horizontal eddy viscosity
+      IF (SMPI_RANK.EQ.0) THEN
           AMID = NCVDEF(CDFID,'am',NCSHORT,4,DIMS,IRET)
+      ELSE
+        AMID=0
+      ENDIF
           IRNG(1) = NINT((AMMIN-AMOF)/AMSC)
           IRNG(2) = NINT((AMMAX-AMOF)/AMSC)
 !         Write (*,*) 'ammin,ammax', AMMIN, AMMAX
-          Call NCAPT(CDFID,AMID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,AMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,AMID,'long_name',NCCHAR,25,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,AMID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,AMID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,AMID,'long_name',NCCHAR,25,
      *        'horizontal eddy viscosity',IRET)
-          Call NCAPTC(CDFID,AMID,'units',NCCHAR,6,'m2 s-1',IRET)
-          Call NCAPTC(CDFID,AMID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,AMID,'units',NCCHAR,6,'m2 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,AMID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
           FLOATVAL(1) = AMSC
-          Call NCAPT(CDFID,AMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,AMID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = AMOF
-          Call NCAPT(CDFID,AMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,AMID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         If (PTQ2.EQ.'Y'.OR.PTQ2.EQ.'y') Then
 !    turbulence kinetic energy
+      IF (SMPI_RANK.EQ.0) THEN
           Q2ID = NCVDEF(CDFID,'q2',NCSHORT,4,DIMS,IRET)
+      ELSE
+        Q2ID=0
+      ENDIF
           IRNG(1) = NINT((Q2MIN-Q2OF)/Q2SC)
           IRNG(2) = NINT((Q2MAX-Q2OF)/Q2SC)
 !         Write (*,*) 'q2min,q2max', Q2MIN, Q2MAX
-          Call NCAPT(CDFID,Q2ID,'valid_range',NCSHORT,2,IRNG,IRET)
-          Call NCAPT(CDFID,Q2ID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
-          Call NCAPTC(CDFID,Q2ID,'long_name',NCCHAR,25,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,Q2ID,'valid_range',NCSHORT,2,IRNG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,Q2ID,'_FillValue',NCSHORT,1,IFILLVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,Q2ID,'long_name',NCCHAR,25,
      *        'turbulence kinetic energy',IRET)
-          Call NCAPTC(CDFID,Q2ID,'coordinates',NCCHAR,18,
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,Q2ID,'coordinates',NCCHAR,18,
      *                'lat lon sigma time',IRET)
-          Call NCAPTC(CDFID,Q2ID,'units',NCCHAR,6,'m2 s-1',IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPTC(CDFID,Q2ID,'units',NCCHAR,6,'m2 s-1',IRET)
           FLOATVAL(1) = Q2SC
-          Call NCAPT(CDFID,Q2ID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,Q2ID,'scale_factor',NCFLOAT,1,FLOATVAL,IRET)
           FLOATVAL(1) = Q2OF
-          Call NCAPT(CDFID,Q2ID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &    Call NCAPT(CDFID,Q2ID,'add_offset',NCFLOAT,1,FLOATVAL,IRET)
         End If
         
         ENDIF
@@ -1029,56 +1535,78 @@
 ! Global attributes
 !NG03312009 CF Vs 1.4 and COARDS CONVENTIONS GLOBAL ATTRIBUTES
 !NG03312009 CF stands for Climate and Forecast; Metadata Convention
-        Call NCAPTC(CDFID,NCGLOBAL,'file_type',NCCHAR,9,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'file_type',NCCHAR,9,
      *      "Full_Grid",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'Conventions',NCCHAR,6,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'Conventions',NCCHAR,6,
      *      "CF-1.0",IRET)
 !NG     *      "CF-1.0",IRET) ! FOR IDV AT SIGMA DEPTHS
 !NG     *      "CF-1.4",IRET) ! FOR IDV VECTORS, AS FLAT, NO VERTICAL RECOGNIZED
-        Call NCAPTC(CDFID,NCGLOBAL,'Conventions_comment',NCCHAR,21,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'Conventions_comment',NCCHAR,21,
      *      "The version is CF-1.4",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'grid_type',NCCHAR,11,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'grid_type',NCCHAR,11,
      *      "Curvilinear",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'z_type',NCCHAR,5,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'z_type',NCCHAR,5,
      *      "Sigma",IRET)
         modelname='New York Harbor Observing and Prediction System '
      *   //'(NYHOPS)'
-        Call NCAPTC(CDFID,NCGLOBAL,'model',NCCHAR,80,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'model',NCCHAR,80,
      *      modelname,IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'title',NCCHAR,30,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'title',NCCHAR,30,
      *      "NYHOPS Forecast Model Results",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'comment',NCCHAR,42,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'comment',NCCHAR,42,
      *      "Once-daily 24hr Hindcast and 48hr Forecast",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'source',NCCHAR,10,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'source',NCCHAR,10,
      *      "S_ECOM_vs8",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'institution',NCCHAR,31,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'institution',NCCHAR,31,
      *      "Stevens Institute of Technology",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'history',NCCHAR,29,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'history',NCCHAR,29,
      *      "ECOMSED/Princeton Ocean Model",IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'references',NCCHAR,55,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'references',NCCHAR,55,
      *      "Alan.Blumberg@stevens.edu, Nickitas.Georgas@stevens.edu"
      *      ,IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'related_url',NCCHAR,39,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'related_url',NCCHAR,39,
      *      "http://www.stevens.edu/maritimeforecast"
      *      ,IRET)
         CALL DATE_AND_TIME(NOWDATE)
-        Call NCAPTC(CDFID,NCGLOBAL,'creation_date',NCCHAR,9,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'creation_date',NCCHAR,9,
      *      NOWDATE,IRET)
 
 !NG        write (*,*) 'Basedate',IYR,IMO,IDA,IHR
-        Call NCAPT(CDFID,NCGLOBAL,'base_date',NCLONG,4,BASE_DATE,IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'type_of_run',NCCHAR,10,TOR,IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'hormix_type',NCCHAR,10,HORZMIX,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,NCGLOBAL,'base_date',NCLONG,4,BASE_DATE,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'type_of_run',NCCHAR,10,TOR,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'hormix_type',NCCHAR,10,HORZMIX,
      *     IRET)
-        Call NCAPT(CDFID,NCGLOBAL,'hormix_value',NCFLOAT,1,HORCON,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,NCGLOBAL,'hormix_value',NCFLOAT,1,HORCON,
      *     IRET)
-        Call NCAPTC(CDFID,NCGLOBAL,'vrtmix_type',NCCHAR,10,VERTMIX,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPTC(CDFID,NCGLOBAL,'vrtmix_type',NCCHAR,10,VERTMIX,
      *     IRET)
-        Call NCAPT(CDFID,NCGLOBAL,'vrtmix_value',NCFLOAT,1,UMOL,
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,NCGLOBAL,'vrtmix_value',NCFLOAT,1,UMOL,
      *     IRET)      
-        Call NCAPT(CDFID,NCGLOBAL,'refl_coeff',NCFLOAT,1,REFL, 
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCAPT(CDFID,NCGLOBAL,'refl_coeff',NCFLOAT,1,REFL,
      *     IRET) ! NG04092008      
-        Call NCENDF(CDFID,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCENDF(CDFID,IRET)
 !=========================================================================
 !         END OF DEFINE MODE
 !=========================================================================
@@ -1109,39 +1637,52 @@
         EDGES(2) = IM
         EDGES(3) = JM
 !       Write (*,*) 'storing vertices'
-        Call NCVPT(CDFID,LNBNDID,CORNER,EDGES,LONBOUNDS,IRET)
-        Call NCVPT(CDFID,LTBNDID,CORNER,EDGES,LATBOUNDS,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,LNBNDID,CORNER,EDGES,LONBOUNDS,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,LTBNDID,CORNER,EDGES,LATBOUNDS,IRET)
 
         CORNER(1) = 1
         CORNER(2) = 1
         EDGES(1) = IM
         EDGES(2) = JM
 !       Write (*,*) 'storing corners'
-        Call NCVPT(CDFID,XID,CORNER,EDGES,XC,IRET)
-        Call NCVPT(CDFID,YID,CORNER,EDGES,YC,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,XID,CORNER,EDGES,XC,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,YID,CORNER,EDGES,YC,IRET)
 !       Write (*,*) 'storing centers' ! NG04022008
-        Call NCVPT(CDFID,XCID,CORNER,EDGES,XGRID,IRET) ! NG04022008
-        Call NCVPT(CDFID,YCID,CORNER,EDGES,YGRID,IRET) ! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,XCID,CORNER,EDGES,XGRID,IRET) ! NG04022008
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,YCID,CORNER,EDGES,YGRID,IRET) ! NG04022008
 ! store h1
-        Call NCVPT(CDFID,H1ID,CORNER,EDGES,H1,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,H1ID,CORNER,EDGES,H1,IRET)
 !       Write (*,*) 'storing h1'
 ! store h2
-        Call NCVPT(CDFID,H2ID,CORNER,EDGES,H2,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,H2ID,CORNER,EDGES,H2,IRET)
 !       Write (*,*) 'storing h2'
 ! store depth
 !       Write (*,*) 'storing depth'
-        Call NCVPT(CDFID,DEPTHID,CORNER,EDGES,HOUT,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,DEPTHID,CORNER,EDGES,HOUT,IRET)
 ! store grid angles
 !       Write (*,*) 'storing grid angles'
-        Call NCVPT(CDFID,ANGID,CORNER,EDGES,ANG,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,ANGID,CORNER,EDGES,ANG,IRET)
 ! store FSM
 !       Write (*,*) 'storing FSM'
-        Call NCVPT(CDFID,FSMID,CORNER,EDGES,FSM,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,FSMID,CORNER,EDGES,FSM,IRET)
 ! store DUM and DVM NG08072008
 !       Write (*,*) 'storing DUM'
-        Call NCVPT(CDFID,DUMID,CORNER,EDGES,DUM_IMJM,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,DUMID,CORNER,EDGES,DUM_IMJM,IRET)
 !       Write (*,*) 'storing DVM'
-        Call NCVPT(CDFID,DVMID,CORNER,EDGES,DVM_IMJM,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,DVMID,CORNER,EDGES,DVM_IMJM,IRET)
 ! store bottom types
 !       INITIALIZE THE BTYPE WITH 999 (land)
 !       DO J=1,JM
@@ -1173,29 +1714,46 @@
         ENDDO
         CORNER(1) = 1
         EDGES(1) = IM
-        Call NCVPT(CDFID,XPOSID,CORNER,EDGES,CNTII,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,XPOSID,CORNER,EDGES,CNTII,IRET)
         CORNER(1) = 1
         EDGES(1) = JM
-        Call NCVPT(CDFID,YPOSID,CORNER,EDGES,CNTJJ,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,YPOSID,CORNER,EDGES,CNTJJ,IRET)
 !       Write (*,*) 'storing sigma levels'
         CORNER(1) = 1
         EDGES(1) = KBot
 !NG05292008        Call NCVPT(CDFID,SIGMAID,CORNER,EDGES,Z,IRET)
-        Call NCVPT(CDFID,SIGMAID,CORNER,EDGES,SIGMEAN,IRET) ! FOR SIGMA AT MID-POINTS
-        Call NCVPT(CDFID,ZSDVID,CORNER,EDGES,Z,IRET) ! FOR SIGMA LEVEL BOUNDS
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,SIGMAID,CORNER,EDGES,SIGMEAN,IRET) ! FOR SIGMA AT MID-POINTS
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,ZSDVID,CORNER,EDGES,Z,IRET) ! FOR SIGMA LEVEL BOUNDS
 !NG03092007        ENDIF
         
       Else
 !NG        CDFID = NCOPN('gcmplt.nc',NCWRITE,IRET) ! NG03312009 changed name to .nc as per CF
+      IF (SMPI_RANK.EQ.0) THEN
         CDFID = NCOPN('gcmplt.cdf',NCWRITE,IRET) ! This is for NYHOPS, too much of a pain otherwise
+      ELSE
+        CDFID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0) THEN
         IFILL = NCSFIL(CDFID,NCNOFILL,IRET)
+      ELSE
+        IFILL=0
+      ENDIF
       End If
       ICDF = ICDF + 1
 ! store time
       CORNER(1) = ICDF
 !      Write (*,*) 'storing time'
+      IF (SMPI_RANK.EQ.0) THEN
       TID = NCVID(CDFID,'time',IRET)
-      Call NCVPT1(CDFID,TID,CORNER,TMID,IRET)
+      ELSE
+        TID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &Call NCVPT1(CDFID,TID,CORNER,TMID,IRET)
 
 !NG04172008 All in UTC and self-consistent.
 !NG      write (*,*) 'start',IYR,IMO,IDA,IHR
@@ -1214,8 +1772,13 @@
 !      write(*,1000)datehour,iyy,imonth,iday,ihh
  1000 format(5I15)
  2000 format(F10.5,4I15)
+      IF (SMPI_RANK.EQ.0) THEN
       DATEID = NCVID(CDFID,'date',IRET)
-      Call NCVPT1(CDFID,DATEID,CORNER,DATEHOUR,IRET)
+      ELSE
+        DATEID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &Call NCVPT1(CDFID,DATEID,CORNER,DATEHOUR,IRET)
 
 !  2D Parameters
       CORNER(1) = 1
@@ -1235,8 +1798,13 @@
         End Do
       End Do
 !      Write (*,*) 'storing elevations'
+      IF (SMPI_RANK.EQ.0) THEN
       ELID = NCVID(CDFID,'elev',IRET)
-      Call NCVPT(CDFID,ELID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        ELID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &Call NCVPT(CDFID,ELID,CORNER,EDGES,WS0,IRET)
 ! store heatflux
       If (PTHF.EQ.'y'.OR.PTHF.EQ.'Y') Then
         Do J = 1, JM
@@ -1246,8 +1814,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing heat flux'
+      IF (SMPI_RANK.EQ.0) THEN
         HFID = NCVID(CDFID,'heat_flux',IRET)
-        Call NCVPT(CDFID,HFID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        HFID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,HFID,CORNER,EDGES,WS0,IRET)
       End If
 ! store drag coefficient
       If (PTCD.EQ.'y'.OR.PTCD.EQ.'Y') Then
@@ -1259,8 +1832,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing drag coefficient'
+      IF (SMPI_RANK.EQ.0) THEN
         BFID = NCVID(CDFID,'cbc',IRET)
-        Call NCVPT(CDFID,BFID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        BFID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,BFID,CORNER,EDGES,WS0,IRET)
       End If
 
       ENDIF
@@ -1277,8 +1855,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing Wave Heights'
+      IF (SMPI_RANK.EQ.0) THEN
         WHID = NCVID(CDFID,'wh',IRET)
-        Call NCVPT(CDFID,WHID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        WHID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,WHID,CORNER,EDGES,WS0,IRET)
 ! Second, Wave periods
         Do J = 1, JM
           Do I = 1, IM
@@ -1289,8 +1872,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing Wave periods'
+      IF (SMPI_RANK.EQ.0) THEN
         WPID = NCVID(CDFID,'wp',IRET)
-        Call NCVPT(CDFID,WPID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        WPID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,WPID,CORNER,EDGES,WS0,IRET)
 ! Third, Wave direction
         Do J = 1, JM
           Do I = 1, IM
@@ -1301,8 +1889,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing Wave Direction'
+      IF (SMPI_RANK.EQ.0) THEN
         WDID = NCVID(CDFID,'wd',IRET)
-        Call NCVPT(CDFID,WDID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        WDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,WDID,CORNER,EDGES,WS0,IRET)
       End If
 !  Wind parameters
       If (PTWND.EQ.'Y'.OR.PTWND.EQ.'y') Then
@@ -1314,8 +1907,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing EW Winds'
+      IF (SMPI_RANK.EQ.0) THEN
         UWNDID = NCVID(CDFID,'wu',IRET)
-        Call NCVPT(CDFID,UWNDID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        UWNDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,UWNDID,CORNER,EDGES,WS0,IRET)
 ! Second, NS Wind
         Do J = 1, JM
           Do I = 1, IM
@@ -1324,16 +1922,25 @@
           End Do
         End Do
 !      Write (*,*) 'storing NS Winds'
+      IF (SMPI_RANK.EQ.0) THEN
         VWNDID = NCVID(CDFID,'wv',IRET)
-        Call NCVPT(CDFID,VWNDID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        VWNDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,VWNDID,CORNER,EDGES,WS0,IRET)
 !  temporary output of wind and surface solar radiation
-        WRITE(1002,'(f10.3,1x,f14.0)')TMID,DATEHOUR
-        WRITE(1006,'(f10.3,1x,f14.0,i10)')TMID,DATEHOUR,NUMEPC
-        CALL SECOM_WINDTEXT(1002,IM,JM,FSM,ARCET,ARCWSX2D,ARCWSY2D,
+      IF (SMPI_RANK.EQ.0)
+     &  WRITE(1002,'(f10.3,1x,f14.0)')TMID,DATEHOUR
+      IF (SMPI_RANK.EQ.0)
+     &  WRITE(1006,'(f10.3,1x,f14.0,i10)')TMID,DATEHOUR,NUMEPC
+      IF (SMPI_RANK.EQ.0)
+     &  CALL SECOM_WINDTEXT(1002,IM,JM,FSM,ARCET,ARCWSX2D,ARCWSY2D,
      +                      ARCSWOBS,VARWIF,AREAICE)
        DO J=39,41
         DO I=22,24
-         write(1006,'(2i5,13E10.3)')I,J,ARCET(I,J)
+      IF (SMPI_RANK.EQ.0)
+     &   write(1006,'(2i5,13E10.3)')I,J,ARCET(I,J)
      +                    ,ARCWSX2D(I,J),ARCWSY2D(I,J),ARCPATM(I,J)
      +                    ,QPREC2D(I,J),QEVAP2D(I,J)
      +                    ,DUMWAD(I,J),DVMWAD(I,J)
@@ -1352,8 +1959,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing atmospheric pressure'
+      IF (SMPI_RANK.EQ.0) THEN
         PATMID = NCVID(CDFID,'patm',IRET)
-        Call NCVPT(CDFID,PATMID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        PATMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,PATMID,CORNER,EDGES,WS0,IRET)
       Endif
 !  Rainfall Rate NG09212011
       If ((PTQPREC.EQ.'Y'.OR.PTQPREC.EQ.'y').AND.WAVEDYN.NE.'DONONLY ')
@@ -1365,8 +1977,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing atmospheric pressure'
+      IF (SMPI_RANK.EQ.0) THEN
         QPRECID = NCVID(CDFID,'qprec',IRET)
-        Call NCVPT(CDFID,QPRECID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        QPRECID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,QPRECID,CORNER,EDGES,WS0,IRET)
       Endif
       If ((PT2DMET.EQ.'Y'.OR.PT2DMET.EQ.'y').AND.WAVEDYN.NE.'DONONLY ')
      + Then
@@ -1377,8 +1994,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing air temperature'
+      IF (SMPI_RANK.EQ.0) THEN
         AIRTID = NCVID(CDFID,'airt',IRET)
-        Call NCVPT(CDFID,AIRTID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        AIRTID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,AIRTID,CORNER,EDGES,WS0,IRET)
         Do J = 1, JM
           Do I = 1, IM
             WS0(I,J) = NINT((ARCCLD(I,J)-CLDOF)/CLDSC) 
@@ -1386,8 +2008,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing cloud cover'
+      IF (SMPI_RANK.EQ.0) THEN
         CLDID = NCVID(CDFID,'cld',IRET)
-        Call NCVPT(CDFID,CLDID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        CLDID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,CLDID,CORNER,EDGES,WS0,IRET)
         Do J = 1, JM
           Do I = 1, IM
             WS0(I,J) = NINT((ARCRHUM(I,J)-RHUMOF)/RHUMSC) 
@@ -1395,8 +2022,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing relative humidity'
+      IF (SMPI_RANK.EQ.0) THEN
         RHUMID = NCVID(CDFID,'rhum',IRET)
-        Call NCVPT(CDFID,RHUMID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        RHUMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,RHUMID,CORNER,EDGES,WS0,IRET)
         Do J = 1, JM
           Do I = 1, IM
             WS0(I,J) = NINT((ARCSWOBS(I,J)-SWOBSOF)/SWOBSSC) 
@@ -1404,8 +2036,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing shortwave radiation'
+      IF (SMPI_RANK.EQ.0) THEN
         SWOBSID = NCVID(CDFID,'swobs',IRET)
-        Call NCVPT(CDFID,SWOBSID,CORNER,EDGES,WS0,IRET)
+      ELSE
+        SWOBSID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,SWOBSID,CORNER,EDGES,WS0,IRET)
       Endif
 
 !NG02222007
@@ -1436,8 +2073,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing salinity'
+      IF (SMPI_RANK.EQ.0) THEN
         DEPTHTID = NCVID(CDFID,'depth_t',IRET)
-        Call NCVPT(CDFID,DEPTHTID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        DEPTHTID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,DEPTHTID,CORNER,EDGES,WA1,IRET)
       End If
 ! store salinity
       If (PTS.EQ.'Y'.OR.PTS.EQ.'y') Then
@@ -1453,8 +2095,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing salinity'
+      IF (SMPI_RANK.EQ.0) THEN
         SALID = NCVID(CDFID,'salt',IRET)
-        Call NCVPT(CDFID,SALID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        SALID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,SALID,CORNER,EDGES,WA1,IRET)
       End If
 ! store temperature
       If (PTT.EQ.'Y'.OR.PTT.EQ.'y') Then
@@ -1470,8 +2117,13 @@
           End Do
         End Do
 !       Write (*,*) 'storing temperature'
+      IF (SMPI_RANK.EQ.0) THEN
         TMPID = NCVID(CDFID,'temp',IRET)
-        Call NCVPT(CDFID,TMPID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        TMPID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,TMPID,CORNER,EDGES,WA1,IRET)
       End If
 ! store vertical diffusivity
       If (PTKH.EQ.'Y'.OR.PTKH.EQ.'y') Then
@@ -1485,8 +2137,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing vertical diffusivity'
+      IF (SMPI_RANK.EQ.0) THEN
         KHID = NCVID(CDFID,'kh',IRET)
-        Call NCVPT(CDFID,KHID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        KHID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,KHID,CORNER,EDGES,WA1,IRET)
       End If
 ! store vertical viscosity
       If (PTKM.EQ.'Y'.OR.PTKM.EQ.'y') Then
@@ -1500,8 +2157,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing vertical viscosity'
+      IF (SMPI_RANK.EQ.0) THEN
         KMID = NCVID(CDFID,'km',IRET)
-        Call NCVPT(CDFID,KMID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        KMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,KMID,CORNER,EDGES,WA1,IRET)
       End If
 ! store horizontal viscosity
       If (PTAM.EQ.'Y'.OR.PTAM.EQ.'y') Then
@@ -1515,8 +2177,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing horizontal viscosity'
+      IF (SMPI_RANK.EQ.0) THEN
         AMID = NCVID(CDFID,'am',IRET)
-        Call NCVPT(CDFID,AMID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        AMID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,AMID,CORNER,EDGES,WA1,IRET)
       End If
 ! store turbulence kinetic energy
       If (PTQ2.EQ.'Y'.OR.PTQ2.EQ.'y') Then
@@ -1529,8 +2196,13 @@
             End Do
           End Do
         End Do
+      IF (SMPI_RANK.EQ.0) THEN
         Q2ID = NCVID(CDFID,'q2',IRET)
-        Call NCVPT(CDFID,Q2ID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        Q2ID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,Q2ID,CORNER,EDGES,WA1,IRET)
       End If
 ! store concentration
       If (PTC.EQ.'Y'.OR.PTC.EQ.'y') Then
@@ -1544,8 +2216,13 @@
           End Do
         End Do
 !        Write (*,*) 'storing concentration'
+      IF (SMPI_RANK.EQ.0) THEN
         CCID = NCVID(CDFID,'conc',IRET)
-        Call NCVPT(CDFID,CCID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        CCID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,CCID,CORNER,EDGES,WA1,IRET)
       End If
 ! store flux
       If (PTUF.EQ.'Y'.OR.PTUF.EQ.'y') Then
@@ -1559,8 +2236,13 @@
           End Do
         End Do
 !      Write (*,*) 'storing U component of flux'
+      IF (SMPI_RANK.EQ.0) THEN
         UFLXID = NCVID(CDFID,'uflux',IRET)
-        Call NCVPT(CDFID,UFLXID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        UFLXID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,UFLXID,CORNER,EDGES,WA1,IRET)
       End If
       If (PTVF.EQ.'Y'.OR.PTVF.EQ.'y') Then
         Do I = 1, IM
@@ -1574,8 +2256,13 @@
         End Do
 !      Write (*,*) 'storing V component of flux'
 ! FIXME: order of next 2 lines should be reversed (vflux), A.Jordi
-        Call NCVPT(CDFID,VFLXID,CORNER,EDGES,WA1,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,VFLXID,CORNER,EDGES,WA1,IRET)
+      IF (SMPI_RANK.EQ.0) THEN
         VFLXID = NCVID(CDFID,'vflux',IRET)
+      ELSE
+        VFLXID=0
+      ENDIF
       End If
 ! store velocity
 !NG03222010 CENTER AND ROTATE TO E-W, N-S FOR GODIVA
@@ -1607,8 +2294,13 @@
             WA1(IM,J,K)=IFILLVAL ! to short out
           End Do
         End Do
+      IF (SMPI_RANK.EQ.0) THEN
         UID = NCVID(CDFID,'u',IRET)
-        Call NCVPT(CDFID,UID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        UID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,UID,CORNER,EDGES,WA1,IRET)
       End If
       If (PTV.EQ.'Y'.OR.PTV.EQ.'y') Then
         WA1 = IFILLVAL
@@ -1622,8 +2314,13 @@
 ! Entire outer frame initialized to fill above.
           End Do
         End Do
+      IF (SMPI_RANK.EQ.0) THEN
         VID = NCVID(CDFID,'v',IRET)
-        Call NCVPT(CDFID,VID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        VID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,VID,CORNER,EDGES,WA1,IRET)
       End If
       If (PTW.EQ.'Y'.OR.PTW.EQ.'y') Then
         Do I = 1, IM
@@ -1641,12 +2338,18 @@
           End Do
         End Do
 !       Write (*,*) 'storing W component of velocity'
+      IF (SMPI_RANK.EQ.0) THEN
         WID = NCVID(CDFID,'w',IRET)
-        Call NCVPT(CDFID,WID,CORNER,EDGES,WA1,IRET)
+      ELSE
+        WID=0
+      ENDIF
+      IF (SMPI_RANK.EQ.0)
+     &  Call NCVPT(CDFID,WID,CORNER,EDGES,WA1,IRET)
       End If
 
       ENDIF
       
-      Call NCCLOS(CDFID,IRET)
+      IF (SMPI_RANK.EQ.0)
+     &Call NCCLOS(CDFID,IRET)
       RETURN ! NG 11/05/02
       End

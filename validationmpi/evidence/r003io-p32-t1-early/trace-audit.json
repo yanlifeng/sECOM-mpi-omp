@@ -1,0 +1,499 @@
+{
+  "reference": "/home/user_home/ylf/secom-omp64-20261118.0SVeEm/traceref-00-11",
+  "candidate": "/home/user_home/ylf/secom-mpi-20261119/runs/r003io-p32-t1-early/rank000",
+  "field_order": [
+    "DUMWAD",
+    "DVMWAD",
+    "EL",
+    "ELB",
+    "ELF",
+    "ET",
+    "ETF",
+    "UA",
+    "UAB",
+    "UAF",
+    "VA",
+    "VAB",
+    "VAF",
+    "D",
+    "CURV42D",
+    "CBC",
+    "TXBOT",
+    "TYBOT",
+    "FLUXUA",
+    "FLUXVA",
+    "TPS",
+    "TRNU",
+    "TRNV",
+    "ADVUA",
+    "ADVVA"
+  ],
+  "frames": {
+    "transient-001-01.bin": {
+      "header": [
+        1,
+        1,
+        372,
+        479,
+        1.0746854059107136e-05,
+        0.0,
+        3,
+        3
+      ],
+      "header_equal": true,
+      "fields": {
+        "DUMWAD": {
+          "bitwise_equal": true
+        },
+        "DVMWAD": {
+          "bitwise_equal": true
+        },
+        "EL": {
+          "bitwise_equal": true
+        },
+        "ELB": {
+          "bitwise_equal": true
+        },
+        "ELF": {
+          "bitwise_equal": true
+        },
+        "ET": {
+          "bitwise_equal": true
+        },
+        "ETF": {
+          "bitwise_equal": true
+        },
+        "UA": {
+          "bitwise_equal": true
+        },
+        "UAB": {
+          "bitwise_equal": true
+        },
+        "UAF": {
+          "bitwise_equal": true
+        },
+        "VA": {
+          "bitwise_equal": true
+        },
+        "VAB": {
+          "bitwise_equal": true
+        },
+        "VAF": {
+          "bitwise_equal": true
+        },
+        "D": {
+          "bitwise_equal": true
+        },
+        "CURV42D": {
+          "bitwise_equal": true
+        },
+        "CBC": {
+          "bitwise_equal": true
+        },
+        "TXBOT": {
+          "bitwise_equal": true
+        },
+        "TYBOT": {
+          "bitwise_equal": true
+        },
+        "FLUXUA": {
+          "bitwise_equal": true
+        },
+        "FLUXVA": {
+          "bitwise_equal": true
+        },
+        "TPS": {
+          "bitwise_equal": true
+        },
+        "TRNU": {
+          "bitwise_equal": true
+        },
+        "TRNV": {
+          "bitwise_equal": true
+        },
+        "ADVUA": {
+          "bitwise_equal": true
+        },
+        "ADVVA": {
+          "bitwise_equal": true
+        }
+      },
+      "reference_sha": "86e0ab7403fe49de9e6de371423cafbcae54ed53462dc7be0f68b38a90d91477",
+      "candidate_sha": "86e0ab7403fe49de9e6de371423cafbcae54ed53462dc7be0f68b38a90d91477",
+      "bitwise_equal": true
+    },
+    "transient-001-10.bin": {
+      "header": [
+        1,
+        10,
+        372,
+        479,
+        0.002038035076111555,
+        -0.0003171726129949093,
+        298,
+        130
+      ],
+      "header_equal": true,
+      "fields": {
+        "DUMWAD": {
+          "bitwise_equal": true
+        },
+        "DVMWAD": {
+          "bitwise_equal": true
+        },
+        "EL": {
+          "bitwise_equal": true
+        },
+        "ELB": {
+          "bitwise_equal": true
+        },
+        "ELF": {
+          "bitwise_equal": true
+        },
+        "ET": {
+          "bitwise_equal": true
+        },
+        "ETF": {
+          "bitwise_equal": true
+        },
+        "UA": {
+          "bitwise_equal": true
+        },
+        "UAB": {
+          "bitwise_equal": true
+        },
+        "UAF": {
+          "bitwise_equal": true
+        },
+        "VA": {
+          "bitwise_equal": true
+        },
+        "VAB": {
+          "bitwise_equal": true
+        },
+        "VAF": {
+          "bitwise_equal": true
+        },
+        "D": {
+          "bitwise_equal": true
+        },
+        "CURV42D": {
+          "bitwise_equal": true
+        },
+        "CBC": {
+          "bitwise_equal": true
+        },
+        "TXBOT": {
+          "bitwise_equal": true
+        },
+        "TYBOT": {
+          "bitwise_equal": true
+        },
+        "FLUXUA": {
+          "bitwise_equal": true
+        },
+        "FLUXVA": {
+          "bitwise_equal": true
+        },
+        "TPS": {
+          "bitwise_equal": true
+        },
+        "TRNU": {
+          "bitwise_equal": true
+        },
+        "TRNV": {
+          "bitwise_equal": true
+        },
+        "ADVUA": {
+          "bitwise_equal": true
+        },
+        "ADVVA": {
+          "bitwise_equal": true
+        }
+      },
+      "reference_sha": "388b4557fe760414f10d87deaf4d3a396ab4c6fd7b89fd011ff85230e721035a",
+      "candidate_sha": "388b4557fe760414f10d87deaf4d3a396ab4c6fd7b89fd011ff85230e721035a",
+      "bitwise_equal": true
+    },
+    "transient-017-03.bin": {
+      "header": [
+        17,
+        3,
+        372,
+        479,
+        0.020984051749110222,
+        -0.00541226752102375,
+        284,
+        300
+      ],
+      "header_equal": true,
+      "fields": {
+        "DUMWAD": {
+          "bitwise_equal": true
+        },
+        "DVMWAD": {
+          "bitwise_equal": true
+        },
+        "EL": {
+          "bitwise_equal": true
+        },
+        "ELB": {
+          "bitwise_equal": true
+        },
+        "ELF": {
+          "bitwise_equal": true
+        },
+        "ET": {
+          "bitwise_equal": true
+        },
+        "ETF": {
+          "bitwise_equal": true
+        },
+        "UA": {
+          "bitwise_equal": true
+        },
+        "UAB": {
+          "bitwise_equal": true
+        },
+        "UAF": {
+          "bitwise_equal": true
+        },
+        "VA": {
+          "bitwise_equal": true
+        },
+        "VAB": {
+          "bitwise_equal": true
+        },
+        "VAF": {
+          "bitwise_equal": true
+        },
+        "D": {
+          "bitwise_equal": true
+        },
+        "CURV42D": {
+          "bitwise_equal": true
+        },
+        "CBC": {
+          "bitwise_equal": true
+        },
+        "TXBOT": {
+          "bitwise_equal": true
+        },
+        "TYBOT": {
+          "bitwise_equal": true
+        },
+        "FLUXUA": {
+          "bitwise_equal": true
+        },
+        "FLUXVA": {
+          "bitwise_equal": true
+        },
+        "TPS": {
+          "bitwise_equal": true
+        },
+        "TRNU": {
+          "bitwise_equal": true
+        },
+        "TRNV": {
+          "bitwise_equal": true
+        },
+        "ADVUA": {
+          "bitwise_equal": true
+        },
+        "ADVVA": {
+          "bitwise_equal": true
+        }
+      },
+      "reference_sha": "71e432283e6423e68e764a35b8b6dbc90f0b12abd7fed1bf05a782b56d8e1a9f",
+      "candidate_sha": "71e432283e6423e68e764a35b8b6dbc90f0b12abd7fed1bf05a782b56d8e1a9f",
+      "bitwise_equal": true
+    },
+    "transient-153-05.bin": {
+      "header": [
+        153,
+        5,
+        372,
+        479,
+        0.3411075472831726,
+        -0.004974303767085075,
+        104,
+        120
+      ],
+      "header_equal": true,
+      "fields": {
+        "DUMWAD": {
+          "bitwise_equal": true
+        },
+        "DVMWAD": {
+          "bitwise_equal": true
+        },
+        "EL": {
+          "bitwise_equal": true
+        },
+        "ELB": {
+          "bitwise_equal": true
+        },
+        "ELF": {
+          "bitwise_equal": true
+        },
+        "ET": {
+          "bitwise_equal": true
+        },
+        "ETF": {
+          "bitwise_equal": true
+        },
+        "UA": {
+          "bitwise_equal": true
+        },
+        "UAB": {
+          "bitwise_equal": true
+        },
+        "UAF": {
+          "bitwise_equal": true
+        },
+        "VA": {
+          "bitwise_equal": true
+        },
+        "VAB": {
+          "bitwise_equal": true
+        },
+        "VAF": {
+          "bitwise_equal": true
+        },
+        "D": {
+          "bitwise_equal": true
+        },
+        "CURV42D": {
+          "bitwise_equal": true
+        },
+        "CBC": {
+          "bitwise_equal": true
+        },
+        "TXBOT": {
+          "bitwise_equal": true
+        },
+        "TYBOT": {
+          "bitwise_equal": true
+        },
+        "FLUXUA": {
+          "bitwise_equal": true
+        },
+        "FLUXVA": {
+          "bitwise_equal": true
+        },
+        "TPS": {
+          "bitwise_equal": true
+        },
+        "TRNU": {
+          "bitwise_equal": true
+        },
+        "TRNV": {
+          "bitwise_equal": true
+        },
+        "ADVUA": {
+          "bitwise_equal": true
+        },
+        "ADVVA": {
+          "bitwise_equal": true
+        }
+      },
+      "reference_sha": "29567a2ca0748586e99489e7d62e683d127a7825d3125da294e223910189979d",
+      "candidate_sha": "29567a2ca0748586e99489e7d62e683d127a7825d3125da294e223910189979d",
+      "bitwise_equal": true
+    },
+    "transient-300-10.bin": {
+      "header": [
+        300,
+        10,
+        372,
+        479,
+        0.5212027430534363,
+        -0.0050032190047204494,
+        46,
+        75
+      ],
+      "header_equal": true,
+      "fields": {
+        "DUMWAD": {
+          "bitwise_equal": true
+        },
+        "DVMWAD": {
+          "bitwise_equal": true
+        },
+        "EL": {
+          "bitwise_equal": true
+        },
+        "ELB": {
+          "bitwise_equal": true
+        },
+        "ELF": {
+          "bitwise_equal": true
+        },
+        "ET": {
+          "bitwise_equal": true
+        },
+        "ETF": {
+          "bitwise_equal": true
+        },
+        "UA": {
+          "bitwise_equal": true
+        },
+        "UAB": {
+          "bitwise_equal": true
+        },
+        "UAF": {
+          "bitwise_equal": true
+        },
+        "VA": {
+          "bitwise_equal": true
+        },
+        "VAB": {
+          "bitwise_equal": true
+        },
+        "VAF": {
+          "bitwise_equal": true
+        },
+        "D": {
+          "bitwise_equal": true
+        },
+        "CURV42D": {
+          "bitwise_equal": true
+        },
+        "CBC": {
+          "bitwise_equal": true
+        },
+        "TXBOT": {
+          "bitwise_equal": true
+        },
+        "TYBOT": {
+          "bitwise_equal": true
+        },
+        "FLUXUA": {
+          "bitwise_equal": true
+        },
+        "FLUXVA": {
+          "bitwise_equal": true
+        },
+        "TPS": {
+          "bitwise_equal": true
+        },
+        "TRNU": {
+          "bitwise_equal": true
+        },
+        "TRNV": {
+          "bitwise_equal": true
+        },
+        "ADVUA": {
+          "bitwise_equal": true
+        },
+        "ADVVA": {
+          "bitwise_equal": true
+        }
+      },
+      "reference_sha": "30a7a9b7bc9601fc3fe3afa3335842cac8de67abfd74c80127fa5863430b21ad",
+      "candidate_sha": "30a7a9b7bc9601fc3fe3afa3335842cac8de67abfd74c80127fa5863430b21ad",
+      "bitwise_equal": true
+    }
+  },
+  "all_bitwise_equal": true
+}
