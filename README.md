@@ -2,7 +2,15 @@
 
 This local research repository starts from the verified v6 Macau Hato development kit. See [BUILD.md](BUILD.md) for build flags, input and launch requirements. `secom-omp-v6` is the immutable 32-thread baseline; campaign evidence is in [validation/](validation/). These are laboratory changes to the supplied code, not an upstream release.
 
-For new performance reports, use the original same-machine serial executable, the unchanged 4,800-step case and six exact output hashes. Report separate same-revision scaling when available. Include I/O and initialization; do not compare SMT threads to physical cores. No external remote is configured.
+For new performance reports, use the original same-machine serial executable, the unchanged 4,800-step case and six exact output hashes. Report separate same-revision scaling when available. Include I/O and initialization; do not compare SMT threads to physical cores. Repository: [yanlifeng/sECOM-mpi-omp](https://github.com/yanlifeng/sECOM-mpi-omp).
+
+`main` publishes the accepted MPI/OpenMP line. The immutable accepted MPI
+source is tagged **`secom-mpi-v2-32`** (`ee2f7dd`); the OpenMP/MPI development
+branches, prior tags and `codex/exp-*` experiment branches are retained for
+traceability. Experiment branches are **not** accepted recommendations and
+are not merged merely by being published. The repository includes the 24
+frozen `case20m/input/` files, source, tests and selected validation evidence;
+full simulation-output archives remain outside Git.
 
 The OpenMP research branch is `codex/secom-omp64`; the v6 tag and its
 `MANIFEST.json` describe the **original frozen kit**, not a checksum list for
