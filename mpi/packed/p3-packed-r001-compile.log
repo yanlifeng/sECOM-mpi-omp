@@ -1,0 +1,26 @@
+2026-11-19T12:06:10,433486411+08:00
+p3.localdomain
+gfortran -I/usr/include/openmpi-x86_64 -pthread -I/usr/lib64/openmpi/lib -Wl,-rpath -Wl,/usr/lib64/openmpi/lib -Wl,--enable-new-dtags -L/usr/lib64/openmpi/lib -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh -lmpi
+mpirun (Open MPI) 4.1.1
+Cpus_allowed_list:	24-31
+d45fa75cfc4fbc1ee64d2a1b554c3a0a4b447b64a4c9bc1b42394d90daf9529c  secom_mpi.f90
+4c52921acda9d73e27cb1ecd7f6343a23ca005e14c8b49acf5dd4d1239656bff  extrnl.f
+bf25a1d6b9f154297c4f4c9b1cf1dd96c086cdb496987cf2957ddf48ed8b0b69  mpideck
+8aef886dde66a5fe92f360dc721cc9572591f1c43fd44f78436579444d5c4061  check_packed.f90
+72e7ec7bad4f0220778ad55ce4fbe5349ecd16f400dae1bf7ddcda8e69426521  runtime_place.c
+c75575706ed3ef2ef10a48735df6bc17730a1ec841704e90d45e273d281c4433  runtime_rank.sh
+d5537b8b2ec981fd30972b7613549e8177bc6e75386356d7d470d393102c1fe9  prepare.py
+fb440c1dc66300e4deff22ee46d56e42d41be7af27ba55d318e03487b2caffe2  halo9.f90.inc
+0:24 24,96
+0:25 25,97
+0:26 26,98
+0:27 27,99
+0:28 28,100
+0:29 29,101
+0:30 30,102
+0:31 31,103
+check_packed.f90:100:19:
+
+     poison=ior(int(z'FFA00000'),iand(ii+379*(jj+17*(kk+11*(it+13*peer))),int(z'000FFFFF')))
+                   1
+Error: Arithmetic overflow converting INTEGER(16) to INTEGER(4) at (1). This check can be disabled with the option ‘-fno-range-check’
