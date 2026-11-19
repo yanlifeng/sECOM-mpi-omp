@@ -1,0 +1,157 @@
+{
+  "case": "Hato/Macau 372x479, 4800 internal, 48000 external steps; same science and products",
+  "revision": "87490b3a06f85cdafdadce7730ff8547a2deb37a",
+  "plan": "day19-v44-plan.json",
+  "time_64_v44": 10.808287938125432,
+  "time_64_same_batch_v30": 11.668290985748172,
+  "seconds_saved_vs_current_v30": 0.8600030476227403,
+  "frac_less_wall_vs_current_v30": 0.07370428528677941,
+  "vs_original_frozen": 30.120892817915358,
+  "vs_original_same_day": 28.9439624266056,
+  "vs_same_elf_one": 22.465581290565012,
+  "original_frozen_seconds": 325.5552825294435,
+  "original_same_day_seconds": 312.834679977037,
+  "one_omp_seconds": 242.8144712857902,
+  "previous_formal_seconds": 14.074089211411774,
+  "required_seconds": 8.138882063236087,
+  "target_met": false,
+  "gap_vs_target_s": 2.6694058748893443,
+  "needed_reduction_from_current": 0.24697767955211603,
+  "paired_wins": 3,
+  "paired_n": 3,
+  "parent_median": {
+    "Df": 10.991535884328187,
+    "EdgeHist": 10.771449757739902,
+    "HistZero": 11.232348939403892
+  },
+  "observations_64": {
+    "Cj": [
+      11.79382237046957,
+      11.492742174305022,
+      11.668290985748172
+    ],
+    "EdgeHist": [
+      10.880616859532893,
+      10.713795533403754,
+      10.808287938125432
+    ]
+  },
+  "max_external_load_64": 0.2434097799078962,
+  "official_same_day_scientific_pass": true,
+  "fit_is_not_observation_skill": true,
+  "checks": "all 30 files reread in each of 20 timed directories; independent reads of 25 fields per saved frame/variant",
+  "frames": {
+    "early": {
+      "frame_count": 5,
+      "fields": 25,
+      "candidates": [
+        "traceday19normal-00-EdgeHistE64",
+        "traceday19fallback-00-EdgeHistF64"
+      ]
+    },
+    "late": {
+      "frame_count": 7,
+      "fields": 25,
+      "candidates": [
+        "deepday19late-00-EdgeHistL64"
+      ]
+    }
+  },
+  "same_day_raw_sha_all_six": true,
+  "only_cross_date_difference": {
+    "short": {
+      "format": "CDF-1",
+      "size_bytes": 21036112,
+      "header_bytes": 6480,
+      "date_offset": 820,
+      "changed_offsets": [
+        827
+      ],
+      "old_date": "20261118",
+      "new_date": "20261119",
+      "old_sha256": "d1761c7971687eca5d1ed141d339c9ddb0fcc735d773d546e0339ff3dbf27f39",
+      "new_sha256": "f395f83a2df9300349ec0f47afa724457d03c6ed7438ee3514317a56f527c916",
+      "all_other_bytes_identical": true
+    },
+    "long": {
+      "format": "CDF-1",
+      "size_bytes": 23530756,
+      "header_bytes": 6480,
+      "date_offset": 820,
+      "changed_offsets": [
+        827
+      ],
+      "old_date": "20261118",
+      "new_date": "20261119",
+      "old_sha256": "a418252846041daef852a549bf55b27dccea5f621cf8a9ddb7e319b50c344eb2",
+      "new_sha256": "838071ddba5cf7d63e2ff264b9aeff5b616de2ec335dea7d1aa3cceac60bd137",
+      "all_other_bytes_identical": true
+    }
+  },
+  "tested_cpu_ids": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71
+  ]
+}
