@@ -1,0 +1,89 @@
+--- v44/extrnl.f
++++ v45/extrnl.f
+@@ -20,6 +20,9 @@
+       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
+       REAL GEOMX(IM,JM),GEOMY(IM,JM)
+       LOGICAL ROTATE,EDGE_LATE
++      LOGICAL FAST45,MODE45,OK45,SECOM45_COR_OK
++      SAVE OK45
++      DATA OK45 /.FALSE./
+ !
+ !$OMP DO SCHEDULE(STATIC)
+       DO 400 J=2,JMM1
+@@ -56,6 +59,9 @@
+ !         IMPOSE MASS FLUX BOUNDARY CONDITIONS
+ !-----------------------------------------------------------------------
+ !$OMP END DO
++      MODE45=ROTATE.AND.TOR.EQ.'BAROTROPIC'.AND.BCTYPE.EQ.'CLAMPED'
++      FAST45=.FALSE.
++      IF(MODE45.AND.IEXT.GT.1) FAST45=OK45
+ !$OMP SINGLE
+       DO 406 N=1,NUMDBC
+       ID=IDD(N)
+@@ -115,7 +121,19 @@
+       ENDIF
+ ! 
+       CALL BCOND(12,DTI2,0)
+-!$OMP END SINGLE
++      IF(MODE45.AND.IEXT.EQ.1) OK45=SECOM45_COR_OK(COR,IM,JM)
++!$OMP END SINGLE NOWAIT
++      IF(FAST45) THEN
++!$OMP DO SCHEDULE(STATIC)
++        DO J=1,JM
++          DO I=1,IM
++            CURV42D(I,J)=.25*COR(I,J)
++          ENDDO
++        ENDDO
++!$OMP END DO
++      ELSE
++!$OMP BARRIER
++      ENDIF
+ !$OMP DO SCHEDULE(STATIC)
+       DO J=1,JM
+         DO I=1,IM
+@@ -157,6 +175,7 @@
+       CALL ADVAVE(ADVUA,ADVVA)
+       ENDIF
+ !
++      IF(.NOT.FAST45) THEN
+ !$OMP DO SCHEDULE(STATIC)
+       DO 95 J=1,JM
+       DO 95 I=1,IM
+@@ -168,6 +187,7 @@
+ !-----------------------------------------------------------------------
+ !
+ !$OMP END DO
++      ENDIF
+       IF(TOR.NE.'BAROTROPIC') GO TO 5000
+ !
+ !     The reference's permanent grid metrics and FSM cannot change
+@@ -405,3 +425,29 @@
+ 
+       RETURN
+       END
++
++! No floating operation touches COR in this guard (including signaling NaNs).
++! Check once per BARO_SUBCYCLE at IEXT=1, not across restarts/outer steps.
++      LOGICAL FUNCTION SECOM45_COR_OK(A,N,M)
++      USE ISO_FORTRAN_ENV, ONLY: INT32,REAL32
++      INTEGER N,M,I,J,E,L,STAT
++      INTEGER(INT32) W
++      REAL A(N,M)
++      CHARACTER*1 OPT
++      SECOM45_COR_OK=.FALSE.
++      IF(KIND(1.0).NE.REAL32.OR.STORAGE_SIZE(1.0).NE.32) RETURN
++      IF(RADIX(1.0).NE.2.OR.DIGITS(1.0).NE.24.OR.MAXEXPONENT(1.0).NE.128.OR.MINEXPONENT(1.0).NE.-125) RETURN
++      IF(TRANSFER(1.0,0_INT32).NE.INT(Z'3F800000',INT32)) RETURN
++      CALL GET_ENVIRONMENT_VARIABLE('SECOM_V45_OVERLAP',OPT,LENGTH=L,STATUS=STAT)
++      IF(STAT.NE.1) THEN
++        IF(STAT.NE.0.OR.L.NE.1.OR.OPT.NE.'1') RETURN
++      ENDIF
++      DO J=1,M
++        DO I=1,N
++          W=TRANSFER(A(I,J),0_INT32)
++          E=IBITS(W,23,8)
++          IF(IBCLR(W,31).NE.0_INT32.AND.(E.LT.3.OR.E.EQ.255)) RETURN
++        ENDDO
++      ENDDO
++      SECOM45_COR_OK=.TRUE.
++      END

@@ -1,0 +1,9 @@
+{
+  "parent": "87490b3a06f85cdafdadce7730ff8547a2deb37a",
+  "parent_sha": "8099efb76e98f44b69af1b5a830d87497592ab835cc6bb68c88168119545b7d3",
+  "source_sha": "de7ba6961e50c564294dd642a27ba52bcaedc40984fcb91ecd33410e9b31d361",
+  "science_sha": "de7ba6961e50c564294dd642a27ba52bcaedc40984fcb91ecd33410e9b31d361",
+  "witness": false,
+  "generator_sha": "a47d38aeb0a6dfa087b47dad7671a83a38ed67a27bcee0da3a83022fcf7e3f97",
+  "patch_sha": "10d29052e4fbf65b6c7bf0bfec4ee90fb249f7e641632520eb6a19f49182d6ed"
+}

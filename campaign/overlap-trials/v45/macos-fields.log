@@ -1,0 +1,11 @@
+PASS: binary32 guard (sNaN included, traps enabled), opt-out, absent env, real-8 fallback
+baseline 1 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+baseline 3 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+candidate 1 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+candidate 3 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+witness 1 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+witness 1 0 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+witness 3 1 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+witness 3 0 080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1
+PASS: removing early END DO join produces STOP 94
+PASS: 20 bit-exact fields, 24 configurations x 2 substeps, 1 and 3 threads; OMP publication checked

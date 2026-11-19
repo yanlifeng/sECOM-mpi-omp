@@ -1,0 +1,33 @@
+{
+  "candidate": "v45",
+  "scope": "Isolated EXTRNL/ADVAVE kernels, not the solver or a performance result",
+  "base_commit": "87490b3a06f85cdafdadce7730ff8547a2deb37a",
+  "science_extrnl_sha256": "de7ba6961e50c564294dd642a27ba52bcaedc40984fcb91ecd33410e9b31d361",
+  "macos": {
+    "compiler": "GNU Fortran Homebrew GCC 10.1.0, x86_64 on Apple Silicon",
+    "matrix": "v44 vs uninstrumented v45 + witnessed forced-on/off, 24 configurations x 2 substeps x 20 raw fields, 1/3 threads",
+    "field_bytes_per_run": 15694080,
+    "field_sha256": "080dc1102850c6996043e70e8a573ee200ab19ba9b48e92e6dada2babc33aeb1",
+    "guard": "15 raw binary32 bit patterns, opt-in/out/unset, REAL-8 fallback",
+    "late_bcond_with_join_rc": 0,
+    "late_bcond_missing_join_mutant_rc": 94,
+    "hardware_trap": "NOT credited: local Rosetta runtime did not deliver SIGFPE for the v44 sNaN fixture",
+    "stdout": "macos-fields.log",
+    "stdout_sha256": "308cce5aa46aa517ba1f56e55f5f1f8c199020c7d727731db67749d6b166cde6"
+  },
+  "p3_linux": {
+    "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)",
+    "cpu_affinity": [37],
+    "preflight_cpu37_cpu109_busy_ticks_in_one_second": [0, 0],
+    "only_microfixtures": true,
+    "traps": "invalid,zero,overflow",
+    "input_signaling_nan_hex": "7F800001",
+    "baseline_original_DO95_after_BCOND_and_ADVAVE_rc": -8,
+    "candidate_original_DO95_after_BCOND_and_ADVAVE_rc": -8,
+    "mutant_fp_compare_earlier_before_ADVAVE_rc": -8,
+    "delayed_final_ADVVA_with_TY_join_rc": 0,
+    "missing_TY_join_mutant_rc": 94,
+    "stdout": "linux-order.log",
+    "stdout_sha256": "85f40ba3b955a1fe9da4f37e60d5fabcbabb808d9333a94b6196980587e43698"
+  }
+}

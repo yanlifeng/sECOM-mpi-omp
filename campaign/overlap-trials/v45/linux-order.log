@@ -1,0 +1,14 @@
+compiler: GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)
+flags: -O3 -fopenmp -ffp-contract=off -fno-fast-math -std=legacy -ffixed-line-length-132 -ffpe-trap=invalid,zero,overflow -fcheck=bounds
+CPU affinity: [37]
+base/science/adv/driver SHA256: 8099efb76e98f44b69af1b5a830d87497592ab835cc6bb68c88168119545b7d3 de7ba6961e50c564294dd642a27ba52bcaedc40984fcb91ecd33410e9b31d361 4d2a44c8b944d691fd5e4cd5e0846ce4a6df73c3eb0db52dbf841c38f8d749aa 8e68d6a27ab832e89d6a712bfa6668eee785d72937da781f7d20b9ef6fa811d0
+v44 instrumented source/binary SHA256: 8c88a31af8c3c5d4b22c20fe07989d4330eff7841e6ee5f2433d9c19b2b5d381 c1473c91c2821b0ff7953aa0af250c6bc1264e118433e96d33ff2f2ce79aaf31
+v44 rc -8 SIGFPE at original DO95
+v45 instrumented source/binary SHA256: 37065fa76c9d28ed47ce695931ed234092f64f59e7d1a0f1be69e436f3be706f 27df520e1dea187105225c557f5fca0fec1a2d8311cce01a11941b9c0be06726
+v45 rc -8 SIGFPE at original DO95
+float_guard_mutant instrumented source/binary SHA256: 5122996b9b760ff5a82bd3273d3b7f68d2a4de1447fbfb6c3aefede3890fd5d6 ccf0dc346193ef99640b0b9b26ec1bc1b0a21f6d27029b3bae53005a72c5c157
+float_guard_mutant rc -8 SIGFPE at pre-ADV guard
+v45_ty_join instrumented source/binary SHA256: b3ded5e3b615c77e8ad6f639213b6be18f8e99894622515e824f79a119e0c80b 0342db05c962c73233f4cfbf4f416b2ef6f66eb25b3814fbdabddb34e5d277a9
+v45_ty_join exit 0
+ty_nowait_mutant instrumented source/binary SHA256: 4ca27b6cad576e3aff9ab7eb9949e1e0fcd723610a47dae6308c5a4bd44fd9f1 4ba90052c15516342839c4cf502577cdcaed61850ef0700229b6cdec73cb3d11
+ty_nowait_mutant exit 94
