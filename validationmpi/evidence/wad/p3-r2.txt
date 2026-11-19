@@ -1,0 +1,39 @@
+launcher ['/usr/lib64/openmpi/bin/mpirun', '--host', 'localhost:2', '-np', '2', '--nooversubscribe', '--bind-to', 'none', '--mca', 'plm', 'isolated', '--mca', 'pml', 'ob1', '--mca', 'btl', 'self,vader', '/usr/bin/python3', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2/test_wad_owned.py', 'p3-rank', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2', '--ranks', '2', '--threads', '1', '--first-cpu', '4']
+p3 rank 1 CPU [5]
+p3 rank 0 CPU [4]
+ WAD_OWNED           2           1           0
+launcher ['/usr/lib64/openmpi/bin/mpirun', '--host', 'localhost:3', '-np', '3', '--nooversubscribe', '--bind-to', 'none', '--mca', 'plm', 'isolated', '--mca', 'pml', 'ob1', '--mca', 'btl', 'self,vader', '/usr/bin/python3', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2/test_wad_owned.py', 'p3-rank', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2', '--ranks', '3', '--threads', '2', '--first-cpu', '4']
+p3 rank 0 CPU [4, 5]
+p3 rank 1 CPU [6, 7]
+p3 rank 2 CPU [8, 9]
+ WAD_OWNED           3           2           0
+launcher ['/usr/lib64/openmpi/bin/mpirun', '--host', 'localhost:7', '-np', '7', '--nooversubscribe', '--bind-to', 'none', '--mca', 'plm', 'isolated', '--mca', 'pml', 'ob1', '--mca', 'btl', 'self,vader', '/usr/bin/python3', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2/test_wad_owned.py', 'p3-rank', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2', '--ranks', '7', '--threads', '1', '--first-cpu', '4']
+p3 rank 0 CPU [4]
+p3 rank 1 CPU [5]
+p3 rank 3 CPU [7]
+p3 rank 4 CPU [8]
+p3 rank 5 CPU [9]
+p3 rank 2 CPU [6]
+p3 rank 6 CPU [10]
+ WAD_OWNED           7           1           0
+launcher ['/usr/lib64/openmpi/bin/mpirun', '--host', 'localhost:3', '-np', '3', '--nooversubscribe', '--bind-to', 'none', '--mca', 'plm', 'isolated', '--mca', 'pml', 'ob1', '--mca', 'btl', 'self,vader', '/usr/bin/python3', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2/test_wad_owned.py', 'p3-rank', '/home/user_home/ylf/secom-mpi-20261119/wad-kernel-r2', '--ranks', '3', '--threads', '2', '--first-cpu', '4', '--negative']
+p3 rank 0 CPU [4, 5]
+p3 rank 1 CPU [6, 7]
+p3 rank 2 CPU [8, 9]
+ WAD_OWNED           3           2           1
+ BAD OWNER           1           8           5           4
+STOP 91
+STOP 91
+STOP 91
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[60699,1],2]
+  Exit code:    91
+--------------------------------------------------------------------------
+PASS: discarded north ET/ETF reset was rejected; mpirun exit 91

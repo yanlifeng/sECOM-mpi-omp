@@ -120,6 +120,7 @@
       Data PATMOPT /1./        ! Set PATMOPT to 1 only if barometric load adjustment
                                ! of surface elevation is to be included
 ! 
+      CALL SMPI_INIT(IM,JM)
       IURUN=1                 ! run_data
       IUGRD=3                 ! model_grid (opened & closed in setdom.f)
       IUTAS=5                 ! init_tands (opened & closed in tands.f)
@@ -1634,6 +1635,22 @@
 !
 !-----------------------------------------------------------------------
 !
+! First MPI stage supports the already validated persistent barotropic
+! path. Other physics must not silently enter an incompletely ported path.
+      IF(SMPI_SIZE.GT.1) THEN
+       IF(TOR.NE.'BAROTROPIC'.OR.JTM.NE.0.OR.ISPLIT.LE.0.OR.
+     &    BCTYPE.NE.'CLAMPED'.OR.HYDTYPE.NE.'INTERNAL'.OR.
+     &    WAVEDYN.NE.'NEGLECT'.OR.TRACER.NE.'NEGLECT'.OR.
+     &    SEDTRAN.NE.'NEGLECT'.OR.CHEMTRAN.NE.'NEGLECT'.OR.
+     &    PARTICLE.NE.'NEGLECT') THEN
+        WRITE(*,*) 'MPI prototype requires barotropic/JTM=0/CLAMPED'
+        CALL SMPI_FINALIZE()
+        STOP 72
+       ENDIF
+      ENDIF
+      CALL SECOM_MPI_BC_PLAN()
+      IF(SMPI_SIZE.GT.1) WRITE(*,*) 'MPI DOMAIN',SMPI_RANK,
+     & SMPI_SIZE,SMPI_JLO,SMPI_JHI,'LOCALBC',SMPI_LOCALBC
                    DO 9000 INTX=ISTART,IEND
 ! 
 !           RAMP=TANH(FLOAT(INTX)/FLOAT(IRAMP+1))
@@ -3178,6 +3195,7 @@
      *    ' PLEASE FIX AND RESUBMIT'//)
 
 
+      CALL SMPI_FINALIZE()
       STOP
       END
 !
@@ -3194,7 +3212,7 @@
 ! the same row owners as the stencil; the first fluxes use only D,
 ! geometry and velocities. Their barrier precedes all reads of WAD.
 !$OMP DO SCHEDULE(STATIC)
-      DO J=1,JM
+      DO J=SMPI_FIRST(1),SMPI_LAST(JM)
         DO I=1,IM
           DUMWAD(I,J)=DUM(I,J)
           DVMWAD(I,J)=DVM(I,J)
@@ -3213,5 +3231,32 @@
         IF(VAMAX.GT.100.) EXIT
       ENDDO
 !$OMP END PARALLEL
+! Transitional correctness path: replicated legacy outer routines see
+! complete authoritative fields, never stale non-owned rows. This bulk
+! publication is explicitly not the final communication/performance plan.
+      CALL SMPI_ALL(ADVUA,IM,JM)
+      CALL SMPI_ALL(ADVVA,IM,JM)
+      CALL SMPI_ALL(FLUXUA,IM,JM)
+      CALL SMPI_ALL(FLUXVA,IM,JM)
+      CALL SMPI_ALL(TPS,IM,JM)
+      CALL SMPI_ALL(CURV42D,IM,JM)
+      CALL SMPI_ALL(TXBOT,IM,JM)
+      CALL SMPI_ALL(TYBOT,IM,JM)
+      CALL SMPI_ALL(TXICE,IM,JM)
+      CALL SMPI_ALL(TYICE,IM,JM)
+      CALL SMPI_ALL(DUMWAD,IM,JM)
+      CALL SMPI_ALL(DVMWAD,IM,JM)
+      CALL SMPI_ALL(EL,IM,JM)
+      CALL SMPI_ALL(ELB,IM,JM)
+      CALL SMPI_ALL(ELF,IM,JM)
+      CALL SMPI_ALL(UA,IM,JM)
+      CALL SMPI_ALL(UAB,IM,JM)
+      CALL SMPI_ALL(UAF,IM,JM)
+      CALL SMPI_ALL(VA,IM,JM)
+      CALL SMPI_ALL(VAB,IM,JM)
+      CALL SMPI_ALL(VAF,IM,JM)
+      CALL SMPI_ALL(D,IM,JM)
+      CALL SMPI_ALL(ET,IM,JM)
+      CALL SMPI_ALL(ETF,IM,JM)
       IF(.NOT.(VAMAX.GT.100.)) IEXT=ISPLIT+1
       END

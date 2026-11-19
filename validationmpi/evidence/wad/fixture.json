@@ -1,0 +1,11 @@
+{
+  "reference": "1b58f33639538c2d214f14a8f9a575ceffed5267",
+  "files": {
+    "comdeck": "56d150a96ad6e3d4d02458fbe6edd871cac4fc8a94365b0dd845236336cc21ab",
+    "mpideck": "f9554d1c50c987ac0e721747e6c6548d40a951bdd2756de96f5061bf6fc1d16c",
+    "secom_mpi.f90": "7647fff648848e89c07c167b0c9a36de79110cfab58e490908be9cf7471903bb",
+    "v46_wandd.f": "6832da739d5b2e975488f88c052d8cb5beeb281ff8adc2883634e4bfc651539b",
+    "wad_owned_driver.f": "9d3bd56c60363f86024bdfcc349e975c610f743e4314e7145b8408afd92feea5",
+    "wandd_kky.f": "05b84add3c551eb85ef59915f1bb1b71417f5943488780846b0988d2b130dee9"
+  }
+}

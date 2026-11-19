@@ -1,6 +1,7 @@
-# GNU Fortran + netCDF-Fortran. No CPU-specific flags or MPI dependency.
+# GNU Fortran + netCDF-Fortran. MPI is required only for MODE=mpi.
 .DEFAULT_GOAL := all
 FC = gfortran
+MPIFC ?= mpifort
 NF_CONFIG ?= nf-config
 MODE ?= serial
 TUNE_FLAGS ?=
@@ -9,30 +10,41 @@ NF_FFLAGS := $(shell $(NF_CONFIG) --fflags)
 NF_LIBS := $(shell $(NF_CONFIG) --flibs)
 EXTRA_LIBS ?=
 OBJECT_NAMES = bcdata.o first.o disply.o maxmin.o print.o prints.o prtxy.o setdom.o sinter.o slicexz.o sliceyz.o tands.o zeroes.o reordr.o sedflx.o sedic.o suslod.o fhcalc.o wavesmb.o wavedon.o chembed.o randb.o oclamp.o advave.o advq.o advt.o antidif.o antidif_chem.o antidif_sed.o archive.o baropg.o pclamp.o ptide_noaa.o alphabc.o densityUNESCO.o ecom3d.o profu.o profv.o proft.o profq.o profe.o smag.o transport.o vertvl.o advsed.o profsed.o bulk.o fzol.o jday.o longwave.o ncld.o n_cloud.o qsat.o vapor.o wreal.o traninp.o chemflx.o partrak.o onepart.o advcon.o stress.o bottau.o advchem.o datehr.o getdate.o hitflx.o north.o solar.o zenith.o mixed.o putcdf.o tscdf.o extrnl.o advu.o advv.o bcond.o setdom_corners.o epcpercell.o smooth.o wandd_kky.o read_corner_loc.o update_cbc.o wetbulb.o airdensity.o update_cbc_mannings.o netcdf_read_restart.o netcdf_read_synop_met.o netcdf_read_ifric2dt.o netcdf_read_corner_loc.o netcdf_read_model_grid.o netcdf_read_bc_elev.o netcdf_read_bc_ts.o netcdf_read_bc_diff1.o netcdf_read_bc_diff2.o netcdf_read_ic_ts.o netcdf_read_bc_met.o netcdf_read_bc_dis.o
-OBJECT_NAMES += baro_check.o windtext.o
+OBJECT_NAMES += baro_check.o windtext.o secom_mpi.o mpi_boundary.o
 OBJDIR = build/$(MODE)
 OBJECTS = $(addprefix $(OBJDIR)/,$(OBJECT_NAMES))
-ifeq ($(MODE),omp)
+ifeq ($(MODE),mpi)
+FC = $(MPIFC)
+MPI_DEFS = -DSECOM_USE_MPI
+# GCC 8 (the pinned p3 toolchain) predates -fallow-argument-mismatch.
+ifeq ($(origin FFLAGS),file)
+FFLAGS := $(filter-out -fallow-argument-mismatch,$(FFLAGS)) -std=legacy
+endif
+endif
+ifneq ($(filter omp mpi,$(MODE)),)
 OMP_LINK = -fopenmp
 $(OBJDIR)/extrnl.o $(OBJDIR)/advave.o $(OBJDIR)/archive.o $(OBJDIR)/ecom3d.o $(OBJDIR)/wandd_kky.o: EXTRA_FFLAGS = -fopenmp
 $(OBJDIR)/bcond.o $(OBJDIR)/bottau.o $(OBJDIR)/update_cbc_mannings.o: EXTRA_FFLAGS = -fopenmp
 $(OBJDIR)/baro_check.o: EXTRA_FFLAGS = -fopenmp
 else ifneq ($(MODE),serial)
-$(error MODE must be serial or omp)
+$(error MODE must be serial, omp or mpi)
 endif
 .PHONY: all
 all: $(OBJDIR)/s--pom.x
 $(OBJDIR)/s--pom.x: $(OBJECTS)
 	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -o $@ $(OBJECTS) $(NF_LIBS) $(EXTRA_LIBS)
-$(OBJDIR)/%.o: %.f comdeck netcdf.inc Makefile.portable
+$(OBJDIR)/secom_mpi.o: secom_mpi.f90 Makefile.portable
+	mkdir -p $(@D)
+	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -cpp $(MPI_DEFS) -J$(OBJDIR) -c $< -o $@
+$(OBJDIR)/%.o: %.f comdeck mpideck netcdf.inc Makefile.portable
 	mkdir -p $(@D)
 	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(NF_FFLAGS) $(EXTRA_FFLAGS) -c $< -o $@
 .PHONY: check-extrema
 check-extrema: $(OBJDIR)/check-extrema
 	$(OBJDIR)/check-extrema
-$(OBJDIR)/check-extrema: ../validation/check_extrema.f baro_check.f comdeck Makefile.portable
+$(OBJDIR)/check-extrema: ../validation/check_extrema.f baro_check.f comdeck mpideck Makefile.portable $(OBJDIR)/secom_mpi.o
 	mkdir -p $(@D)
-	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -fcheck=bounds -I. ../validation/check_extrema.f baro_check.f -o $@
+	$(FC) $(TUNE_FLAGS) $(FFLAGS) $(OMP_LINK) -fcheck=bounds -I. ../validation/check_extrema.f baro_check.f $(OBJDIR)/secom_mpi.o -o $@
 .PHONY: check-windtext
 check-windtext: $(OBJDIR)/check-windtext
 	cd "$$(mktemp -d '$(abspath $(OBJDIR))/windcheck.XXXXXX')" && \

@@ -24,13 +24,37 @@
       SAVE ON46
       DATA ON46 /.FALSE./
 !
+! The validated local-boundary plan proves that sparse nonzero copies
+! stay on their owners. Publish only adjacent rows on that path; retain
+! complete snapshots for any boundary graph that fails the proof.
+      IF(SMPI_LOCALBC) THEN
+      CALL SMPI_HALO(D,IM,JM)
+      CALL SMPI_HALO(UA,IM,JM)
+      CALL SMPI_HALO(VA,IM,JM)
+      CALL SMPI_HALO(UAB,IM,JM)
+      CALL SMPI_HALO(VAB,IM,JM)
+      CALL SMPI_HALO(EL,IM,JM)
+      CALL SMPI_HALO(ELB,IM,JM)
+      CALL SMPI_HALO(DUMWAD,IM,JM)
+      CALL SMPI_HALO(DVMWAD,IM,JM)
+      ELSE
+      CALL SMPI_ALL(D,IM,JM)
+      CALL SMPI_ALL(UA,IM,JM)
+      CALL SMPI_ALL(VA,IM,JM)
+      CALL SMPI_ALL(UAB,IM,JM)
+      CALL SMPI_ALL(VAB,IM,JM)
+      CALL SMPI_ALL(EL,IM,JM)
+      CALL SMPI_ALL(ELB,IM,JM)
+      CALL SMPI_ALL(DUMWAD,IM,JM)
+      CALL SMPI_ALL(DVMWAD,IM,JM)
+      ENDIF
 !$OMP DO SCHEDULE(STATIC)
-      DO 400 J=2,JMM1
+      DO 400 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 400 I=2,IM
  400  FLUXUA(I,J)=.25*(D(I,J)+D(I-1,J))*(H2(I,J)+H2(I-1,J))*UA(I,J)
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
-      DO 405 J=2,JM
+      DO 405 J=SMPI_FIRST(2),SMPI_LAST(JM)
       DO 405 I=2,IMM1
  405  FLUXVA(I,J)=.25*(D(I,J)+D(I,J-1))*(H1(I,J)+H1(I,J-1))*VA(I,J)
 !
@@ -48,8 +72,9 @@
 !wad         ENDDO
 !wad      ENDDO
 !$OMP END DO
+      CALL SMPI_HALO(FLUXVA,IM,JM)
 !$OMP DO SCHEDULE(STATIC)
-      DO 410 J=2,JMM1
+      DO 410 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 410 I=2,IMM1
  410  ELF(I,J)=ELB(I,J)-DTE2*
      . (FLUXUA(I+1,J)-FLUXUA(I,J)+FLUXVA(I,J+1)-FLUXVA(I,J))/ART(I,J)
@@ -63,6 +88,7 @@
       FAST46=.FALSE.
       IF(MODE46.AND.IEXT.GT.1) FAST46=ON46
 !$OMP SINGLE
+      IF(.NOT.SMPI_LOCALBC) CALL SMPI_ALL_RAW(ELF,IM,JM)
       DO 406 N=1,NUMDBC
       ID=IDD(N)
       JD=JDD(N)
@@ -125,7 +151,7 @@
 !$OMP END SINGLE NOWAIT
       IF(FAST46) THEN
 !$OMP DO SCHEDULE(STATIC)
-        DO J=1,JM
+        DO J=SMPI_FIRST(1),SMPI_LAST(JM)
           DO I=1,IM
             CURV42D(I,J)=.25*COR(I,J)
           ENDDO
@@ -135,7 +161,7 @@
 !$OMP BARRIER
       ENDIF
 !$OMP DO SCHEDULE(STATIC)
-      DO J=1,JM
+      DO J=SMPI_FIRST(1),SMPI_LAST(JM)
         DO I=1,IM
           ELF(I,J)=ELF(I,J)*FSM(I,J)
         ENDDO
@@ -177,7 +203,7 @@
 !
       IF(.NOT.FAST46) THEN
 !$OMP DO SCHEDULE(STATIC)
-      DO 95 J=1,JM
+      DO 95 J=SMPI_FIRST(1),SMPI_LAST(JM)
       DO 95 I=1,IM
  95   CURV42D(I,J)=.25*COR(I,J)
 !
@@ -195,7 +221,7 @@
 !     Refresh on every outer step (also works on hot starts).
       IF(IEXT.EQ.1) THEN
 !$OMP DO SCHEDULE(STATIC)
-       DO J=2,JMM1
+       DO J=SMPI_FIRST(2),SMPI_LAST(JMM1)
         DO I=2,IMM1
          GEOMX(I,J)=(H2(I+1,J)*FSM(I+1,J)+H2(I,J)*FSM(I,J))/
      .          (FSM(I+1,J)+FSM(I,J)+1.E-30)-
@@ -210,7 +236,7 @@
 !$OMP END DO
       ENDIF
 !$OMP DO SCHEDULE(STATIC)
-      DO 60 J=2,JMM1
+      DO 60 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 60 I=2,IMM1
       CURV42D(I,J)= CURV42D(I,J)
      .  +.125*((VA(I,J+1)+VA(I,J))*GEOMX(I,J)
@@ -222,7 +248,7 @@
 ! still completes all three independent fields before boundary edits.
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
-      DO 100 J=2,JMM1
+      DO 100 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 100 I=2,IMM1
 !NG04232008      TXBOT(I,J)=-BFRIC
       TXBOT(I,J)=-0.5*(CBC(I,J)+CBC(I-1,J))
@@ -235,7 +261,7 @@
  100  CONTINUE
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
-      DO 102 J=2,JMM1
+      DO 102 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 102 I=2,IMM1
 !NG04232008      TYBOT(I,J)=-BFRIC
       TYBOT(I,J)=-0.5*(CBC(I,J)+CBC(I,J-1))
@@ -253,8 +279,14 @@
 !$OMP SINGLE
 ! The existing stress join and preceding initialization join have completed
 ! V divergence, CURV42D and both stresses before any ordered edge update.
+      IF(.NOT.SMPI_LOCALBC) THEN
+        CALL SMPI_ALL_RAW(CURV42D,IM,JM)
+        CALL SMPI_ALL_RAW(TXBOT,IM,JM)
+        CALL SMPI_ALL_RAW(TYBOT,IM,JM)
+      ENDIF
       IF(EDGE_LATE) CALL SECOM_ADV34_EDGES(ADVUA,ADVVA)
       DO 310 N=1,NUMEBC
+      IF(SMPI_LOCALBC.AND..NOT.SMPI_OWNS(JETA(N))) CYCLE
       IE=IETA(N)
       JE=JETA(N)
       IC=ICON(N)
@@ -275,6 +307,12 @@
  310  CONTINUE
       IF(EDGE_LATE) CALL SECOM_ADV34_CORNERS()
 !$OMP END SINGLE
+      IF(SMPI_LOCALBC) THEN
+        CALL SMPI_HALO(CURV42D,IM,JM)
+        CALL SMPI_HALO(UA,IM,JM)
+        CALL SMPI_HALO(VA,IM,JM)
+      ENDIF
+      CALL SMPI_HALO(ELF,IM,JM)
 
  5000 CONTINUE
 
@@ -291,7 +329,7 @@
 !$OMP END SINGLE
       ENDIF
 !$OMP DO SCHEDULE(STATIC)
-      DO 425 J=2,JMM1
+      DO 425 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 425 I=3,IMM1
       UAF(I,J)=ADVUA(I,J)
      .    -ARU(I,J)*( CURV42D(I,J)*D(I,J)*(VA(I,J+1)+VA(I,J))
@@ -325,7 +363,7 @@
 ! VAF reads UA/VA, not UAF. Both updates finish before BCOND(13).
 !$OMP END DO NOWAIT
 !$OMP DO SCHEDULE(STATIC)
-      DO 435 J=3,JMM1
+      DO 435 J=SMPI_FIRST(3),SMPI_LAST(JMM1)
       DO 435 I=2,IMM1
       VAF(I,J)=ADVVA(I,J)  
      .    +ARV(I,J)*( CURV42D(I,J)*D(I,J)*(UA(I+1,J)+UA(I,J))
@@ -354,6 +392,11 @@
 !JKL
 !$OMP END DO
 !$OMP SINGLE
+      IF(.NOT.SMPI_LOCALBC) THEN
+        CALL SMPI_ALL_RAW(UAF,IM,JM)
+        CALL SMPI_ALL_RAW(VAF,IM,JM)
+        CALL SMPI_ALL_RAW(ELF,IM,JM)
+      ENDIF
       IF(BCTYPE.EQ.'RANDB  ') CALL RANDB
       IF(BCTYPE.EQ.'MIXED  ') CALL MIXED(1)
 !JKL
@@ -365,7 +408,7 @@
 ! leave cache; retain the old interface and timing for other paths.
       IF(ROTATE) THEN
 !$OMP DO SCHEDULE(STATIC)
-        DO J=1,JM
+        DO J=SMPI_FIRST(1),SMPI_LAST(JM)
           DO I=1,IM
             TXBOT(I,J)=TXBOT(I,J)*DUM(I,J)
             TYBOT(I,J)=TYBOT(I,J)*DVM(I,J)
@@ -383,7 +426,7 @@
 !$OMP END DO
       ELSE
 !$OMP DO SCHEDULE(STATIC)
-      DO J=1,JM
+      DO J=SMPI_FIRST(1),SMPI_LAST(JM)
         DO I=1,IM
           TXBOT(I,J)=TXBOT(I,J)*DUM(I,J)
           TYBOT(I,J)=TYBOT(I,J)*DVM(I,J)
@@ -400,6 +443,9 @@
       SUBROUTINE SECOM_ADV34_CORNERS()
       INCLUDE 'comdeck'
       DO N=1,NUMECR
+! The admission test proves both corner targets and every RHS source
+! share this owner. Do not evaluate stale non-owned arithmetic at all.
+       IF(SMPI_LOCALBC.AND..NOT.SMPI_OWNS(JCHARD(N))) CYCLE
        IF(NCHARD(N).EQ.1) THEN ! Bottom Left Corner
         Va(ICHARD(N),JCHARD(N)+1) =
      +   .5*(Va(ICHARD(N)+1,JCHARD(N)+1)+Va(ICHARD(N),JCHARD(N)+2))

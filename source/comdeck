@@ -419,4 +419,7 @@
       CHARACTER*7 BCTYPE
       COMMON /OBCBLK/BCTYPE
 
+! MPI metadata is isolated from scientific COMMON blocks. Serial/OMP
+! builds link identity/no-op helpers; only the MPI build partitions rows.
+      INCLUDE 'mpideck'
 !    END OF COMDECK

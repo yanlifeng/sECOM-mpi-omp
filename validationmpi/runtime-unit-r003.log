@@ -1,0 +1,47 @@
+2026-11-19T11:48:21,227011418+08:00
+p3.localdomain
+Linux 4.18.0-513.24.1.el8_9.x86_64
+gfortran -I/usr/include/openmpi-x86_64 -pthread -I/usr/lib64/openmpi/lib -Wl,-rpath -Wl,/usr/lib64/openmpi/lib -Wl,--enable-new-dtags -L/usr/lib64/openmpi/lib -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh -lmpi
+mpirun (Open MPI) 4.1.1
+Cpus_allowed_list:	24-31
+4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f  secom_mpi.f90
+bf25a1d6b9f154297c4f4c9b1cf1dd96c086cdb496987cf2957ddf48ed8b0b69  mpideck
+801a5c831916bd7085ad474b2e8bd3877def06ae892bc04c949755a843eea73d  check_runtime.f90
+72e7ec7bad4f0220778ad55ce4fbe5349ecd16f400dae1bf7ddcda8e69426521  runtime_place.c
+c75575706ed3ef2ef10a48735df6bc17730a1ec841704e90d45e273d281c4433  runtime_rank.sh
+0:24 24,96
+0:25 25,97
+0:26 26,98
+0:27 27,99
+0:28 28,100
+0:29 29,101
+0:30 30,102
+0:31 31,103
+4610922963bb34d1953c523a49d4e25b37c9cbe284600ace3be1942fbda08866  check-runtime
+BEGIN JM=5 ranks=1 OMP=1
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           1     2416345           1           5           1           2          24
+PASS
+BEGIN JM=5 ranks=2 OMP=1
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           2     2416353           1           3           1           2          24
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           1           2     2416354           4           5           1           2          26
+PASS
+BEGIN JM=7 ranks=4 OMP=1
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           1           4     2416365           3           4           1           2          26
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           2           4     2416366           5           6           1           2          28
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           3           4     2416367           7           7           1           2          30
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           4     2416364           1           2           1           2          24
+PASS
+BEGIN JM=4 ranks=4 OMP=1
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           4     2416381           1           1           1           2          24
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           1           4     2416382           2           2           1           2          26
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           2           4     2416383           3           3           1           2          28
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           3           4     2416384           4           4           1           2          30
+PASS
+BEGIN JM=7 ranks=2 OMP=2
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           1           2     2416399           5           7           2           2          26          27
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           2     2416398           1           4           2           2          24          25
+PASS
+BEGIN JM=5 ranks=1 OMP=2
+ SMPI_PASS rank,size,pid,lo,hi,omp,threadlevel,cpus:           0           1     2416411           1           5           2           2          24          25
+PASS
+2026-11-19T11:48:23,419205720+08:00

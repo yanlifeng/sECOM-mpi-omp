@@ -22,7 +22,7 @@
 ! while it is hot. Only divergences read other rows, and U divergence
 ! must finish before the V stage reuses the shared FLUX arrays.
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
-      DO J=1,JM
+      DO J=SMPI_FIRST(1),SMPI_LAST(JM)
        DO I=1,IM
       FLUXUA(I,J)=0.0
       FLUXVA(I,J)=0.0
@@ -67,14 +67,17 @@
        ENDIF
       ENDDO
 !$OMP END DO
+! The U divergence reads FLUXVA(:,J+1). Complete the packed boundary
+! rows before any rank reuses the flux arrays for the V stage.
+      IF(SMPI_SIZE.GT.1) CALL SMPI_HALO(FLUXVA,IM,JM)
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
-      DO 480 J=2,JMM1
+      DO 480 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 480 I=3,IMM1
  480  ADVUA(I,J)=FLUXUA(I,J)-FLUXUA(I-1,J)
      .           +FLUXVA(I,J+1)-FLUXVA(I,J)
 !$OMP END DO
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
-      DO J=1,JM
+      DO J=SMPI_FIRST(1),SMPI_LAST(JM)
        DO I=1,IM
       FLUXUA(I,J)=0.0
       FLUXVA(I,J)=0.0
@@ -109,12 +112,21 @@
        ENDIF
       ENDDO
 !$OMP END DO
+! Different producer/epoch from above: V divergence consumes J-1.
+      IF(SMPI_SIZE.GT.1) CALL SMPI_HALO(FLUXVA,IM,JM)
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
-      DO 880 J=3,JMM1
+      DO 880 J=SMPI_FIRST(3),SMPI_LAST(JMM1)
       DO 880 I=2,IMM1
  880  ADVVA(I,J)=FLUXUA(I+1,J)-FLUXUA(I,J)
      .          +FLUXVA(I,J)-FLUXVA(I,J-1)
 !$OMP END DO NOWAIT
+! One correctness-first publication for both public and deferred edges.
+! ADVUA is already complete (end of DO 480). The team exit barrier
+! inside its gather also completes DO 880 before the ADVVA gather.
+      IF(SMPI_SIZE.GT.1.AND..NOT.EDGE_LATE) THEN
+        CALL SMPI_ALL(ADVUA,IM,JM)
+        CALL SMPI_ALL(ADVVA,IM,JM)
+      ENDIF
 ! Only the rotating barotropic caller can defer publication: no following
 ! curvature or bottom/ice stress loop reads the two acceleration fields.
       IF(EDGE_LATE) RETURN
