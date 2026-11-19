@@ -1,0 +1,47 @@
+{
+  "compiler": "GNU Fortran (Homebrew GCC 10.1.0) 10.1.0",
+  "source_sha": "49b5228fd203bbb7b717962b11bbc7912b3de0148c1918ecbac399534180b4d2",
+  "runtime_sha": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f",
+  "cases": {
+    "v46-threads1-mode2": {
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "v46-threads1-mode10": {
+      "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "v46-threads1-mode11": {
+      "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+    },
+    "default-threads1-mode2": {
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "default-threads1-mode10": {
+      "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "default-threads1-mode11": {
+      "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+    },
+    "v46-threads3-mode2": {
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "v46-threads3-mode10": {
+      "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "v46-threads3-mode11": {
+      "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+    },
+    "default-threads3-mode2": {
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "default-threads3-mode10": {
+      "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+      "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+    },
+    "default-threads3-mode11": {
+      "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+    }
+  }
+}

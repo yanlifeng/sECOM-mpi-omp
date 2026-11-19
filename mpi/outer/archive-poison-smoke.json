@@ -1,0 +1,43 @@
+{
+  "kind": "serial-build smoke only",
+  "ranks": 1,
+  "threads": 1,
+  "cpus": [],
+  "compiler": "GNU Fortran (Homebrew GCC 10.1.0) 10.1.0",
+  "mpi": null,
+  "flags": [
+    "-O3",
+    "-fopenmp",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-std=legacy",
+    "-ffixed-line-length-132",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fcheck=bounds"
+  ],
+  "source_sha": "49b5228fd203bbb7b717962b11bbc7912b3de0148c1918ecbac399534180b4d2",
+  "driver_sha": "0e4e648fae0486ab14a008913dd43b759f9cd35f777b3027d6383b9c8e9d7e99",
+  "runtime_sha": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f",
+  "cases": {
+    "reference/2": {
+      "rank0/archive.raw": "e87cd8884412fdf5083ddc24aff1f05c66f00648c246cab5749e6bf3605effc7"
+    },
+    "reference/10": {
+      "rank0/archive.raw": "e87cd8884412fdf5083ddc24aff1f05c66f00648c246cab5749e6bf3605effc7",
+      "rank0/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1"
+    },
+    "reference/11": {
+      "rank0/archive.raw": "ab5e53dcbadb3458c3b6d79eb4d6a480da20223349559b7f25e471763ebab566"
+    },
+    "candidate/2": {
+      "rank0/archive.raw": "e87cd8884412fdf5083ddc24aff1f05c66f00648c246cab5749e6bf3605effc7"
+    },
+    "candidate/10": {
+      "rank0/archive.raw": "e87cd8884412fdf5083ddc24aff1f05c66f00648c246cab5749e6bf3605effc7",
+      "rank0/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1"
+    },
+    "candidate/11": {
+      "rank0/archive.raw": "ab5e53dcbadb3458c3b6d79eb4d6a480da20223349559b7f25e471763ebab566"
+    }
+  }
+}

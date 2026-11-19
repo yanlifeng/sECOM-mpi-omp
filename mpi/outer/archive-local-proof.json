@@ -1,0 +1,182 @@
+{
+  "kind": "local reference vs policy-off/full-owner with NO MPI transport",
+  "compiler": "GNU Fortran (Homebrew GCC 10.1.0) 10.1.0",
+  "flags": [
+    "-O3",
+    "-fopenmp",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-std=legacy",
+    "-ffixed-line-length-132",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fcheck=bounds"
+  ],
+  "source_sha": "49b5228fd203bbb7b717962b11bbc7912b3de0148c1918ecbac399534180b4d2",
+  "cases": {
+    "v46/0": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "v46/1": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "9ac7f454ab7bf37fc8943372ec7a93baa0a2b6752194b6b5c3ad8bdda530ae3e"
+      }
+    },
+    "v46/2": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "v46/5": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "v46/6": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "v46/8": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "1594613c7e8c1ded07155120bf236077aa1aa39c9c75d32065917116b9c36561"
+      }
+    },
+    "v46/9": {
+      "rc": 95,
+      "outputs": {
+        "archive.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "v46/10": {
+      "rc": 0,
+      "outputs": {
+        "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "v46/11": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+      }
+    },
+    "off/0": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "off/1": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "9ac7f454ab7bf37fc8943372ec7a93baa0a2b6752194b6b5c3ad8bdda530ae3e"
+      }
+    },
+    "off/2": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "off/5": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "off/6": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "off/8": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "1594613c7e8c1ded07155120bf236077aa1aa39c9c75d32065917116b9c36561"
+      }
+    },
+    "off/9": {
+      "rc": 95,
+      "outputs": {
+        "archive.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "off/10": {
+      "rc": 0,
+      "outputs": {
+        "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "off/11": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+      }
+    },
+    "full_owner_no_transport/0": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "full_owner_no_transport/1": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "9ac7f454ab7bf37fc8943372ec7a93baa0a2b6752194b6b5c3ad8bdda530ae3e"
+      }
+    },
+    "full_owner_no_transport/2": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "full_owner_no_transport/5": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "full_owner_no_transport/6": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "full_owner_no_transport/8": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "1594613c7e8c1ded07155120bf236077aa1aa39c9c75d32065917116b9c36561"
+      }
+    },
+    "full_owner_no_transport/9": {
+      "rc": 95,
+      "outputs": {
+        "archive.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "full_owner_no_transport/10": {
+      "rc": 0,
+      "outputs": {
+        "gcmtsr": "e5756c18a94f24e769cd5e0fd20a111aa264358e0f9342817eddba8e0bc58ef8",
+        "archive.raw": "a5c9aac3415152a16de08e880a87f3dbb43463c207c1567b61c2bdbd96335097"
+      }
+    },
+    "full_owner_no_transport/11": {
+      "rc": 0,
+      "outputs": {
+        "archive.raw": "ff58d59465348c857b6f948c6da27c4ffe524f86df316a175cba9684c2f121f6"
+      }
+    }
+  }
+}

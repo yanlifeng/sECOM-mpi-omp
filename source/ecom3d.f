@@ -9,6 +9,7 @@
       INCLUDE 'comdeck'
       REAL ROWVMAX(JM),ROWEMIN(JM)
       INTEGER ROWIMAX(JM),ROWIMIN(JM)
+      INTEGER JMAINLO,JMAINHI,IBADOUTER
       LOGICAL SECOM_HIST0,SECOM_HIST_CERT0
       EXTERNAL SECOM_HIST_CERT0
       DATA SECOM_HIST0/.FALSE./
@@ -1649,8 +1650,27 @@
        ENDIF
       ENDIF
       CALL SECOM_MPI_BC_PLAN()
+! Owner-only outer stages are admitted together, before any histories.
+! Other supported inputs retain conservative replicated publication.
+      IBADOUTER=1
+      IF(SMPI_SIZE.GT.1.AND.SMPI_LOCALBC.AND.JTM.EQ.0.AND.
+     &   RESTAR.EQ.'COLD START'.AND.ISTART.EQ.1.AND.CDFOUT.AND.
+     &   TOR.EQ.'BAROTROPIC'.AND.HYDTYPE.EQ.'INTERNAL'.AND.
+     &   HORZMIX.EQ.'CONSTANT'.AND.OPTBFRIC.EQ.'MANNINGS-N'.AND.
+     &   OPTMBC(1:8).EQ.'AVERAGED'.AND..NOT.CREADPET.AND.
+     &   ICEFRICTION.NE.3.AND.NCHEMLAY.EQ.0.AND.
+     &   EPTS.EQ.0.AND.VPTS.EQ.0.AND.FPTS.EQ.0) IBADOUTER=0
+      CALL SMPI_INDEX_RAW(IBADOUTER)
+      SMPI_OUTER=IBADOUTER.EQ.0
+      JMAINLO=1
+      JMAINHI=JM
+      IF(SMPI_OUTER) THEN
+        JMAINLO=SMPI_JLO
+        JMAINHI=SMPI_JHI
+      ENDIF
       IF(SMPI_SIZE.GT.1) WRITE(*,*) 'MPI DOMAIN',SMPI_RANK,
-     & SMPI_SIZE,SMPI_JLO,SMPI_JHI,'LOCALBC',SMPI_LOCALBC
+     & SMPI_SIZE,SMPI_JLO,SMPI_JHI,'LOCALBC',SMPI_LOCALBC,
+     & 'OWNED_OUTER',SMPI_OUTER
                    DO 9000 INTX=ISTART,IEND
 ! 
 !           RAMP=TANH(FLOAT(INTX)/FLOAT(IRAMP+1))
@@ -2580,7 +2600,7 @@
  8200 CONTINUE
 !
 
-      DO 380 J=1,JM 
+      DO 380 J=JMAINLO,JMAINHI
       DO 380 I=1,IM 
       EGB(I,J)=EGF(I,J)
       ETB(I,J)=ET(I,J)
@@ -2648,6 +2668,7 @@
 **      MOVED ABOVE TO BE CONSITENT WITH  ecom3d  Khan 080999
 !
       IF(MOD(INTX,IPRINT).EQ.0 .AND. INTX.GE.IPRTSTART)  THEN
+       IF(SMPI_OUTER) CALL SMPI_OUTER_SNAPSHOT(ADVUA,ADVVA)
        CALL PRINTS(DRHOX,DRHOY,TRNU,TRNV)
       ENDIF
 
@@ -2661,6 +2682,7 @@
       ENDIF
 !NG    WRITE(*,*) 'INTX=', INTX, 'IRESTART=', IRESTART
       IF (INTX.EQ.IRESTART) THEN
+       IF(SMPI_OUTER) CALL SMPI_OUTER_SNAPSHOT(ADVUA,ADVVA)
        IF (NRESEND.LE.1) THEN
       IF (SMPI_RANK.EQ.0)
      &  OPEN (IUWRS,FORM='unformatted',FILE='startup')
@@ -2916,6 +2938,7 @@
 !
 !NG   GENERATE RESTART HERE ONLY IF REQUESTED AT END-OF-FILE
       IF (IEND.LE.IRESTART.OR.NRESEND.EQ.0) THEN
+       IF(SMPI_OUTER) CALL SMPI_OUTER_SNAPSHOT(ADVUA,ADVVA)
        IF (NRESEND.LE.1) THEN
       IF (SMPI_RANK.EQ.0)
      &  OPEN (IUWRS,FORM='unformatted',FILE='startup')
@@ -3168,6 +3191,7 @@
 !NG
 ! 
  9100 CONTINUE
+      IF(SMPI_OUTER) CALL SMPI_OUTER_SNAPSHOT(ADVUA,ADVVA)
 !       CLOSE (IUT90)
 !       CLOSE (IUT91)
 !       CLOSE (IUT92)
@@ -3261,9 +3285,8 @@
         IF(VAMAX.GT.100.) EXIT
       ENDDO
 !$OMP END PARALLEL
-! Transitional correctness path: replicated legacy outer routines see
-! complete authoritative fields, never stale non-owned rows. This bulk
-! publication is explicitly not the final communication/performance plan.
+! Non-admitted configurations still require the legacy full publication.
+      IF(.NOT.SMPI_OUTER) THEN
       CALL SMPI_ALL(ADVUA,IM,JM)
       CALL SMPI_ALL(ADVVA,IM,JM)
       CALL SMPI_ALL(FLUXUA,IM,JM)
@@ -3288,5 +3311,6 @@
       CALL SMPI_ALL(D,IM,JM)
       CALL SMPI_ALL(ET,IM,JM)
       CALL SMPI_ALL(ETF,IM,JM)
+      ENDIF
       IF(.NOT.(VAMAX.GT.100.)) IEXT=ISPLIT+1
       END

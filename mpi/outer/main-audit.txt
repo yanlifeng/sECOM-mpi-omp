@@ -1,0 +1,49 @@
+r004b / BAROTROPIC outer-state publication review (2026-11-19)
+
+Scope: cold start, MPI>1, SMPI_LOCALBC and SMPI_OUTER admitted before the
+time loop. Require INTERNAL, CLAMPED, CONSTANT mixing, MANNINGS-N,
+AVERAGED/no-PET, non-time-varying ice, JTM=0, ISPLIT>0, no tracer,
+sediment, chemistry or particles, no stations. Do not generalize to
+arbitrary input decks or mixed/3-D branches. Line labels below refer
+to source/ecom3d.f. No additional non-owner reader found in the gated
+main path after removal of the 24 per-outer-step bulk publications.
+
+Before/inside the subcycle. Startup readers, FIRST, and startup ARCHIVE
+run while fields are replicated. On each outer step only BCOND(7)'s
+three dense forcing passes are owned; all scalar/record reads and the
+ordered boundary lists are unchanged. The V-momentum stencil requires
+the south TYSURF and CBC after their producers; BOTTAU's VBAR requires
+north VA. Each has its explicit halo. Rain/evaporation, T/S updates,
+DT used in Manning, UBAR and QBAR otherwise read only the owner row.
+Constant mixing skips SMAG and BAROTROPIC skips the 3-D pressure and
+flux preparation. The subcycle's staged halos, WAD and replicated
+extrema verdict are unchanged; VAMAX>100 branches on every rank.
+
+Step 1 is different. Label 8001 branches to 8200, bypassing archive.
+DO 380 must stay JMAINLO:JMAINHI: EGB=EGF, ETB=ET, ET=ETF,
+DT=H+ET, UTB=UTF, VTB=VTF are all same-row reads/writes. NUMEPC=0.
+This preserves owner DT for next BCOND(7) and Manning. No peer reads
+of these six updated fields occur before the next event/halo.
+
+Steps 2 onward. After 8001, the history zero certificate scans owned
+rows and reduces the veto. SECOM_ARCHIVE_BODY updates owned rows;
+its own EL/VA halos and event publications handle cross-row energy
+and history consumers. It returns to 9900, NOT 8200. At 9900 the
+tracer, particle and sediment/chemistry blocks are skipped by the
+gate, as is EXTERNAL reconstruction. TOR=BAROTROPIC then jumps to
+9910, bypassing 3-D momentum, velocity clamping, WREAL and DO 380.
+There is no extra dense physics reader on this 9900 -> 9910 path.
+
+External consumers. All ranks participate in SMPI_OUTER_SNAPSHOT
+before scheduled PRINTS, the in-loop restart, the end-of-run restart,
+and at 9100 for diagnostics (also reached on abort). Root-only file
+writes do not predicate the collective. The frozen startup record
+needs D/DT, CURV42D/TXBOT/TYBOT, UA/UAB/VA/VAB, EL/ELB/ETF/ET/ETB,
+ADVUA/ADVVA, TXICE/TYICE, DUMWAD/DVMWAD, first-step EGB/UTB/VTB and
+possibly rain-modified T/TB/S/SB. Other record fields are unchanged
+in this admitted path. CBC, UBAR/VBAR, QBAR and TAU are not in the
+frozen restart layout; snapshots still cover them for diagnostics.
+BCOND's saved local scratch PRECTEMP is not COMMON and must never be
+published as a grid. Startup, history output and PRINTS have separate
+contracts: a full restart snapshot is not a substitute for a history
+event publication.

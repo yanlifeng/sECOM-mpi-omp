@@ -1,0 +1,68 @@
+{
+  "kind": "real MPI slab poison + raw branch captures",
+  "ranks": 3,
+  "threads": 1,
+  "cpus": [
+    20,
+    21,
+    22
+  ],
+  "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)",
+  "mpi": "mpirun (Open MPI) 4.1.1",
+  "flags": [
+    "-O3",
+    "-fopenmp",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-std=legacy",
+    "-ffixed-line-length-132",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fcheck=bounds"
+  ],
+  "source_sha": "49b5228fd203bbb7b717962b11bbc7912b3de0148c1918ecbac399534180b4d2",
+  "driver_sha": "0e4e648fae0486ab14a008913dd43b759f9cd35f777b3027d6383b9c8e9d7e99",
+  "runtime_sha": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f",
+  "cases": {
+    "reference/2": {
+      "rank0/archive.raw": "e07e7044c772aa818ab8b070fded71b289f51a20a84aaf2ded89b03039790f80",
+      "rank1/archive.raw": "d39ded5e1bd783f06535c1651d7e84e0de43883a4ba302ec9d9ae94bcc142ae0",
+      "rank2/archive.raw": "1b1f19b7fe76b3cb51f8e9d3f1a89004386977162d09df5ea09da6c74d7e90b2"
+    },
+    "reference/10": {
+      "rank0/archive.raw": "e07e7044c772aa818ab8b070fded71b289f51a20a84aaf2ded89b03039790f80",
+      "rank0/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1",
+      "rank1/archive.raw": "d39ded5e1bd783f06535c1651d7e84e0de43883a4ba302ec9d9ae94bcc142ae0",
+      "rank1/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1",
+      "rank2/archive.raw": "1b1f19b7fe76b3cb51f8e9d3f1a89004386977162d09df5ea09da6c74d7e90b2",
+      "rank2/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1"
+    },
+    "reference/11": {
+      "rank0/archive.raw": "35bef8a1c6a9e70af1eb32ddbf6ab092878afaf6296796c6d06d8b504ddb11a3",
+      "rank1/archive.raw": "32d352a1103ed8f791feb445b5ad890e5a922b05b9f9c44063f233783bd3a71b",
+      "rank2/archive.raw": "31ca2879b19c0cd8f83c89432f7d8520f03e2b0756ac76f05ca48c02a780a20e"
+    },
+    "candidate/2": {
+      "rank0/archive.raw": "e07e7044c772aa818ab8b070fded71b289f51a20a84aaf2ded89b03039790f80",
+      "rank1/archive.raw": "d39ded5e1bd783f06535c1651d7e84e0de43883a4ba302ec9d9ae94bcc142ae0",
+      "rank2/archive.raw": "1b1f19b7fe76b3cb51f8e9d3f1a89004386977162d09df5ea09da6c74d7e90b2"
+    },
+    "candidate/10": {
+      "rank0/archive.raw": "e07e7044c772aa818ab8b070fded71b289f51a20a84aaf2ded89b03039790f80",
+      "rank0/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1",
+      "rank1/archive.raw": "d39ded5e1bd783f06535c1651d7e84e0de43883a4ba302ec9d9ae94bcc142ae0",
+      "rank1/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1",
+      "rank2/archive.raw": "1b1f19b7fe76b3cb51f8e9d3f1a89004386977162d09df5ea09da6c74d7e90b2",
+      "rank2/gcmtsr": "ea65e6e161bfd599c9a9716eb939b1f4c496562614bc811f8f7b27626a75ceb1"
+    },
+    "candidate/11": {
+      "rank0/archive.raw": "35bef8a1c6a9e70af1eb32ddbf6ab092878afaf6296796c6d06d8b504ddb11a3",
+      "rank1/archive.raw": "32d352a1103ed8f791feb445b5ad890e5a922b05b9f9c44063f233783bd3a71b",
+      "rank2/archive.raw": "31ca2879b19c0cd8f83c89432f7d8520f03e2b0756ac76f05ca48c02a780a20e"
+    },
+    "missing_CBC/11": {
+      "rank0/archive.raw": "d816f3517d6c8dfbdeaf590939d497d44862695905b83ec59f2d23bb30afe9cf",
+      "rank1/archive.raw": "46cd5d16293228117bc072127dae2f9982955b2e111ff0000997707531641bb3",
+      "rank2/archive.raw": "69b519f1eecd052f660a5b0b41f8149b903f039a06253068e08b764db87d467e"
+    }
+  }
+}

@@ -4,6 +4,7 @@
 !       UPWIND FLUX AT OPEN SALT/TEMP BOUNDARY
 !
       INCLUDE 'comdeck'
+      INTEGER JOBLO,JOBHI
       PARAMETER (INTMAX = 100)  ! JI
       REAL SSTINT(INTMAX), WT(INTMAX), WQ(INTMAX), RLWC(INTMAX)  ! JI
 *Khan 072898
@@ -1386,7 +1387,17 @@
 !-------- METEOROLOGICAL BOUNDARY CONDITIONS ---------------------------
 !NG09022014 First zero out 2D precipitation and evaporation.
 !NG09022014 Then use synop_pet if it exists, or 1D if it does not and available
-        DO J=1,JM
+! Only the admitted AVERAGED/no-PET case is owned. All input records,
+! time cursors, scalar interpolation, and ordered edge lists stay intact.
+        JOBLO=1
+        JOBHI=JM
+        IF(SMPI_OUTER) THEN
+          IF(OPTMBC(1:8).NE.'AVERAGED'.OR.CREADPET.OR.
+     &       ICEFRICTION.EQ.3) STOP 97
+          JOBLO=SMPI_JLO
+          JOBHI=SMPI_JHI
+        END IF
+        DO J=JOBLO,JOBHI
          DO I=1,IM
           QPREC2D(I,J)=0.0
           QEVAP2D(I,J)=0.0
@@ -1462,7 +1473,7 @@
 4114    CONTINUE
        ELSE
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
-        DO 4115 J=1,JM
+        DO 4115 J=JOBLO,JOBHI
          DO 4115 I=1,IM
 !NG04092008           WU(I,J) = UWIND
 !NG04092008           WV(I,J) = VWIND
@@ -1504,7 +1515,7 @@
 !  ADDED RAMPING TO WIND STRESSES AND HEAT FLUX
 !
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J,K) SCHEDULE(STATIC)
-       DO 4120 J=1,JM
+       DO 4120 J=JOBLO,JOBHI
          DO 4120 I=1,IM
 !NG12162010 INCLUDE RAIN/EVAP VELOCITY
 !NG12162010           WSSURF(I,J)=0.0
@@ -1533,6 +1544,9 @@
            TYSURF(I,J)=RAMP*
      +      (-1.E-3)*(-TX*SIN(ANG(I,J))+TY*COS(ANG(I,J)))*FSM(I,J)
  4120  CONTINUE
+! V momentum takes the south neighbor's wind stress; U momentum reads
+! only within its own row. This entry is outside every OMP region.
+       IF(SMPI_OUTER) CALL SMPI_HALO_RAW(TYSURF,IM,JM)
 !
       ELSE if(OPTMBC(1:8).eq.'SYNOPTIC') then   ! JI
 !-------- SYNOPTIC (PRECIPITATION, EVAPORATION & HEAT FLUX) ------------

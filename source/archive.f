@@ -11,8 +11,27 @@
 !
       REAL XOUTP(NPARTM),YOUTP(NPARTM),ZOUTP(NPARTM)
       REAL ENER_E(IM,JM),ENER_A(IM,JM),ENER_K(IM,JM)
+      LOGICAL OWNARC,SMPI_ARC_REQUESTED
+      INTEGER JA_LO,JA_HI
 !
       SAVE
+! All ranks enable this policy together, never mid-history. The public
+! cold-start call at INTX=0 retains the old, fully replicated state.
+      OWNARC=SMPI_ARC_REQUESTED().AND.SMPI_SIZE.GT.1.AND.INTX.GT.0
+      JA_LO=1
+      JA_HI=JM
+      IF(OWNARC) THEN
+! JTM and RESTAR are not in comdeck: the top-level policy setter must
+! check JTM=0 and COLD START before enabling the common flag.
+        IF(TOR.NE.'BAROTROPIC'.OR..NOT.CDFOUT.OR.
+     &     HYDTYPE.NE.'INTERNAL'.OR.
+     &     BCTYPE.NE.'CLAMPED'.OR.NCHEMLAY.NE.0.OR.
+     &     TRACER.NE.'NEGLECT'.OR.SEDTRAN.NE.'NEGLECT'.OR.
+     &     CHEMTRAN.NE.'NEGLECT'.OR.PARTICLE.NE.'NEGLECT'.OR.
+     &     WAVEDYN.NE.'NEGLECT') STOP 96
+        JA_LO=SMPI_JLO
+        JA_HI=SMPI_JHI
+      ENDIF
 !
 !-----------------------------------------------------------------------
 !-------- COMPUTATIONAL HISTORY WRITES AND ACCUMULATION ----------------
@@ -113,8 +132,11 @@
 !
       ELSE
 ! Distinct history cells; preserve the time/layer summation order.
+! ARCVX samples EL(J-1) even across a rank boundary. Other changing
+! sources for loop 530 are at the owned cell. H/H1/H2 are replicated.
+       IF(OWNARC) CALL SMPI_HALO_RAW(EL,IM,JM)
 !$OMP PARALLEL DO SCHEDULE(STATIC) DEFAULT(SHARED) PRIVATE(J,I,LL)
-       DO 530 J=1,JM
+       DO 530 J=JA_LO,JA_HI
          DO 530 I=1,IM
 !NG03312009           ARCUX(I,J,1)=ARCUX(I,J,1)+UAF(I,J)*DEI*
 !NG03312009     2       0.5*(H(I,J)+EL(I,J)+H(I-1,J)+EL(I-1,J))
@@ -273,6 +295,7 @@
 !
       TMIDDLE=TIME-(.5*DTI*DAYI/DEI)
       IF (CDFOUT) THEN 
+       IF(OWNARC) CALL SMPI_ARC_PUBLISH_HISTORY()
        CALL PUTCDF(TMIDDLE)
        icdfcheck=1
        GO TO 5600
@@ -501,7 +524,7 @@
 !
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(I,J,K,LL)
 !$OMP DO SCHEDULE(STATIC)
-      DO 570 J=1,JM
+      DO 570 J=JA_LO,JA_HI
         DO 570 I=1,IM
           ARCET (I,J)=0.0
 !NG04092008          ARCWU (I,J)=0.0
@@ -528,7 +551,7 @@
 !
 !$OMP DO COLLAPSE(2) SCHEDULE(STATIC)
       DO 580 K=1,KB
-      DO 580 J=1,JM
+      DO 580 J=JA_LO,JA_HI
       DO 580 I=1,IM
       ARCU (I,J,K)=0.0
       ARCV (I,J,K)=0.0
@@ -567,6 +590,10 @@
       IF ((INTX.EQ.0).AND.(ISKILL.EQ.1)) GOTO 8450 ! NG03182010, NEED TO SKIP PRINTING OF COLD START IC
 
       IF(TOR.EQ.'BAROTROPIC') THEN
+! Keep the original replicated station accumulators and transect fold.
+! The frozen case has no stations; nonempty lists require current planes.
+       IF(OWNARC.AND.(EPTS+VPTS+FPTS).GT.0)
+     &      CALL SMPI_ARC_PUBLISH_STATIONS()
        DO 140 N=1,EPTS
        II=INXIE(N)
        JJ=INXJE(N)
@@ -816,19 +843,30 @@
        IF(MOD(INTX,ISKILL).NE.0) GOTO 7100
 !      Evaluate independent contributions in parallel. Fold original
 !      single-precision accumulators in the original i-fastest order.
+       IF(OWNARC) CALL SMPI_HALO_RAW(VA,IM,JM)
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
-       DO J=1,JM
+       DO J=JA_LO,JA_HI
         DO I=1,IM
          ENER_E(I,J)=EL(I,J)*ART(I,J)*FSM(I,J)/AREA*SKILLI
          ENER_A(I,J)=.5*GRAV*EL(I,J)*EL(I,J)*FSM(I,J)*ART(I,J)/
      2      AREA*SKILLI
-         IF(I.LT.IM.AND.J.LT.JM)
-     1    ENER_K(I,J)=0.125*D(I,J)*((UA(I,J)+UA(I+1,J))**2+
+         IF(I.LT.IM.AND.J.LT.JM) THEN
+          ENER_K(I,J)=0.125*D(I,J)*((UA(I,J)+UA(I+1,J))**2+
      2     (VA(I,J)+VA(I,J+1))**2)*FSM(I,J)*ART(I,J)/
      3     AREA*SKILLI
+         ELSEIF(OWNARC) THEN
+! Initialize communicated padding only; the reference never sums it.
+          ENER_K(I,J)=0.
+         ENDIF
         ENDDO
        ENDDO
 !$OMP END PARALLEL DO
+       IF(OWNARC) THEN
+        CALL SMPI_ALL_RAW(ENER_E,IM,JM)
+        CALL SMPI_ALL_RAW(ENER_A,IM,JM)
+        CALL SMPI_ALL_RAW(ENER_K,IM,JM)
+       ENDIF
+       IF(.NOT.OWNARC.OR.SMPI_RANK.EQ.0) THEN
        DO 100 J=1,JM
        DO 100 I=1,IM
        ESUM=ESUM+ENER_E(I,J)
@@ -837,6 +875,14 @@
        TKE=TKE+ENER_K(I,J)
        ENDIF
  100   CONTINUE
+       ENDIF
+       IF(OWNARC) THEN
+! Owner of global row 1 is rank zero: publish its original REAL bits
+! (not a tree sum) to all legacy writers.
+        CALL SMPI_RBCAST_ROW_RAW(ESUM,1)
+        CALL SMPI_RBCAST_ROW_RAW(APE,1)
+        CALL SMPI_RBCAST_ROW_RAW(TKE,1)
+       ENDIF
  7100  CONTINUE
        ENDIF
       ELSE
@@ -1150,14 +1196,28 @@
 ! and their histories must be exactly +0.  This is intentionally not
 ! just an output-filter or a generic DEAD-physics flag.
       LOGICAL FUNCTION SECOM_HIST_CERT0()
+      INCLUDE 'comdeck'
+      LOGICAL SMPI_ARC_REQUESTED,SMPI_ARC_CERT_ROWS
+      IF(SMPI_ARC_REQUESTED().AND.SMPI_SIZE.GT.1.AND.INTX.GT.0) THEN
+! A local reject must NOT return before other ranks enter the collective.
+! Only the authoritative rows matter; stale remote +0 cannot certify them.
+        IREJECT=1
+        IF(SMPI_ARC_CERT_ROWS(SMPI_JLO,SMPI_JHI)) IREJECT=0
+        CALL SMPI_INDEX_RAW(IREJECT)
+        SECOM_HIST_CERT0=IREJECT.EQ.0
+      ELSE
+        SECOM_HIST_CERT0=SMPI_ARC_CERT_ROWS(1,JM)
+      ENDIF
+      END
+      LOGICAL FUNCTION SMPI_ARC_CERT_ROWS(JA_LO,JA_HI)
       USE ISO_FORTRAN_ENV, ONLY: INT32,INT64
       INCLUDE 'comdeck'
       INTEGER(INT32) DIBITS
-      SECOM_HIST_CERT0=.FALSE.
+      SMPI_ARC_CERT_ROWS=.FALSE.
       IF (STORAGE_SIZE(DEI).NE.32.OR.STORAGE_SIZE(TSED(1,1,1)).NE.64) RETURN
       DIBITS=TRANSFER(DEI,0_INT32)
       IF (DIBITS.LE.0.OR.DIBITS.GT.TRANSFER(1.0,0_INT32)) RETURN
-      DO J=1,JM
+      DO J=JA_LO,JA_HI
         DO I=1,IM
           IF (TRANSFER(WSET1(I,J,1),0_INT32).NE.0) RETURN
           IF (TRANSFER(WSET2(I,J,1),0_INT32).NE.0) RETURN
@@ -1181,5 +1241,98 @@
           ENDIF
         ENDDO
       ENDDO
-      SECOM_HIST_CERT0=.TRUE.
+      SMPI_ARC_CERT_ROWS=.TRUE.
+      END
+
+! Archive is called outside any OMP region, so use the RAW MPI helpers.
+      SUBROUTINE SMPI_ARC_PUBLISH_HISTORY()
+      INCLUDE 'comdeck'
+      CALL SMPI_ALL_RAW(ARCET,IM,JM)
+      CALL SMPI_ALL_RAW(ARCPATM,IM,JM)
+      CALL SMPI_ALL_RAW(ARCWSX2D,IM,JM)
+      CALL SMPI_ALL_RAW(ARCWSY2D,IM,JM)
+      CALL SMPI_ALL_RAW(ARCAIRT,IM,JM)
+      CALL SMPI_ALL_RAW(ARCCLD,IM,JM)
+      CALL SMPI_ALL_RAW(ARCRHUM,IM,JM)
+      CALL SMPI_ALL_RAW(ARCSWOBS,IM,JM)
+      CALL SMPI_ALL_RAW(ARCQPREC,IM,JM)
+      CALL SMPI_ALL_RAW(ARCQEVAP,IM,JM)
+      CALL SMPI_ALL_RAW(ARCWVHT,IM,JM)
+      CALL SMPI_ALL_RAW(ARCWVPD,IM,JM)
+      CALL SMPI_ALL_RAW(ARCWVDR,IM,JM)
+! In the guarded BAROTROPIC branch PUTCDF sets KBot=1. Every published
+! K level is an IM*JM Fortran plane, not a J slice spanning K.
+      CALL SMPI_ARC_PLANES(ARCU,1)
+      CALL SMPI_ARC_PLANES(ARCV,1)
+      CALL SMPI_ARC_PLANES(ARCAM,1)
+      CALL SMPI_ARC_PLANES(ARCUX,1)
+      CALL SMPI_ARC_PLANES(ARCVX,1)
+! PUTCDF reads actual fields, not averages alone. PTCD accesses CBC;
+! the wind text writer consumes VARWIF/AREAICE, fort.1006 also samples
+! wet masks, forcing and AAM/KM at K=2 irrespective of the 3D switches.
+      CALL SMPI_ALL_RAW(CBC,IM,JM)
+      CALL SMPI_ALL_RAW(VARWIF,IM,JM)
+      CALL SMPI_ALL_RAW(AREAICE,IM,JM)
+      CALL SMPI_ALL_RAW(QPREC2D,IM,JM)
+      CALL SMPI_ALL_RAW(QEVAP2D,IM,JM)
+      CALL SMPI_ALL_RAW(DUMWAD,IM,JM)
+      CALL SMPI_ALL_RAW(DVMWAD,IM,JM)
+      CALL SMPI_ALL_RAW(AAM2D,IM,JM)
+      CALL SMPI_ALL_RAW(AAM(1,1,2),IM,JM)
+      CALL SMPI_ALL_RAW(KM(1,1,2),IM,JM)
+      END
+
+      SUBROUTINE SMPI_ARC_PLANES(A3DUMMY,NL)
+      INCLUDE 'comdeck'
+      REAL A3DUMMY(IM,JM,KB)
+      DO K=1,NL
+        CALL SMPI_ALL_RAW(A3DUMMY(1,1,K),IM,JM)
+      ENDDO
+      END
+
+      SUBROUTINE SMPI_ARC_PUBLISH_STATIONS()
+      INCLUDE 'comdeck'
+      IF(EPTS.GT.0.OR.FPTS.GT.0) CALL SMPI_ALL_RAW(EL,IM,JM)
+      IF(EPTS.GT.0) THEN
+        CALL SMPI_ALL_RAW(TXSURF,IM,JM)
+        CALL SMPI_ALL_RAW(TYSURF,IM,JM)
+        CALL SMPI_ALL_RAW(PATM,IM,JM)
+        CALL SMPI_ALL_RAW(WSX2D,IM,JM)
+        CALL SMPI_ALL_RAW(WSY2D,IM,JM)
+        CALL SMPI_ALL_RAW(CLDFRC2D,IM,JM)
+        CALL SMPI_ALL_RAW(AIRTM2D,IM,JM)
+        CALL SMPI_ALL_RAW(RELHU2D,IM,JM)
+        CALL SMPI_ALL_RAW(SWOBS2D,IM,JM)
+        CALL SMPI_ALL_RAW(QPREC2D,IM,JM)
+        CALL SMPI_ALL_RAW(QEVAP2D,IM,JM)
+        CALL SMPI_ALL_RAW(WVPD,IM,JM)
+        CALL SMPI_ALL_RAW(WVHT,IM,JM)
+        CALL SMPI_ALL_RAW(WVDR,IM,JM)
+      ENDIF
+      IF(VPTS.GT.0) THEN
+        CALL SMPI_ALL_RAW(UA,IM,JM)
+        CALL SMPI_ALL_RAW(VA,IM,JM)
+        CALL SMPI_ALL_RAW(AAM2D,IM,JM)
+        CALL SMPI_ALL_RAW(TAU(1,1,1),IM,JM)
+! Tracer/chemistry/bed sources are replicated from startup and not
+! evolved on this guarded path. They can be nonzero: the station loops
+! still execute the original expressions on them, in their old order.
+      ENDIF
+      IF(FPTS.GT.0) THEN
+        CALL SMPI_ALL_RAW(UAF,IM,JM)
+        CALL SMPI_ALL_RAW(VAF,IM,JM)
+      ENDIF
+      END
+
+      LOGICAL FUNCTION SMPI_ARC_REQUESTED()
+      LOGICAL SMPI_OUTER
+      COMMON /SMPI_OUTER_FLAG/ SMPI_OUTER
+      SMPI_ARC_REQUESTED=SMPI_OUTER
+      END
+! Integrator may relocate this initialization to the common runtime.
+! Initialize in exactly one BLOCK DATA; do not set independently per rank.
+      BLOCK DATA SMPI_ARC_DEFAULT
+      LOGICAL SMPI_OUTER
+      COMMON /SMPI_OUTER_FLAG/ SMPI_OUTER
+      DATA SMPI_OUTER /.FALSE./
       END

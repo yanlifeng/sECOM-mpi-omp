@@ -1,0 +1,481 @@
+{
+  "compiler": "GNU Fortran (Homebrew GCC 10.1.0) 10.1.0",
+  "source_sha": "68cb2a93dd86a5b9f80b0a635e70c31c0af4f76acef581b0f41ab9296d678a99",
+  "accepted": [
+    {
+      "line": 9,
+      "name": "advua",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "dummy"
+    },
+    {
+      "line": 10,
+      "name": "advva",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "dummy"
+    },
+    {
+      "line": 11,
+      "name": "fluxua",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 12,
+      "name": "fluxva",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 13,
+      "name": "tps",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 14,
+      "name": "curv42d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 15,
+      "name": "txbot",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 16,
+      "name": "tybot",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 17,
+      "name": "txice",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 18,
+      "name": "tyice",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 19,
+      "name": "dumwad",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 20,
+      "name": "dvmwad",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 21,
+      "name": "el",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 22,
+      "name": "elb",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 23,
+      "name": "elf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 24,
+      "name": "ua",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 25,
+      "name": "uab",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 26,
+      "name": "uaf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 27,
+      "name": "va",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 28,
+      "name": "vab",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 29,
+      "name": "vaf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 30,
+      "name": "d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 31,
+      "name": "dt",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 32,
+      "name": "et",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 33,
+      "name": "etf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 34,
+      "name": "etb",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 35,
+      "name": "egb",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 36,
+      "name": "utb",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 37,
+      "name": "vtb",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 38,
+      "name": "cbc",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 39,
+      "name": "qbar",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 40,
+      "name": "qprec2d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 41,
+      "name": "qevap2d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 42,
+      "name": "wsx2d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 43,
+      "name": "wsy2d",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 44,
+      "name": "wssurf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 45,
+      "name": "wtsurf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 46,
+      "name": "txsurf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 47,
+      "name": "tysurf",
+      "dimensions": [
+        372,
+        479
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 50,
+      "name": "t",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 51,
+      "name": "tb",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 52,
+      "name": "s",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 53,
+      "name": "sb",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 54,
+      "name": "ubar",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 55,
+      "name": "vbar",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    },
+    {
+      "line": 56,
+      "name": "tau",
+      "dimensions": [
+        372,
+        479,
+        2
+      ],
+      "element_type": "REAL 4",
+      "placement": "common"
+    }
+  ],
+  "rejected_mutation": [
+    [
+      39,
+      "prectemp",
+      "REAL 4",
+      []
+    ]
+  ]
+}

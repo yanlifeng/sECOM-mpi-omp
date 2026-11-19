@@ -8,13 +8,25 @@
 !**********************************************************************
 !
       INCLUDE 'comdeck'
+      INTEGER JOTLO,JOTHI
       SAVE
 !
 !  CALC. BOTTOM SHEAR STRESS
 !
+      JOTLO=2
+      JOTHI=JMM1
+      IF(SMPI_OUTER) THEN
+        IF(TOR.NE.'BAROTROPIC'.OR.WAVEDYN.NE.'NEGLECT'.OR.
+     &     NUMQBC.NE.0) STOP 97
+        JOTLO=SMPI_FIRST(2)
+        JOTHI=SMPI_LAST(JMM1)
+! Step-entry VA is the owner from the last ROTATE, not an output
+! snapshot. VBAR on the last owned row reads the next owner's VA.
+        CALL SMPI_HALO_RAW(VA,IM,JM)
+      END IF
       IF(TOR.EQ.'BAROTROPIC') THEN
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
-       DO 10 J=2,JMM1
+       DO 10 J=JOTLO,JOTHI
         DO 10 I=2,IMM1
 !         UBAR(I,J,KBM1)=(DUMWAD(I,J)*UA(I,J)+DUMWAD(I+1,J)*UA(I+1,J))/
 !     +                  (DUMWAD(I,J)+DUMWAD(I+1,J)+1.0E-30)
@@ -39,7 +51,7 @@
 !
 !
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
-      DO 20 J=2,JMM1
+      DO 20 J=JOTLO,JOTHI
         DO 20 I=2,IMM1
            QBAR(I,J)=SQRT(UBAR(I,J,KBM1)*UBAR(I,J,KBM1)+
      +                    VBAR(I,J,KBM1)*VBAR(I,J,KBM1))
@@ -99,7 +111,7 @@
 !NG12222010
       ELSEIF (WAVEDYN.EQ.'NEGLECT ') THEN
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(I,J) SCHEDULE(STATIC)
-        DO 40 J=2,JMM1
+        DO 40 J=JOTLO,JOTHI
           DO 40 I=2,IMM1
             IF (FSM(I,J).GT.0.0) THEN
 !

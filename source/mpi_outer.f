@@ -1,0 +1,58 @@
+      SUBROUTINE SMPI_OUTER_SNAPSHOT(ADVUA,ADVVA)
+! Rare-event publication for the admitted barotropic owner path. All
+! ranks participate before PRINTS or the root's binary restart writes.
+! A snapshot never changes an owned value or floating arithmetic order.
+! Static/disabled-physics arrays remain replicated from initialization.
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM)
+      IF(.NOT.SMPI_OUTER) RETURN
+      CALL SMPI_ALL_RAW(ADVUA,IM,JM)
+      CALL SMPI_ALL_RAW(ADVVA,IM,JM)
+      CALL SMPI_ALL_RAW(FLUXUA,IM,JM)
+      CALL SMPI_ALL_RAW(FLUXVA,IM,JM)
+      CALL SMPI_ALL_RAW(TPS,IM,JM)
+      CALL SMPI_ALL_RAW(CURV42D,IM,JM)
+      CALL SMPI_ALL_RAW(TXBOT,IM,JM)
+      CALL SMPI_ALL_RAW(TYBOT,IM,JM)
+      CALL SMPI_ALL_RAW(TXICE,IM,JM)
+      CALL SMPI_ALL_RAW(TYICE,IM,JM)
+      CALL SMPI_ALL_RAW(DUMWAD,IM,JM)
+      CALL SMPI_ALL_RAW(DVMWAD,IM,JM)
+      CALL SMPI_ALL_RAW(EL,IM,JM)
+      CALL SMPI_ALL_RAW(ELB,IM,JM)
+      CALL SMPI_ALL_RAW(ELF,IM,JM)
+      CALL SMPI_ALL_RAW(UA,IM,JM)
+      CALL SMPI_ALL_RAW(UAB,IM,JM)
+      CALL SMPI_ALL_RAW(UAF,IM,JM)
+      CALL SMPI_ALL_RAW(VA,IM,JM)
+      CALL SMPI_ALL_RAW(VAB,IM,JM)
+      CALL SMPI_ALL_RAW(VAF,IM,JM)
+      CALL SMPI_ALL_RAW(D,IM,JM)
+      CALL SMPI_ALL_RAW(DT,IM,JM)
+      CALL SMPI_ALL_RAW(ET,IM,JM)
+      CALL SMPI_ALL_RAW(ETF,IM,JM)
+      CALL SMPI_ALL_RAW(ETB,IM,JM)
+      CALL SMPI_ALL_RAW(EGB,IM,JM)
+      CALL SMPI_ALL_RAW(UTB,IM,JM)
+      CALL SMPI_ALL_RAW(VTB,IM,JM)
+      CALL SMPI_ALL_RAW(CBC,IM,JM)
+      CALL SMPI_ALL_RAW(QBAR,IM,JM)
+      CALL SMPI_ALL_RAW(QPREC2D,IM,JM)
+      CALL SMPI_ALL_RAW(QEVAP2D,IM,JM)
+      CALL SMPI_ALL_RAW(WSX2D,IM,JM)
+      CALL SMPI_ALL_RAW(WSY2D,IM,JM)
+      CALL SMPI_ALL_RAW(WSSURF,IM,JM)
+      CALL SMPI_ALL_RAW(WTSURF,IM,JM)
+      CALL SMPI_ALL_RAW(TXSURF,IM,JM)
+      CALL SMPI_ALL_RAW(TYSURF,IM,JM)
+! AVERAGED rain may modify nominal T/S even in a barotropic run.
+      DO K=1,KB
+        CALL SMPI_ALL_RAW(T(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(TB(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(S(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(SB(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(UBAR(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(VBAR(1,1,K),IM,JM)
+        CALL SMPI_ALL_RAW(TAU(1,1,K),IM,JM)
+      ENDDO
+      END
