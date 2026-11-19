@@ -1,0 +1,28 @@
+{"baro_check.f": {"candidate": "463cc54c64c22a5f32d967316d9561738c37c67893bf8f7d9c8a6f17f6dcecf1", "parent": "3f33f980efc41238e330e024b51f62cb0d583a0678793da3526adf778a21b35e"}, "secom_mpi.f90": {"candidate": "55651179eec343acd21f6b8767a0ef82dafa2c76c74d15fb7caeb375f23b369a", "parent": "6d68e97bd686f2db5c234f994f48a8d0260ba1c1569d51d4419efed659134e86"}}
+55651179eec343acd21f6b8767a0ef82dafa2c76c74d15fb7caeb375f23b369a  secom_mpi.f90
+463cc54c64c22a5f32d967316d9561738c37c67893bf8f7d9c8a6f17f6dcecf1  baro_check.f
+141fb96db34efcd81da8385b7034b731c2e58f607241a0241a6813619b3a56ed  expanded.f
+8536a26b8c618b0058a16b270a0905a3c9f9dbece0efccb3525bc83fed28ecab  /home/user_home/ylf/secom-mpi-20261119/extrema1-kernel-r001/overlay/check_health.f
+ce9c99f9857aca0767e9e9f74a9341df841a889cd78c7d57edecedb87a34fc80  /home/user_home/ylf/secom-mpi-20261119/extrema-kernel-r001/check_extrema_mpi.f
+cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93  /home/user_home/ylf/secom-mpi-20261119/r007extrema/source/mpideck
+GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)
+TEST stock ranks=2 nt=1 mask=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           2           1
+TEST stock ranks=4 nt=1 mask=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           4           1
+TEST stock ranks=2 nt=2 mask=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           2           2
+TEST extended ranks=2 nt=1 mask=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           2           1
+TEST extended ranks=4 nt=1 mask=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           4           1
+TEST extended ranks=2 nt=2 mask=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           2           2
+TEST contract ranks=2 nt=1 mask=20-23
+ PASS_HEALTH_CONTRACT cases/ranks=          18           2
+TEST contract ranks=4 nt=1 mask=20-23
+ PASS_HEALTH_CONTRACT cases/ranks=          18           4
+TEST contract ranks=2 nt=2 mask=20-23
+ PASS_HEALTH_CONTRACT cases/ranks=          18           2
+EXPECTED selected speed row SIGFPE: trap-old rc=136
+EXPECTED selected speed row SIGFPE: trap-new rc=136

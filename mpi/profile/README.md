@@ -35,7 +35,13 @@ A killed/abnormal/partial run must not be used for attribution.
 * **mpi**: actual time in blocking RAW MPI calls: REAL-plane Allgatherv, halo
   Sendrecv, row-stat and integer-row-stat Allgatherv, coordinate Allreduce,
   row-rooted Bcast, WAD flag Sendrecv, and packed Halo9 Sendrecv if the parent
-  has that optional feature. These **do not overlap each other on a rank**.
+  has that optional feature. For modern source revisions this includes
+  check-record Allgather, fallback picks Allreduce, healthy-key Allreduce,
+  one-way generic field Sendrecv (including VAF), WAD paired planes and
+  unpacked or packed EXTRNL entry Sendrecv. The manifest records exact
+  static callsite counts; the log counts only executed blocking calls,
+  not bytes, source lines or high-level helper invocations.
+  These **do not overlap each other on a rank**.
   They are already included in the appropriate life/site interval. Multiple
   MPI calls per helper are counted individually; for example an ordinary
   two-direction halo executes two Sendrecvs. MPI setup/finalize collectives
@@ -55,6 +61,15 @@ sum of rank-seconds, and each rank's MPI fraction of **its own** loop.
 Missing optional metrics on a rank count as zero; a maximum from one metric
 need not belong to the same rank as a maximum from another. Never add nested
 site/mpi timers or sum ranks to estimate wall time.
+
+For an admitted multi-rank production case using unpacked entry+WAD5+keys,
+pass `--expect-owned-epochs` during summarization. This verifies **each rank**
+executed 9 entry Sendrecvs on first substeps and 5 thereafter, 4 WAD
+paired-plane calls, one WAD flag publication and one VAF directional
+Sendrecv per substep, and one health-key Allreduce per substep. The
+last three WAD categories are distinct: WAD5's five field sends do not
+include the separate flag publication. No claim about fallback PICK calls
+is inferred from the healthy-key count; use the reported separate counters.
 
 Local smoke: link the generated `secom_mpi.f90` (no `SECOM_USE_MPI`) and
 `check_timers.f90` with `-cpp -fopenmp -fcheck=all`; run with one and two

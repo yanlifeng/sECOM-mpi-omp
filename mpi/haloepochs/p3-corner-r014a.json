@@ -1,0 +1,285 @@
+{
+  "cpus": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)",
+  "mpi": "mpirun (Open MPI) 4.1.1",
+  "flags": [
+    "-O3",
+    "-fopenmp",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fcheck=bounds",
+    "-std=legacy",
+    "-ffixed-line-length-132"
+  ],
+  "inputs": {
+    "old": {
+      "role": "old",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+        "secom_mpi.f90": "097fb5e765477f2bd4b892bec0336352e6fc1d453827cf5b77f78eb8f80db6f7",
+        "mpi_boundary.f": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+        "extrnl.f": "15aadafd410bfbe50ca40d92610dab62d92bbc6684018093943f643ca879b910",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "865f91ba36e937d2eecc29a0154c1ea9c0837f0a2bf4ed76b3221792e8432448",
+        "baro_check.f": "d8dfab685c868b9f218390a14d6a093957db420293e4a0bea47937116185501e",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "32545f83a363c02a03f5c45e3b4cecb5b1b025e567d2364a5e5cca6ce7cf3da3"
+      }
+    },
+    "cert": {
+      "role": "cert",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "a2b44693aaa6bb649b83a8f33b00e65f8dc634982e862965484371a555ee3e85",
+        "secom_mpi.f90": "72b08e9cc1118b4e94c60c48fff94334cb16abff31749fc779180404e511f038",
+        "mpi_boundary.f": "5fd1963117174ebce45ce1beb42ffe20caf85e904995012505e5daea5c6c9281",
+        "extrnl.f": "75d9483164443ecbef5cf90ba4e4d96be0419d29bd66a526cc53b9099fd67dfc",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "865f91ba36e937d2eecc29a0154c1ea9c0837f0a2bf4ed76b3221792e8432448",
+        "baro_check.f": "d8dfab685c868b9f218390a14d6a093957db420293e4a0bea47937116185501e",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "4e295d9b135c30769f8e6d79fcde84bd8a2079b7e18db6e852f9b496dd2eaac5"
+      }
+    },
+    "bad-skip-ua": {
+      "role": "bad-skip-ua",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "a2b44693aaa6bb649b83a8f33b00e65f8dc634982e862965484371a555ee3e85",
+        "secom_mpi.f90": "72b08e9cc1118b4e94c60c48fff94334cb16abff31749fc779180404e511f038",
+        "mpi_boundary.f": "5fd1963117174ebce45ce1beb42ffe20caf85e904995012505e5daea5c6c9281",
+        "extrnl.f": "dc0446c30c0b1a13329b18aa6c7ebfa89eb69a45f7c586d00a1ef4472072dda0",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "865f91ba36e937d2eecc29a0154c1ea9c0837f0a2bf4ed76b3221792e8432448",
+        "baro_check.f": "d8dfab685c868b9f218390a14d6a093957db420293e4a0bea47937116185501e",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "4e295d9b135c30769f8e6d79fcde84bd8a2079b7e18db6e852f9b496dd2eaac5"
+      }
+    }
+  },
+  "cases": {
+    "old-3x1-mode1": {
+      "files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "cert-3x1-mode1": {
+      "files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "bad-skip-ua-3x1-mode1": {
+      "files": [
+        "dcf260a0e288d6ddb25243189278102eca3ea8f2331172f5671a7c47563d2bf4",
+        "f0deff42ad4bad76390d4f5ddb3e8ddec1e2b6880f1e8b034b54cad31d7f43b2",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": [
+        [
+          0,
+          2,
+          "D",
+          258984
+        ],
+        [
+          1,
+          1,
+          "VA",
+          17900
+        ]
+      ]
+    },
+    "old-3x1-mode3": {
+      "files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "cert-3x1-mode3": {
+      "files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "d1a99b4f125173e29a257259744750b47a6aba596fa142d000755a00ebc01e58",
+        "d54bcf11ef9d0fe19a65b19e3a346f335e8993c9b445c61fc72adcdcd8fac045",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "old-3x1-mode4": {
+      "files": [
+        "ddec3fd85e947f05f20219fb20abd94c8de3db57eb1facf60d45a848f379eb35",
+        "f73aff54b41b961b1f4d899f6399e84912d2734e577831887488d156ab1cbeda",
+        "e1d9d75c13102c9d10d3422c1c745a2992cb02c3ccd86211a9b20c90e2c50ee9"
+      ],
+      "oracle_files": [
+        "ddec3fd85e947f05f20219fb20abd94c8de3db57eb1facf60d45a848f379eb35",
+        "f73aff54b41b961b1f4d899f6399e84912d2734e577831887488d156ab1cbeda",
+        "e1d9d75c13102c9d10d3422c1c745a2992cb02c3ccd86211a9b20c90e2c50ee9"
+      ],
+      "detected": []
+    },
+    "cert-3x1-mode4": {
+      "files": [
+        "ddec3fd85e947f05f20219fb20abd94c8de3db57eb1facf60d45a848f379eb35",
+        "f73aff54b41b961b1f4d899f6399e84912d2734e577831887488d156ab1cbeda",
+        "e1d9d75c13102c9d10d3422c1c745a2992cb02c3ccd86211a9b20c90e2c50ee9"
+      ],
+      "oracle_files": [
+        "ddec3fd85e947f05f20219fb20abd94c8de3db57eb1facf60d45a848f379eb35",
+        "f73aff54b41b961b1f4d899f6399e84912d2734e577831887488d156ab1cbeda",
+        "e1d9d75c13102c9d10d3422c1c745a2992cb02c3ccd86211a9b20c90e2c50ee9"
+      ],
+      "detected": []
+    },
+    "old-3x1-mode5": {
+      "files": [
+        "6195c16be141e40886fbd63f1d178d21ca333b00cb42a848d020e3fe0dc555e3",
+        "7b417642a46d358be18ea815b11779f96d26edcef99d7b725c64793c305ad65c",
+        "839d2f88cbcbbde332d79d7b7a64bb4e9bb9f823558f767514bc05057c1dd576"
+      ],
+      "oracle_files": [
+        "6195c16be141e40886fbd63f1d178d21ca333b00cb42a848d020e3fe0dc555e3",
+        "7b417642a46d358be18ea815b11779f96d26edcef99d7b725c64793c305ad65c",
+        "839d2f88cbcbbde332d79d7b7a64bb4e9bb9f823558f767514bc05057c1dd576"
+      ],
+      "detected": []
+    },
+    "cert-3x1-mode5": {
+      "files": [
+        "6195c16be141e40886fbd63f1d178d21ca333b00cb42a848d020e3fe0dc555e3",
+        "7b417642a46d358be18ea815b11779f96d26edcef99d7b725c64793c305ad65c",
+        "839d2f88cbcbbde332d79d7b7a64bb4e9bb9f823558f767514bc05057c1dd576"
+      ],
+      "oracle_files": [
+        "6195c16be141e40886fbd63f1d178d21ca333b00cb42a848d020e3fe0dc555e3",
+        "7b417642a46d358be18ea815b11779f96d26edcef99d7b725c64793c305ad65c",
+        "839d2f88cbcbbde332d79d7b7a64bb4e9bb9f823558f767514bc05057c1dd576"
+      ],
+      "detected": []
+    },
+    "old-3x1-mode6": {
+      "files": [
+        "0637f17168945a6fc4e7e7d3f783683e6ce25bce2e46889860e2c7335254d3a5",
+        "5a67c5371853f98047f9456a31436c313764c191c5b8ebbc8c0b425ed1776ac5",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "0637f17168945a6fc4e7e7d3f783683e6ce25bce2e46889860e2c7335254d3a5",
+        "5a67c5371853f98047f9456a31436c313764c191c5b8ebbc8c0b425ed1776ac5",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "cert-3x1-mode6": {
+      "files": [
+        "0637f17168945a6fc4e7e7d3f783683e6ce25bce2e46889860e2c7335254d3a5",
+        "5a67c5371853f98047f9456a31436c313764c191c5b8ebbc8c0b425ed1776ac5",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "oracle_files": [
+        "0637f17168945a6fc4e7e7d3f783683e6ce25bce2e46889860e2c7335254d3a5",
+        "5a67c5371853f98047f9456a31436c313764c191c5b8ebbc8c0b425ed1776ac5",
+        "45de34299abc5f2d84de72897e72c2429fb80e7950eb050c1002f7fbcb60537b"
+      ],
+      "detected": []
+    },
+    "old-2x2-mode1": {
+      "files": [
+        "0ff662babd2fdc12bf2f232754b564896e31d960077f1b916ddd33ae7dbec9ac",
+        "20bc73b36b28f5a0dfcb52f0bc6bae7e5a96297e1c229b9127b80d58ffc8161b"
+      ],
+      "oracle_files": [
+        "0ff662babd2fdc12bf2f232754b564896e31d960077f1b916ddd33ae7dbec9ac",
+        "20bc73b36b28f5a0dfcb52f0bc6bae7e5a96297e1c229b9127b80d58ffc8161b"
+      ],
+      "detected": []
+    },
+    "cert-2x2-mode1": {
+      "files": [
+        "0ff662babd2fdc12bf2f232754b564896e31d960077f1b916ddd33ae7dbec9ac",
+        "20bc73b36b28f5a0dfcb52f0bc6bae7e5a96297e1c229b9127b80d58ffc8161b"
+      ],
+      "oracle_files": [
+        "0ff662babd2fdc12bf2f232754b564896e31d960077f1b916ddd33ae7dbec9ac",
+        "20bc73b36b28f5a0dfcb52f0bc6bae7e5a96297e1c229b9127b80d58ffc8161b"
+      ],
+      "detected": []
+    },
+    "old-2x2-mode4": {
+      "files": [
+        "a5e02ecb1d55fe63c2431cf55ba4631279a683da7c4ffd419fb064fec2d1567c",
+        "12910b10570bf6052ca5968b03105916efb240f1959de395067e80db0f896628"
+      ],
+      "oracle_files": [
+        "a5e02ecb1d55fe63c2431cf55ba4631279a683da7c4ffd419fb064fec2d1567c",
+        "12910b10570bf6052ca5968b03105916efb240f1959de395067e80db0f896628"
+      ],
+      "detected": []
+    },
+    "cert-2x2-mode4": {
+      "files": [
+        "a5e02ecb1d55fe63c2431cf55ba4631279a683da7c4ffd419fb064fec2d1567c",
+        "12910b10570bf6052ca5968b03105916efb240f1959de395067e80db0f896628"
+      ],
+      "oracle_files": [
+        "a5e02ecb1d55fe63c2431cf55ba4631279a683da7c4ffd419fb064fec2d1567c",
+        "12910b10570bf6052ca5968b03105916efb240f1959de395067e80db0f896628"
+      ],
+      "detected": []
+    },
+    "corner-meta-1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24]\n PASS_CORNER_EPOCH cases/ranks=           6           1\n"
+    },
+    "corner-meta-2": {
+      "rc": 0,
+      "log": "rank 0 CPU [24]\nrank 1 CPU [25]\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=T KEEP_VA=F\nMPI CORNER PLAN LOCALBC=F KEEP_UA=T KEEP_VA=T\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=T KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\n PASS_CORNER_EPOCH cases/ranks=           6           2\n"
+    },
+    "corner-meta-3": {
+      "rc": 0,
+      "log": "rank 0 CPU [24]\nrank 1 CPU [25]\nrank 2 CPU [26]\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=T KEEP_VA=F\nMPI CORNER PLAN LOCALBC=F KEEP_UA=T KEEP_VA=T\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=T KEEP_VA=F\nMPI CORNER PLAN LOCALBC=T KEEP_UA=F KEEP_VA=F\n PASS_CORNER_EPOCH cases/ranks=           6           3\n"
+    }
+  }
+}

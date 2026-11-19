@@ -1,0 +1,280 @@
+{
+  "cpus": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)",
+  "mpi": "mpirun (Open MPI) 4.1.1",
+  "flags": [
+    "-O3",
+    "-fopenmp",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fcheck=bounds",
+    "-std=legacy",
+    "-ffixed-line-length-132"
+  ],
+  "inputs": {
+    "old": {
+      "role": "old",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+        "secom_mpi.f90": "b4a3282df234d258a7b25e6872fd18f53a82bbb72f51a715c43cef8864638909",
+        "mpi_boundary.f": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+        "extrnl.f": "15aadafd410bfbe50ca40d92610dab62d92bbc6684018093943f643ca879b910",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "4df5bee96b35a863d5ea28c18485bec08bee038e9034b414f7161db6c2d8ca53",
+        "baro_check.f": "2b21137b45f7ab8950a8979672e9e2682dfdbbbfe9ffb4864f20d859db5f3535",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "5fef1080d93b3c5efb64f6a0cef74c455bef73e09fe345392d2f7e03561153ac"
+      }
+    },
+    "five": {
+      "role": "five",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+        "secom_mpi.f90": "50c31cd05aa014d796a8f515f93b0425cac4c09ff2fdf62a2aa5a1e65caee3cc",
+        "mpi_boundary.f": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+        "extrnl.f": "15aadafd410bfbe50ca40d92610dab62d92bbc6684018093943f643ca879b910",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "865f91ba36e937d2eecc29a0154c1ea9c0837f0a2bf4ed76b3221792e8432448",
+        "baro_check.f": "2b21137b45f7ab8950a8979672e9e2682dfdbbbfe9ffb4864f20d859db5f3535",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "c7923a182ae1c6a8d9dc4618e86afdc771c1ce3383861c002d40ab29d68b31ce"
+      }
+    },
+    "bad-el-south": {
+      "role": "bad-el-south",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+        "secom_mpi.f90": "50c31cd05aa014d796a8f515f93b0425cac4c09ff2fdf62a2aa5a1e65caee3cc",
+        "mpi_boundary.f": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+        "extrnl.f": "15aadafd410bfbe50ca40d92610dab62d92bbc6684018093943f643ca879b910",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "9bc2584d0edfa4cf19f75bde5d3a4d2db413412fc2f7c3abef08f9320ad9afdc",
+        "baro_check.f": "2b21137b45f7ab8950a8979672e9e2682dfdbbbfe9ffb4864f20d859db5f3535",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "c7923a182ae1c6a8d9dc4618e86afdc771c1ce3383861c002d40ab29d68b31ce"
+      }
+    },
+    "bad-vaf-north": {
+      "role": "bad-vaf-north",
+      "files": {
+        "comdeck": "842324da2d70b651f63f90933b2b7d4219f45f4e100b8410e84f267b007def2c",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+        "secom_mpi.f90": "50c31cd05aa014d796a8f515f93b0425cac4c09ff2fdf62a2aa5a1e65caee3cc",
+        "mpi_boundary.f": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+        "extrnl.f": "15aadafd410bfbe50ca40d92610dab62d92bbc6684018093943f643ca879b910",
+        "advave.f": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae",
+        "wandd_kky.f": "74246fddf1b6d9ce5256e9158cdfe2f2d9d9ae0e5e9157d4d275b13f354b8194",
+        "baro_check.f": "2b21137b45f7ab8950a8979672e9e2682dfdbbbfe9ffb4864f20d859db5f3535",
+        "two_bconds.f": "8f270e6eed2710a49be94df250267ece12420071affae66d9e1c4dc7243347c4",
+        "driver.f": "03dd578c71f208d4d6071e90c49a8589636d4ad7ed2a532dc140a8d12bba060c"
+      }
+    }
+  },
+  "cases": {
+    "old-3x1-mode1": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "five-3x1-mode1": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "bad-el-south-3x1-mode1": {
+      "files": [
+        "69450eddce89f40298ff0048975bca726e9a90b4afde7a3f8a7d429470ddc30a",
+        "a298a087edad1df7538ef87c316a65ac3caf21bf401a0edd994e691077fde88a",
+        "d1ec9eca6953d191e853fe2adccebfcddf560667a1c05c00be952dd5773ee24f"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": [
+        [
+          0,
+          2,
+          "scalar",
+          250016
+        ],
+        [
+          1,
+          2,
+          "scalar",
+          214304
+        ],
+        [
+          2,
+          2,
+          "scalar",
+          214304
+        ]
+      ]
+    },
+    "bad-vaf-north-3x1-mode1": {
+      "files": [
+        "8b418932134ae7b31221173c83fd079f14b81471265776d1e2e8d8f11c295ca9",
+        "79c70e2d231c56a29dceb5f807d1ba0c73c4123da2dbab4ec0b7897f8a67c606",
+        "1f6f8364acfbbea05da39d5825c3ed2db5ef3a8168351c862285595f3fa381ed"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": [
+        [
+          0,
+          1,
+          "scalar",
+          8
+        ],
+        [
+          1,
+          1,
+          "scalar",
+          8
+        ],
+        [
+          2,
+          1,
+          "scalar",
+          8
+        ]
+      ]
+    },
+    "old-3x1-mode2": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "five-3x1-mode2": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "old-3x1-mode3": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "five-3x1-mode3": {
+      "files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "oracle_files": [
+        "84b09a7f67d69e0cc711f25d117f6d75183e2d6e842f3a1f471f6fdeb6faf6cc",
+        "d02ea32cf5fcb7af1f64fe0afcd98005876c95c300be46d5e0e227d21426853b",
+        "3678248c3ffd01dfba952fc94050b9d673ff12c5f811aeb4a6c2524118a5f548"
+      ],
+      "detected": []
+    },
+    "old-2x2-mode1": {
+      "files": [
+        "03f10333be083da936a058cc8cd346dba884ea53ecf86b4ec41e95317a395549",
+        "88c80cfeaa1aa6cd38b01b9662746b1ba69f5a22b849ad81fdad3d535ad92a73"
+      ],
+      "oracle_files": [
+        "03f10333be083da936a058cc8cd346dba884ea53ecf86b4ec41e95317a395549",
+        "88c80cfeaa1aa6cd38b01b9662746b1ba69f5a22b849ad81fdad3d535ad92a73"
+      ],
+      "detected": []
+    },
+    "five-2x2-mode1": {
+      "files": [
+        "03f10333be083da936a058cc8cd346dba884ea53ecf86b4ec41e95317a395549",
+        "88c80cfeaa1aa6cd38b01b9662746b1ba69f5a22b849ad81fdad3d535ad92a73"
+      ],
+      "oracle_files": [
+        "03f10333be083da936a058cc8cd346dba884ea53ecf86b4ec41e95317a395549",
+        "88c80cfeaa1aa6cd38b01b9662746b1ba69f5a22b849ad81fdad3d535ad92a73"
+      ],
+      "detected": []
+    },
+    "raw-pair-4x1-jm4-mode1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24]\nrank 1 CPU [25]\nrank 2 CPU [26]\nrank 3 CPU [27]\n PASS_WAD_PAIR epochs/ranks/threads/JM=           4           4           1           4\n"
+    },
+    "raw-pair-3x2-jm8-mode1": {
+      "rc": 0,
+      "log": "rank 1 CPU [26, 27]\nrank 2 CPU [28, 29]\nrank 0 CPU [24, 25]\n PASS_WAD_PAIR epochs/ranks/threads/JM=           4           3           2           8\n"
+    },
+    "raw-pair-1x2-jm7-mode1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24, 25]\n PASS_WAD_PAIR epochs/ranks/threads/JM=           4           1           2           7\n"
+    },
+    "raw-pair-2x1-jm5-mode2": {
+      "rc": 41,
+      "log": "rank 1 CPU [25]\nrank 0 CPU [24]\nSTOP 41\nSTOP 41\n DETECTED_WAD_PAIR_WRONG_DIRECTION extra_fields_cells=          14\n--------------------------------------------------------------------------\nPrimary job  terminated normally, but 1 process returned\na non-zero exit code. Per user-direction, the job has been aborted.\n--------------------------------------------------------------------------\n--------------------------------------------------------------------------\nmpirun detected that one or more processes exited with non-zero status, thus causing\nthe job to be terminated. The first process to do so was:\n\n  Process name: [[37845,1],0]\n  Exit code:    41\n--------------------------------------------------------------------------\n"
+    },
+    "raw-entry-4x1-jm4-mode1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24]\nrank 1 CPU [25]\nrank 2 CPU [26]\nrank 3 CPU [27]\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           0           4           1           1         372           4           1\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           1           4           2           2         372           4           1\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           2           4           3           3         372           4           1\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           3           4           4           4         372           4           1\n"
+    },
+    "raw-entry-3x2-jm8-mode1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24, 25]\nrank 1 CPU [26, 27]\nrank 2 CPU [28, 29]\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           1           3           4           6         372           8           2\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           2           3           7           8         372           8           2\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           0           3           1           3         372           8           2\n"
+    },
+    "raw-entry-1x2-jm7-mode1": {
+      "rc": 0,
+      "log": "rank 0 CPU [24, 25]\n ENTRY_EPOCH_PASS rank,size,lo,hi,im,jm,nt           0           1           1           7         372           7           2\n"
+    }
+  }
+}

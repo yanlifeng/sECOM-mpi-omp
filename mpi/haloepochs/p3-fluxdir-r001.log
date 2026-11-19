@@ -1,0 +1,19 @@
+{"advave.f": {"candidate": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae", "parent": "e6095ca3ee034e87a7d3bddf824c90214cab3ed0864611e4f1d46dd305d45dc1"}, "extrnl.f": {"candidate": "a5f45fc4923acccc9a911aded7100e70719339eb4a7e341f0f545737cb34d2bb", "parent": "b920dd1af28f85a9d8e97cd79cf7ff4a2cd475d08fa81553321ac484c8add718"}, "secom_mpi.f90": {"candidate": "7fd7c5a529436e2956431d694f1b874e6c873cdd85740b6a1b7c18dbf9193bdb", "parent": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f"}}
+7fd7c5a529436e2956431d694f1b874e6c873cdd85740b6a1b7c18dbf9193bdb  secom_mpi.f90
+748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae  advave.f
+a5f45fc4923acccc9a911aded7100e70719339eb4a7e341f0f545737cb34d2bb  extrnl.f
+f6087a1106ff0e97389fdb145f14aef82aa32f02e7c0cb0e72933181450313d3  /home/user_home/ylf/secom-mpi-20261119/fluxdir-kernel-r001/overlay/check_flux_dir.f90
+cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93  /home/user_home/ylf/secom-mpi-20261119/r004b/source/mpideck
+GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)
+TEST ranks=1 threads=2 JM=5 mutation=none mask=20-23
+ PASS_FLUX_DIR generations/ranks/threads/JM=           3           1           2           5
+TEST ranks=2 threads=1 JM=7 mutation=none mask=20-23
+ PASS_FLUX_DIR generations/ranks/threads/JM=           3           2           1           7
+TEST ranks=4 threads=1 JM=4 mutation=none mask=20-23
+ PASS_FLUX_DIR generations/ranks/threads/JM=           3           4           1           4
+TEST ranks=4 threads=1 JM=11 mutation=none mask=20-23
+ PASS_FLUX_DIR generations/ranks/threads/JM=           3           4           1          11
+TEST ranks=2 threads=2 JM=5 mutation=none mask=20-23
+ PASS_FLUX_DIR generations/ranks/threads/JM=           3           2           2           5
+TEST ranks=2 threads=2 JM=7 mutation=reverse mask=20-23
+ DETECTED_WRONG_DIRECTION          11

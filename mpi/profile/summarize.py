@@ -18,6 +18,8 @@ def main():
     ap.add_argument('--threads',type=int,required=True)
     ap.add_argument('--steps',type=int,required=True)
     ap.add_argument('--split',type=int,required=True)
+    ap.add_argument('--expect-owned-epochs',action='store_true',
+                    help='Require each rank to have measured the unpacked-entry, healthy-key and WAD5 macros')
     ap.add_argument('--out',type=Path,required=True)
     a=ap.parse_args()
     files=sorted(a.run.glob('rank*/smpi-profile-*.log'))
@@ -43,6 +45,15 @@ def main():
             expect=a.steps*(a.split if site in ('extrnl','wetdry','check') else 1)
             if sample.get(('site','iteration',site,'inclusive'),(0,))[0]!=expect:
                 raise ValueError(f'{f}: unmatched {site} count; expected {expect}')
+        if a.expect_owned_epochs:
+            subs=a.steps*a.split
+            for site,name,want in [('extrnl','entry-sendrecv',a.steps*(9+5*(a.split-1))),
+                                   ('check','checkkeys-max',subs),
+                                   ('wetdry','wad-pair-sendrecv',4*subs),
+                                   ('wetdry','wad-sendrecv',subs),
+                                   ('wetdry','oneway-sendrecv',subs)]:
+                actual=sample.get(('mpi','iteration',site,name),(0,))[0]
+                if actual!=want:raise ValueError(f'{f}: {site}/{name}: expected {want}, got {actual}')
         mpi_sum=sum(s for (k,life,site,op),(n,s) in sample.items() if k=='mpi' and life=='iteration')
         loop=sample['life','iteration','all','wall'][1]
         if loop<=0 or mpi_sum>loop*(1+1e-6):raise ValueError('invalid serialized MPI/loop denominator')
@@ -58,6 +69,7 @@ def main():
         rows.append(dict(zip(['kind','life','site','event'],key),count=stats([n for n,_ in vals]),
                          unit=unit,value=stats([s for _,s in vals])))
     report=dict(kind='instrumented_diagnostic_only',ranks=a.ranks,threads=a.threads,steps=a.steps,split=a.split,
+                checked_owned_epoch_counts=a.expect_owned_epochs,
                 note='Rank maxima/medians are not full-job throughput. Phase/subphase/MPI timings are nested. '
                      'Sum over ranks is rank-seconds, not seconds elapsed; a sum of fractions is not a fraction of wall.',
                 metrics=rows)

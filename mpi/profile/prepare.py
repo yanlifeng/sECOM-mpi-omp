@@ -45,8 +45,25 @@ def mainf(t):
              "      IF(HORZMIX.EQ.'CLOSURE   ') THEN\n      CALL SD_SITE(14,1)\n      CALL SMAG\n"
              "      CALL SD_SITE(14,0)\n      ENDIF")
     t = surround(t, r'^        CALL EXTRNL_TEAM\([^\n]+$', 10)
-    t = surround(t, r'^        CALL WANDD_TEAM\(EL,D\)$', 11)
-    t = surround(t, r'^        CALL SECOM_CHECK_TEAM\([^\n]+$', 12)
+    if 'CALL SECOM_WAD_FIVE_TEAM(' in t:
+        t=surround(t,r'^        IF\(SMPI_SIZE.GT.1.AND.SMPI_LOCALBC.AND.SMPI_OUTER.AND.\n'
+                     r'     &     NUMEPC.EQ.0.AND.NUMQBC.EQ.0.AND.NUMDBC.EQ.0\) THEN\n'
+                     r'          CALL SECOM_WAD_FIVE_TEAM\(EL,D\)\n'
+                     r'        ELSEIF\(SMPI_SIZE.GT.1.AND.SMPI_LOCALBC\) THEN\n'
+                     r'          CALL SECOM_WAD_COLOR_TEAM\(EL,D\)\n        ELSE\n'
+                     r'          CALL WANDD_TEAM\(EL,D\)\n        ENDIF$',11)
+    elif 'CALL SECOM_WAD_COLOR_TEAM(' in t:
+        # Include the full uniform branch, so WAD has the same timing scope on
+        # both paths and the compiler still sees the original IF/ELSE shape.
+        t=surround(t,r'^        IF\(SMPI_SIZE.GT.1.AND.SMPI_LOCALBC\) THEN\n'
+                     r'          CALL SECOM_WAD_COLOR_TEAM\(EL,D\)\n        ELSE\n'
+                     r'          CALL WANDD_TEAM\(EL,D\)\n        ENDIF$',11)
+    else:
+        t = surround(t, r'^        CALL WANDD_TEAM\(EL,D\)$', 11)
+    if '        CALL SECOM_CHECK_READY_TEAM(' in t:
+        t = surround(t, r'^        CALL SECOM_CHECK_READY_TEAM\([^\n]*\n     &[^\n]*\)$', 12)
+    else:
+        t = surround(t, r'^        CALL SECOM_CHECK_TEAM\([^\n]+$', 12)
     return t
 
 
@@ -56,16 +73,24 @@ def archive(t):
     return t
 
 
-def runtime(t):
-    kinds = {'halo':1,'all':2,'rows':3,'irows':4,'index':5,'rbcast_row':6,'wad_publish':7,'halo9':8}
+def runtime(t,counts=None):
+    kinds = {'halo':1,'all':2,'rows':3,'irows':4,'index':5,'rbcast_row':6,'wad_publish':7,'halo9':8,
+             'checkrec':9,'checkpicks':10,'flux_one':11,'entry_epoch':12,'wad_pair':13,'checkkeys':14}
+    operations = dict(halo='sendrecv', all='allgatherv', rows='allgatherv', irows='allgatherv',
+                      index='allreduce', rbcast_row='bcast', wad_publish='sendrecv', halo9='sendrecv',
+                      checkrec='allgather', checkpicks='allreduce', flux_one='sendrecv',
+                      entry_epoch='sendrecv', wad_pair='sendrecv', checkkeys='allreduce')
     got, out, raw = {}, [], None
     for line in t.splitlines(keepends=True):
         if line.startswith('subroutine ') or line.startswith('end subroutine'):
             m = re.match(r'subroutine smpi_(\w+)_raw\(', line)
             raw = m[1] if m else None
-        if raw and re.match(r'\s*call MPI_\w+\(', line):
-            if raw not in kinds:
-                raise ValueError('unclassified RAW communication: ' + raw)
+        active = line.split('!',1)[0]
+        if raw and re.search(r'\bcall\s+mpi_\w+',active,re.I):
+            m=re.match(r'\s*call\s+MPI_(\w+)\(',active,re.I)
+            if (not m or raw not in kinds or m[1].lower()!=operations[raw] or
+                    not active.split(';')[0].rstrip().endswith(')')):
+                raise ValueError('unclassified RAW communication or incomplete call: '+raw+' '+line.rstrip())
             id = kinds[raw]
             got[raw] = got.get(raw,0) + 1
             # checked(ierr) belongs outside the actual MPI call timer.
@@ -78,8 +103,20 @@ def runtime(t):
     exp = {'halo':4,'all':1,'rows':2,'irows':2,'index':1,'rbcast_row':1,'wad_publish':1}
     if 'subroutine smpi_halo9_raw(' in t:
         exp['halo9']=1
+    if 'subroutine smpi_checkrec_raw(' in t:
+        exp['checkrec']=1
+        exp['checkpicks']=1
+    for name,count in [('flux_one',2),('checkkeys',1),('wad_pair',1)]:
+        if re.search(r'\bsmpi_'+name+r'_raw\s*\(',t,re.I):
+            exp[name]=count
+    if re.search(r'\bsmpi_entry_epoch_raw\s*\(',t,re.I):
+        # Packed (including a disabled packed path) adds two MPI callsites;
+        # the selected unpacked-only source retains exactly two in ONE().
+        exp['entry_epoch']=4 if 'module smpi_entry_workspace\n' in t else 2
     if got != exp:
         raise ValueError('unexpected runtime callsites: ' + repr(got))
+    if counts is not None:
+        counts.update(got)
     return ''.join(out) + Path(__file__).with_name('timers.inc').read_text()
 
 
@@ -96,13 +133,14 @@ def main():
     ap.add_argument('--nf-config',default='/home/user_home/ylf/kt5-licom-secom-ylf/deps/bin/nf-config')
     a=ap.parse_args()
     s,d=a.source.resolve(),a.out.resolve()
-    methods={'ecom3d.f':mainf, 'archive.f':archive, 'secom_mpi.f90':runtime}
+    counts={}
+    methods={'ecom3d.f':mainf, 'archive.f':archive, 'secom_mpi.f90':lambda txt:runtime(txt,counts)}
     rendered={n:fn((s/n).read_bytes().decode('latin1')).encode('latin1') for n,fn in methods.items()}
     d.mkdir()
     for n,b in rendered.items():
         with (d/n).open('xb') as f: f.write(b)
     proof={'kind':'diagnostic_not_eligible_for_timing','parent':{n:sha(s/n) for n in rendered},
-           'generated':{n:sha(d/n) for n in rendered},'commands':[]}
+           'generated':{n:sha(d/n) for n in rendered},'raw_static_mpi_callsites':counts,'commands':[]}
     if a.build:
         flags=shlex.split('-O3 -fno-fast-math -ffp-contract=off -std=legacy -ffixed-line-length-132 '
                           '-g -fbacktrace -ffpe-trap=invalid,zero,overflow -march=native -mprefer-vector-width=256 -fopenmp')

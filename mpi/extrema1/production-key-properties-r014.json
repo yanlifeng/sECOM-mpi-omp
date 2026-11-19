@@ -1,0 +1,18 @@
+{
+  "pass": true,
+  "seed": 846313,
+  "compiled_records": 30155,
+  "numeric_order_groups": 1286,
+  "distinct_water_values_ordered": 2068,
+  "distinct_speed_values_ordered": 664,
+  "water_max_observed_legal_key": 9205357638345293823,
+  "signed_int64_max": 9223372036854775807,
+  "sentinel_1e10_bits": "501502f9",
+  "tested_total_cells_max": 1073741824,
+  "production_sha256": {
+    "baro_check.f": "d8dfab685c868b9f218390a14d6a093957db420293e4a0bea47937116185501e",
+    "secom_mpi.f90": "3af4a1dff9bdbc3cfe4320c091fe1adb7b8e26060ff3615aa4c2d70610037fd4"
+  },
+  "compiled_projection_sha256": "e7bcb0c1c02a841eb0baba83b54242870ca7d7bcc0635d3f4909518f1d6f7537",
+  "method": "actual checked Fortran packing/decoding fragments vs independent float/J/I tuple oracle; not a solver run"
+}

@@ -5,6 +5,11 @@
       INCLUDE 'comdeck'
       INTEGER IBADBC,INEBC,IEBC,JEBC,ICBC,JCBC,JSBC,ITSBC
       INTEGER IMASKBC(4),IMAGBC(4),IKBC,ICORB,JCORB,ITYPBC
+      INTEGER IKEEP_U,IKEEP_V,JTRG_V
+      SMPI_KEEP_UA=.TRUE.
+      SMPI_KEEP_VA=.TRUE.
+      IKEEP_U=0
+      IKEEP_V=0
       SMPI_LOCALBC=.FALSE.
       IF(SMPI_SIZE.LE.1) RETURN
       IBADBC=1
@@ -71,8 +76,30 @@
           IF(JCORB.LT.2.OR.JCORB.GT.JM) GOTO 90
           IF(SMPI_OWNER_RAW(JCORB).NE.SMPI_OWNER_RAW(JCORB-1)) GOTO 90
         END IF
+! Middle momentum reads UA only to its south (export rank's last row)
+! and VA only to its north (export rank's first row). Check geometric
+! owners, not our own bounds, so any rank's list can veto the elision.
+        JTRG_V=JCORB
+        IF(ITYPBC.LE.2) JTRG_V=JCORB+1
+        IF(JCORB.LT.JM) THEN
+          IF(SMPI_OWNER_RAW(JCORB).NE.SMPI_OWNER_RAW(JCORB+1))
+     &      IKEEP_U=1
+        ENDIF
+        IF(JTRG_V.GT.1) THEN
+          IF(SMPI_OWNER_RAW(JTRG_V).NE.SMPI_OWNER_RAW(JTRG_V-1))
+     &      IKEEP_V=1
+        ENDIF
       END DO
       IBADBC=0
    90 CALL SMPI_INDEX_RAW(IBADBC)
       SMPI_LOCALBC=IBADBC.EQ.0
+      IF(SMPI_LOCALBC) THEN
+        CALL SMPI_INDEX_RAW(IKEEP_U)
+        CALL SMPI_INDEX_RAW(IKEEP_V)
+        SMPI_KEEP_UA=IKEEP_U.NE.0
+        SMPI_KEEP_VA=IKEEP_V.NE.0
+      ENDIF
+      IF(SMPI_RANK.EQ.0) WRITE(*,'(A,L1,A,L1,A,L1)')
+     &  'MPI CORNER PLAN LOCALBC=',SMPI_LOCALBC,
+     &  ' KEEP_UA=',SMPI_KEEP_UA,' KEEP_VA=',SMPI_KEEP_VA
       END

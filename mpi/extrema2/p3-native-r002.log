@@ -1,0 +1,20 @@
+{"baro_check.f": {"candidate_sha256": "3f33f980efc41238e330e024b51f62cb0d583a0678793da3526adf778a21b35e", "parent_sha256": "5930b7eeb30964b56c73f1be63a01f0197ce3a8d418af62f69c9bac9815d6736"}, "secom_mpi.f90": {"candidate_sha256": "30f46613b639d40292caf7f8a67567dc97796fdcc98aa6d442f8ae5cafd1ee9e", "parent_sha256": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f"}}
+3f33f980efc41238e330e024b51f62cb0d583a0678793da3526adf778a21b35e  baro_check.f
+30f46613b639d40292caf7f8a67567dc97796fdcc98aa6d442f8ae5cafd1ee9e  secom_mpi.f90
+141fb96db34efcd81da8385b7034b731c2e58f607241a0241a6813619b3a56ed  extended.f
+ce9c99f9857aca0767e9e9f74a9341df841a889cd78c7d57edecedb87a34fc80  /home/user_home/ylf/secom-mpi-20261119/extrema-kernel-r001/check_extrema_mpi.f
+fd518697faa665e5600a20a7704ff6531584fea8206ef1bf3675ea20d4849277  /home/user_home/ylf/secom-mpi-20261119/r004b/source/comdeck
+cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93  /home/user_home/ylf/secom-mpi-20261119/r004b/source/mpideck
+GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)
+CHECK stock ranks=2 threads=1 allowed=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           2           1
+CHECK stock ranks=4 threads=1 allowed=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           4           1
+CHECK stock ranks=2 threads=2 allowed=20-23
+ PASS_MPI_EXTREMA cases/ranks/threads=           9           2           2
+CHECK expanded ranks=2 threads=1 allowed=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           2           1
+CHECK expanded ranks=4 threads=1 allowed=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           4           1
+CHECK expanded ranks=2 threads=2 allowed=20-23
+ PASS_EXTREMA2 cases/veto/ranks/threads=          16           4           2           2

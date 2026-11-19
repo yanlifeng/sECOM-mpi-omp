@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "scope": "source reconstruction, build command and pre-pinned ELF evidence; not a native recompile",
+  "manifest_sha256": "80f726db56e6ddd94afa59e40908da91614bf92cc07093879ad325fee3d9f15e",
+  "bundle_manifest_sha256": "3a87f02ae4bf51c745aee628f2803547d741b3a140ddbf2142c81bfb275cbec1",
+  "science_tree_sha256": "46f5da3de7d5904ed20e902e1c1ba501f2ca40fa090e11c07a8d7754a6b9d1a4",
+  "builder_sha256": "2e9ca8821ae6589e348fdd44414d73c29d462e17b484bd9f68218a548a333273",
+  "remote_source_and_log_sha256": {
+    "early/main.f": "64dec3cea6a817844ef01409a5aa2c06c21999a334072a077c9b891e4e7bc90e",
+    "early/capture.f": "01155bfd0de6adaa61e13a962050d92cae84bb2c047ce3562d474fc08d5b56b5",
+    "early/build.log": "23ffef3683de5ba782271b7d6643eb2c4c53a157ab4d5cb36a2ba9f93afb5220",
+    "late/main.f": "64dec3cea6a817844ef01409a5aa2c06c21999a334072a077c9b891e4e7bc90e",
+    "late/capture.f": "0576a8730e9aded404aed1df986bccf55b348035c6ebb4c1c8fedacabcb3f4f0",
+    "late/build.log": "8207b0edb212bc2d4a748df47ef49a9945c24a317d3bd5d3034d1ce452f95cd9"
+  },
+  "modes": {
+    "early": {
+      "regenerated_sources_byte_identical": true,
+      "unchanged_science_objects_in_link": 101,
+      "actual_elf_sha256": "58e632e2ff9c001f14572e0dc63ff6f57c8f8ede39cc6a178a3da7983fcac554",
+      "commands_match_build_receipt": true,
+      "only_owned_scratch_allgather": true
+    },
+    "late": {
+      "regenerated_sources_byte_identical": true,
+      "unchanged_science_objects_in_link": 101,
+      "actual_elf_sha256": "8f20fc11e7f6ea0f76f40f73a1cce947cfbc40a5f76dda9af27e9399cbe1089c",
+      "commands_match_build_receipt": true,
+      "only_owned_scratch_allgather": true
+    }
+  }
+}

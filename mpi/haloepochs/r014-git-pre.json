@@ -1,0 +1,60 @@
+{
+  "worktree_canonical": "46f5da3de7d5904ed20e902e1c1ba501f2ca40fa090e11c07a8d7754a6b9d1a4",
+  "git_commit": "2ca632f44f7e919f9d90a9b8219606eb371e3c9d",
+  "git_canonical": "876004a32afde050a7df2a68121ca565869751ad0f47385cc2b50335b14a70b0",
+  "git_worktree_mismatches": [
+    "advave.f",
+    "baro_check.f",
+    "ecom3d.f",
+    "extrnl.f",
+    "mpi_boundary.f",
+    "mpideck",
+    "secom_mpi.f90",
+    "wandd_kky.f"
+  ],
+  "matched_commit": false,
+  "r004b_commit": "c371fa33180127b2b2042621e828de6d696056f0",
+  "r004b_canonical": "876004a32afde050a7df2a68121ca565869751ad0f47385cc2b50335b14a70b0",
+  "delta_from_r004b": {
+    "advave.f": {
+      "r004b": "e6095ca3ee034e87a7d3bddf824c90214cab3ed0864611e4f1d46dd305d45dc1",
+      "frozen": "748abfdba930372efa7e4e070241744430e04de5c34878e0ae18b562c60904ae"
+    },
+    "baro_check.f": {
+      "r004b": "5930b7eeb30964b56c73f1be63a01f0197ce3a8d418af62f69c9bac9815d6736",
+      "frozen": "d8dfab685c868b9f218390a14d6a093957db420293e4a0bea47937116185501e"
+    },
+    "ecom3d.f": {
+      "r004b": "9fad24c38c8a0e63caf817f013c179f9784cdc6322f9730f12cebf3c05a37396",
+      "frozen": "d494d84c7314faff16c03b40b2e205998e73d6b32f8e9c2ea65c030bbd9e7da0"
+    },
+    "extrnl.f": {
+      "r004b": "b920dd1af28f85a9d8e97cd79cf7ff4a2cd475d08fa81553321ac484c8add718",
+      "frozen": "afda34e2a75a857adaf29bdc4febd8bcdf91289cb430b0f983217dc7f287b2bd"
+    },
+    "mpi_boundary.f": {
+      "r004b": "410c85e4c18ca29a1c2c1965e8796bb1efffa440da337a73d44a1e5fdfd43fd1",
+      "frozen": "5fd1963117174ebce45ce1beb42ffe20caf85e904995012505e5daea5c6c9281"
+    },
+    "mpideck": {
+      "r004b": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93",
+      "frozen": "a2b44693aaa6bb649b83a8f33b00e65f8dc634982e862965484371a555ee3e85"
+    },
+    "secom_mpi.f90": {
+      "r004b": "4aeadf73690ec3d4d12ff3c683ba735f1fef048c5136ccde7cb80220ed5a338f",
+      "frozen": "3af4a1dff9bdbc3cfe4320c091fe1adb7b8e26060ff3615aa4c2d70610037fd4"
+    },
+    "wandd_kky.f": {
+      "r004b": "05b84add3c551eb85ef59915f1bb1b71417f5943488780846b0988d2b130dee9",
+      "frozen": "bc2dbc2a386fc786f29d6208f55e1208f8dce21a35ce8eea43ca145aa549dd12"
+    }
+  },
+  "normalized_public_procedure_hashes": {
+    "WANDD_KKY": "9b375fd578ebcb39960486c233bca4b15245c80c92961334478d1a526d19383f",
+    "WANDD_TEAM": "3c73cf29bdc803817cbae5c356ee6e733b13436acf7236f9544048ec58b0035d",
+    "ADVAVE": "990e11581b9b9f4a13605d49fd39c115c986e1ddab341363460986c21a1e246f",
+    "EXTRNL": "2e40191b7fcaf93f8f558d46f4a6dabd1f5d046562bb60aa02c1a7b7498daf9a",
+    "SECOM_ADV34_CORNERS": "4dcee03b8389496d199ef04b1646fd6f364fd6899e1503b23805b9a872c264f3"
+  },
+  "source_count": 107
+}

@@ -69,7 +69,11 @@
 !$OMP END DO
 ! The U divergence reads FLUXVA(:,J+1). Complete the packed boundary
 ! rows before any rank reuses the flux arrays for the V stage.
-      IF(SMPI_SIZE.GT.1) CALL SMPI_HALO(FLUXVA,IM,JM)
+      IF(SMPI_LOCALBC.AND.EDGE_LATE) THEN
+        CALL SMPI_FLUX_HALO_N(FLUXVA,IM,JM)
+      ELSE IF(SMPI_SIZE.GT.1) THEN
+        CALL SMPI_HALO(FLUXVA,IM,JM)
+      END IF
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
       DO 480 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 480 I=3,IMM1
@@ -113,7 +117,11 @@
       ENDDO
 !$OMP END DO
 ! Different producer/epoch from above: V divergence consumes J-1.
-      IF(SMPI_SIZE.GT.1) CALL SMPI_HALO(FLUXVA,IM,JM)
+      IF(SMPI_LOCALBC.AND.EDGE_LATE) THEN
+        CALL SMPI_FLUX_HALO_S(FLUXVA,IM,JM)
+      ELSE IF(SMPI_SIZE.GT.1) THEN
+        CALL SMPI_HALO(FLUXVA,IM,JM)
+      END IF
 !$OMP DO SCHEDULE(STATIC) PRIVATE(I,J)
       DO 880 J=SMPI_FIRST(3),SMPI_LAST(JMM1)
       DO 880 I=2,IMM1

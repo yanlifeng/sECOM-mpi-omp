@@ -28,6 +28,14 @@
 ! stay on their owners. Publish only adjacent rows on that path; retain
 ! complete snapshots for any boundary graph that fails the proof.
       IF(SMPI_LOCALBC) THEN
+      IF(SMPI_SIZE.GT.1.AND.SMPI_OUTER.AND.ROTATE.AND.
+     &   NUMEPC.EQ.0.AND.NUMQBC.EQ.0.AND.NUMDBC.EQ.0) THEN
+! The caller's MASTER sets global IEXT without an exit barrier. Do
+! not evaluate the FIRST flag before that store is published to all.
+!$OMP BARRIER
+        CALL SMPI_ENTRY_EPOCH(D,UA,VA,UAB,VAB,EL,ELB,DUMWAD,
+     &                        DVMWAD,IM,JM,IEXT.EQ.1)
+      ELSE
       CALL SMPI_HALO(D,IM,JM)
       CALL SMPI_HALO(UA,IM,JM)
       CALL SMPI_HALO(VA,IM,JM)
@@ -37,6 +45,7 @@
       CALL SMPI_HALO(ELB,IM,JM)
       CALL SMPI_HALO(DUMWAD,IM,JM)
       CALL SMPI_HALO(DVMWAD,IM,JM)
+      ENDIF
       ELSE
       CALL SMPI_ALL(D,IM,JM)
       CALL SMPI_ALL(UA,IM,JM)
@@ -72,7 +81,11 @@
 !wad         ENDDO
 !wad      ENDDO
 !$OMP END DO
-      CALL SMPI_HALO(FLUXVA,IM,JM)
+      IF(SMPI_LOCALBC.AND.ROTATE) THEN
+        CALL SMPI_FLUX_HALO_N(FLUXVA,IM,JM)
+      ELSE
+        CALL SMPI_HALO(FLUXVA,IM,JM)
+      END IF
 !$OMP DO SCHEDULE(STATIC)
       DO 410 J=SMPI_FIRST(2),SMPI_LAST(JMM1)
       DO 410 I=2,IMM1
@@ -308,11 +321,28 @@
       IF(EDGE_LATE) CALL SECOM_ADV34_CORNERS()
 !$OMP END SINGLE
       IF(SMPI_LOCALBC) THEN
-        CALL SMPI_HALO(CURV42D,IM,JM)
-        CALL SMPI_HALO(UA,IM,JM)
-        CALL SMPI_HALO(VA,IM,JM)
+! MOMENTUM_SOUTH: only private V momentum reads this field across J.
+        IF(SMPI_LOCALBC.AND.ROTATE.AND.SMPI_OUTER) THEN
+          CALL SMPI_FLUX_HALO_S(CURV42D,IM,JM)
+        ELSE
+          CALL SMPI_HALO(CURV42D,IM,JM)
+        END IF
+! Geometry was checked once. Keep both publications on public, static
+! fallback, or uncertified calls; do not change the curve or ELF epochs.
+        IF(SMPI_OUTER.AND.EDGE_LATE.AND.SMPI_SIZE.GT.1) THEN
+          IF(SMPI_KEEP_UA) CALL SMPI_HALO(UA,IM,JM)
+          IF(SMPI_KEEP_VA) CALL SMPI_HALO(VA,IM,JM)
+        ELSE
+          CALL SMPI_HALO(UA,IM,JM)
+          CALL SMPI_HALO(VA,IM,JM)
+        ENDIF
       ENDIF
-      CALL SMPI_HALO(ELF,IM,JM)
+! MOMENTUM_SOUTH: only private V momentum reads this field across J.
+      IF(SMPI_LOCALBC.AND.ROTATE.AND.SMPI_OUTER) THEN
+        CALL SMPI_FLUX_HALO_S(ELF,IM,JM)
+      ELSE
+        CALL SMPI_HALO(ELF,IM,JM)
+      END IF
 
  5000 CONTINUE
 

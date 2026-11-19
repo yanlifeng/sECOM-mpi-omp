@@ -1,0 +1,7 @@
+checkready-none-3x2 PASS 0 WAD_OWNED
+both-none-2x1 PASS 0 WAD_OWNED
+both-none-3x2 PASS 0 WAD_OWNED
+both-none-7x1 PASS 0 WAD_OWNED
+both-public-stale-3x2 PASS 91 BAD PUBLIC
+both-drop-reset-3x2 PASS 91 BAD OWNER
+both-drop-vaf-3x2 PASS 91 BAD HALO

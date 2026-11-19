@@ -96,3 +96,105 @@ log copies are `runtime-unit-r002.log` and `runtime-unit-r003.log`.
 The latter SHA-256 is
 `0ebc0757f534d87df616f2ea618c3d0dedda5daaaddf3b6f8ea7f85023b8252b`;
 it records the exact inputs and binary hashes and application-thread CPUs.
+
+## r014: which ghost is current, and when
+
+Here **north** means the received row `JHI+1` (this rank sends its first
+owned row south); **south** means the received row `JLO-1` (it sends its
+last owned row north). At a global edge there is no corresponding ghost.
+A directional transfer makes no promise about the opposite ghost, let alone
+the rest of a replicated plane. A later write starts a new version even if
+the array name and stencil are unchanged.
+
+On the admitted rotating `BARO_SUBCYCLE` path, the required versions are:
+
+| Producer -> consumer | Receive from south | Receive from north |
+| --- | --- | --- |
+| EXTRNL entry, first substep of **each** outer step | D, UA, UAB, EL, ELB, DUMWAD | D, VA, VAB |
+| EXTRNL entry, later substep of the **same** outer step | UA, UAB, ELB, DUMWAD | VAB |
+| EXTRNL hydraulic flux -> free-surface divergence | — | FLUXVA |
+| ADVAVE first flux -> U divergence; then second flux -> V divergence | FLUXVA (second only) | FLUXVA (first only) |
+| Post-boundary -> V momentum | CURV42D, ELF | — |
+| Private WAD entry, after ROTATE | ELEV (=EL), TD (=D) | ELEV, TD; VA, DVMWAD |
+| Private WAD after both colors -> CHECK / next EXTRNL | — | VA, DVMWAD; VAF |
+
+The first two entries use one uncombined Sendrecv **per field and
+direction** (9 or 5); the experimental packed entry is not in r014.
+A team barrier precedes reading the MASTER-written IEXT. WAD leaves EL/D
+unchanged, so their two entry ghosts survive for the next substep; its
+final north VA also survives CHECK. UA and the rotated histories cannot
+be reused this way. BARO restores face masks at each outer-step start.
+Do not substitute an EL north-only WAD transfer: the next EXTRNL needs
+the retained **south** EL.
+
+WAD's five halo Sendrecv calls comprise two for the bilateral EL/D pair,
+one for each generation of the north VA/DVMWAD pair and one for north VAF.
+An additional, separate integer-flags publication commits north-seam writes
+to their actual owner, after both global-parity colors and their joins.
+Only one color owns the sending rank's last source row; flags must survive
+the other color. A receiver applies only marked components, with ET/ETF
+copied from **its own ETB**. Both tests on each face still observe their
+immediate local writes. An overlarge paired count uses individual
+same-direction transfers; the paired workspace is released at FINALIZE.
+Only CHECK immediately following WAD may declare its required north
+DVMWAD/VAF ready. An intervening producer invalidates that claim.
+
+### Boundary admission and public calls
+
+The entry and five-halo WAD contract is private to multi-rank rotating
+BARO with LOCALBC, owned OUTER and empty Q/EPC/diffuser lists. LOCALBC
+alone can select the private merged-color WAD with bilateral halos and the
+three directional FLUXVA generations on rotating/late-edge calls. Other
+local-boundary EXTRNL entries retain the nine bilateral halos; failure
+of the geometry certificate retains the full owner gathers at entry.
+Standalone EXTRNL and ADVAVE do not select the rotating/late-edge path;
+public WANDD retains per-color publication, and public CHECK refreshes its
+own inputs. This is a communication contract, not an assertion that arbitrary
+public-call sequences support or reproduce an arbitrary 3-D configuration.
+
+Startup validates static boundary lists and FSM with their original ordered
+copy semantics before accepting LOCALBC. For lower hard corners (types 1/2)
+the UA/VA target rows are `j`/`j+1`; for upper ones (3/4) both are
+`j`. Regardless of the rank inspecting the list, keep the mid-step UA
+halo if a target is its owner's last row with a north neighbor, and keep VA
+if a target is its owner's first row with a south neighbor. **Two separate**
+global integer vetoes select KEEP_UA and KEEP_VA once per admitted plan;
+they default/reset to true. A valid upper corner on an owner's last row
+really can veto skipping UA. Only the certified private mid-step may act
+on a false keep flag. CURV42D and ELF are still published after their
+boundary edits. Re-plan if geometry changes. Rank-zero stdout reports
+`MPI CORNER PLAN LOCALBC=... KEEP_UA=... KEEP_VA=...`; use the separate
+`OWNED_OUTER` field to check outer admission.
+
+The executable rejects multi-rank physics outside its barotropic,
+INTERNAL/CLAMPED, JTM=0, positive-split, no transport/wave/particle scope;
+its conservative communication branch is **not** a working generic 3-D
+fallback. Even within that scope, OUTER additionally gates cold start,
+constant horizontal mixing, Manning friction, averaged meteorology,
+no PET/special ice, CDF output, zero chemical layers and empty E/V/F station
+lists. No rank may independently change these decisions mid-call.
+
+### Healthy extrema and non-mutating diagnostics
+
+After the original row calculations, multi-rank CHECK can certify its
+healthy verdict with **one** elementwise MPI_MAX over three signed INT64
+words: speed key, water key, any-rank veto. This is not a floating-point
+reduction. It preserves last-J/last-I speed tie order (only the true
+winning row re-executes the original descending-I SQRT search), and the
+first-J/first-I water minimum with that cell's actual zero sign. On success
+water supplies the final coordinates, as before. Speculative cell checks
+use only integer bits. An unqualified layout/size, exceptional or nonzero
+subnormal inspected data, speed above 100, or absent winner must not publish
+a partial result: the two-collective verdict, and then the original
+row-gather verdict if needed, remain available. Single-rank CHECK retains
+its original tail. See [bounds and exception tests](../mpi/extrema1/KEY_BOUNDS.md).
+
+The separate early/late trace ELF copies **only owned rows** of each of 25
+fields into diagnostic scratch, gathers the scratch, and writes the frame
+and extrema header on rank zero. Gathering the scientific plane itself can
+silently repair a stale ghost and hide the very defect being checked;
+never use a trace run as a timing sample. The
+[trace-copy negative control](check_trace_copy.py) checks the distinction.
+For communication receipts, see the [WAD poison controls](../mpi/haloepochs/WAD5.md),
+[corner veto cases](../mpi/haloepochs/CORNER.md) and
+[momentum-direction controls](../mpi/haloepochs/MOMENTUM_SOUTH.md).

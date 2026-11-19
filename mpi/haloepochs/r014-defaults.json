@@ -1,0 +1,46 @@
+{
+  "source_pre": "46f5da3de7d5904ed20e902e1c1ba501f2ca40fa090e11c07a8d7754a6b9d1a4",
+  "source_post": "46f5da3de7d5904ed20e902e1c1ba501f2ca40fa090e11c07a8d7754a6b9d1a4",
+  "nsource": 107,
+  "changed_since_r004b": [
+    "advave.f",
+    "baro_check.f",
+    "ecom3d.f",
+    "extrnl.f",
+    "mpi_boundary.f",
+    "mpideck",
+    "secom_mpi.f90",
+    "wandd_kky.f"
+  ],
+  "public_wad_equal_ignoring_trailing_whitespace": true,
+  "shape": [
+    372,
+    479
+  ],
+  "compiler": "GNU Fortran (Homebrew GCC 10.1.0) 10.1.0",
+  "common_flags": [
+    "-O3",
+    "-std=legacy",
+    "-ffixed-line-length-132",
+    "-ffpe-trap=invalid,zero,overflow",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-fcheck=bounds"
+  ],
+  "original_extrema_fixture": "328cdeb0fafc477f0d532d8c92ee9463f8111675fef2a903721c12a62d4a1b04",
+  "wad_fixture": "bff7f059995cae001cbe774c0f60b71e7cdfe3a6613115e237356d58fb61e11b",
+  "cases": {
+    "serial1": {
+      "defaults": "PASS WAD/defaults         372         479           1",
+      "extrema": "PASS: rounded speed ties, both abort thresholds, and all-land mask"
+    },
+    "omp1": {
+      "defaults": "PASS WAD/defaults         372         479           1",
+      "extrema": "PASS: rounded speed ties, both abort thresholds, and all-land mask"
+    },
+    "omp3": {
+      "defaults": "PASS WAD/defaults         372         479           3",
+      "extrema": "PASS: rounded speed ties, both abort thresholds, and all-land mask"
+    }
+  }
+}

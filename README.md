@@ -19,10 +19,19 @@ See [the 2026-11-19 update](validation/OMP64.md) for the six-file byte equality,
 transient-field checks, cross-date output metadata, and evidence-package audit.
 
 The MPI development branch is **`codex/secom-mpi-hybrid`**, based on v46.
-Its row-owned barotropic path supports MPI plus OpenMP. On p3, five complete
-32 MPI × 1 thread runs took **16.60–16.99 s**, median **16.83 s**: **19.35×**
-versus the original frozen serial executable, exceeding the 16× target.
+Its row-owned barotropic path supports MPI plus OpenMP. The latest r014
+32 MPI × 1 thread runs took **12.80–13.06 s**, median **12.9677 s** across
+five new interleaved comparisons: **25.105×** versus the original frozen
+serial executable, exceeding the new **24×** target in all five samples.
+The same-day original serial denominator gives **24.124×** at the median
+(not in every sample). Against five fresh previous-MPI controls, the median
+wall time fell **24.67%**. All six public files and twelve 25-field snapshots
+match the original serial byte for byte; snapshots do not mutate solver halos.
 This is not a claim of improvement over the existing OpenMP version.
 See [MPI results and scope](validationmpi/RESULTS.md) and the
 [communication contract](validationmpi/RUNTIME.md). The accepted source
-does not enable the optional packed-halo or profiling experiments.
+keeps profiling out of official timing. Nine-field entry packing was rejected;
+directional/epoch-aware communication and paired WAD fields shorten halos
+only on the admitted private path. Multi-rank CHECK independently validates
+its exact integer-key healthy reduction, retaining conservative value
+fallbacks and public-call input halos. The old `secom-mpi-v1-32` tag is retained.

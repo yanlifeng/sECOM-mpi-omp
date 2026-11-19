@@ -1,0 +1,17 @@
+PASS old-3x1-mode1 []
+PASS five-3x1-mode1 []
+PASS bad-el-south-3x1-mode1 [(0, 2, 'scalar', 250016), (1, 2, 'scalar', 214304), (2, 2, 'scalar', 214304)]
+PASS bad-vaf-north-3x1-mode1 [(0, 1, 'scalar', 8), (1, 1, 'scalar', 8), (2, 1, 'scalar', 8)]
+PASS old-3x1-mode2 []
+PASS five-3x1-mode2 []
+PASS old-3x1-mode3 []
+PASS five-3x1-mode3 []
+PASS old-2x2-mode1 []
+PASS five-2x2-mode1 []
+PASS raw-pair-4x1-jm4-mode1 0
+PASS raw-pair-3x2-jm8-mode1 0
+PASS raw-pair-1x2-jm7-mode1 0
+PASS raw-pair-2x1-jm5-mode2 41
+PASS raw-entry-4x1-jm4-mode1 0
+PASS raw-entry-3x2-jm8-mode1 0
+PASS raw-entry-1x2-jm7-mode1 0

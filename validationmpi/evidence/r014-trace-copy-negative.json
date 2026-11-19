@@ -1,0 +1,135 @@
+{
+  "kind": "local_mock_collective_not_solver",
+  "builder_sha": "2e9ca8821ae6589e348fdd44414d73c29d462e17b484bd9f68218a548a333273",
+  "compiler": "GNU Fortran (Homebrew GCC 8.4.0_1) 8.4.0",
+  "results": [
+    {
+      "mode": "early",
+      "variant": "copy",
+      "rank": 0,
+      "omp": 1,
+      "mutated_words": 0,
+      "frame_sha": "f68d552370728dd1a0fe46bb7a4647fb512136a8952694dd6af3bcd0f8714346"
+    },
+    {
+      "mode": "early",
+      "variant": "copy",
+      "rank": 0,
+      "omp": 3,
+      "mutated_words": 0,
+      "frame_sha": "f68d552370728dd1a0fe46bb7a4647fb512136a8952694dd6af3bcd0f8714346"
+    },
+    {
+      "mode": "early",
+      "variant": "copy",
+      "rank": 1,
+      "omp": 1,
+      "mutated_words": 0,
+      "frame_sha": null
+    },
+    {
+      "mode": "early",
+      "variant": "copy",
+      "rank": 1,
+      "omp": 3,
+      "mutated_words": 0,
+      "frame_sha": null
+    },
+    {
+      "mode": "early",
+      "variant": "inplace_negative",
+      "rank": 0,
+      "omp": 1,
+      "mutated_words": 375,
+      "frame_sha": "f68d552370728dd1a0fe46bb7a4647fb512136a8952694dd6af3bcd0f8714346"
+    },
+    {
+      "mode": "early",
+      "variant": "inplace_negative",
+      "rank": 0,
+      "omp": 3,
+      "mutated_words": 375,
+      "frame_sha": "f68d552370728dd1a0fe46bb7a4647fb512136a8952694dd6af3bcd0f8714346"
+    },
+    {
+      "mode": "early",
+      "variant": "inplace_negative",
+      "rank": 1,
+      "omp": 1,
+      "mutated_words": 500,
+      "frame_sha": null
+    },
+    {
+      "mode": "early",
+      "variant": "inplace_negative",
+      "rank": 1,
+      "omp": 3,
+      "mutated_words": 500,
+      "frame_sha": null
+    },
+    {
+      "mode": "late",
+      "variant": "copy",
+      "rank": 0,
+      "omp": 1,
+      "mutated_words": 0,
+      "frame_sha": "17d2cd1c98e8d7201f6b09ee01a0e489100d181c0ea0e1f916e50040efd358a1"
+    },
+    {
+      "mode": "late",
+      "variant": "copy",
+      "rank": 0,
+      "omp": 3,
+      "mutated_words": 0,
+      "frame_sha": "17d2cd1c98e8d7201f6b09ee01a0e489100d181c0ea0e1f916e50040efd358a1"
+    },
+    {
+      "mode": "late",
+      "variant": "copy",
+      "rank": 1,
+      "omp": 1,
+      "mutated_words": 0,
+      "frame_sha": null
+    },
+    {
+      "mode": "late",
+      "variant": "copy",
+      "rank": 1,
+      "omp": 3,
+      "mutated_words": 0,
+      "frame_sha": null
+    },
+    {
+      "mode": "late",
+      "variant": "inplace_negative",
+      "rank": 0,
+      "omp": 1,
+      "mutated_words": 375,
+      "frame_sha": "17d2cd1c98e8d7201f6b09ee01a0e489100d181c0ea0e1f916e50040efd358a1"
+    },
+    {
+      "mode": "late",
+      "variant": "inplace_negative",
+      "rank": 0,
+      "omp": 3,
+      "mutated_words": 375,
+      "frame_sha": "17d2cd1c98e8d7201f6b09ee01a0e489100d181c0ea0e1f916e50040efd358a1"
+    },
+    {
+      "mode": "late",
+      "variant": "inplace_negative",
+      "rank": 1,
+      "omp": 1,
+      "mutated_words": 500,
+      "frame_sha": null
+    },
+    {
+      "mode": "late",
+      "variant": "inplace_negative",
+      "rank": 1,
+      "omp": 3,
+      "mutated_words": 500,
+      "frame_sha": null
+    }
+  ]
+}

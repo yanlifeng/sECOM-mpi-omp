@@ -37,14 +37,29 @@ def main():
       CHARACTER*32 TRNAME
       INTEGER TRUNIT
 """ + condition
-    text += ''.join('      CALL SMPI_ALL_RAW(%s,IM,JM)\n' % f for f in FIELDS)
     text += """      IF(SMPI_RANK.NE.0) RETURN
       WRITE(TRNAME,'("transient-",I3.3,"-",I2.2,".bin")') INTX,IEXT
       OPEN(NEWUNIT=TRUNIT,FILE=TRNAME,FORM='UNFORMATTED',ACCESS='STREAM',STATUS='NEW')
       WRITE(TRUNIT) INTX,IEXT,IM,JM,VAMAX,ELMINX,IAMAX,JAMAX
-      WRITE(TRUNIT) DUMWAD,DVMWAD,EL,ELB,ELF,ET,ETF,UA,UAB,UAF,VA,VAB,VAF,
-     & D,CURV42D,CBC,TXBOT,TYBOT,FLUXUA,FLUXVA,TPS,TRNU,TRNV,ADVUA,ADVVA
-      CLOSE(TRUNIT)
+"""
+    text = text.replace('      IF(SMPI_RANK.NE.0) RETURN',
+                        '      TRUNIT=-1\n      IF(SMPI_RANK.EQ.0) THEN')
+    text += '      ENDIF\n'
+    text += ''.join('      CALL CAPTURE_MPI_PLANE(TRUNIT,%s)\n' % f for f in FIELDS)
+    text += """      IF(SMPI_RANK.EQ.0) CLOSE(TRUNIT)
+      END
+      SUBROUTINE CAPTURE_MPI_PLANE(TRUNIT,CAPFIELD)
+      INCLUDE 'comdeck'
+      INTEGER TRUNIT
+      REAL CAPFIELD(IM,JM),BUFFER(IM,JM)
+      SAVE BUFFER
+! Gather a COPY of owned rows: a diagnostic must not refresh the
+! scientific ghost rows and silently repair a missing halo later.
+      DO J=SMPI_JLO,SMPI_JHI
+        BUFFER(:,J)=CAPFIELD(:,J)
+      ENDDO
+      CALL SMPI_ALL_RAW(BUFFER,IM,JM)
+      IF(SMPI_RANK.EQ.0) WRITE(TRUNIT) BUFFER
       END
 """
     if args.late:
@@ -68,7 +83,8 @@ def main():
             log.write(' '.join(map(shlex.quote, cmd)) + '\n')
             log.flush()
             subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
-    proof = dict(kind='instrumented_not_for_timing', commands=commands, frames=frames, fields=FIELDS,
+    proof = dict(kind='instrumented_not_for_timing', snapshot_mode='owned_copy_nondestructive',
+                 commands=commands, frames=frames, fields=FIELDS,
                  binary_sha=hashlib.sha256((dest / 's--pom.x').read_bytes()).hexdigest())
     (dest / 'build.json').write_text(json.dumps(proof, indent=2))
 

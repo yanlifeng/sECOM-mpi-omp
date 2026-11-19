@@ -1,0 +1,16 @@
+# Five private WAD directional exchanges
+
+`python3 -B mpi/haloepochs/wad5.py --source COMPLETE_PARENT/source --out NEW_DIRECTORY` emits three overlay files: runtime, WAD, and its private BARO call. Generate from a complete parent with entry epochs (packed or explicit per-plane), FLUXVA directional raw, merged WAD colors, and CHECK-ready contracts already present. Ordinary public calls still use their original path; a local-boundary but outer-ineligible case still uses the prior private bilateral WAD. The private five path has the same zero sparse Q/EPC/diffuser gate as the ENTRY call, only within ROTATE. Its correctness does not depend on the MPI implementation or its eager threshold.
+
+| WAD epoch | Payload | Receive ghost(s) | Sendrecv |
+|---|---|---|---:|
+| Entry after explicit team join | ELEV=EL, TD=D | north and south | 2 |
+| Entry | VA, DVMWAD | north | 1 |
+| After both colors, explicit flags committed on target owner | VA, DVMWAD | north | 1 |
+| Same post-commit epoch | VAF | north | 1 |
+
+The one explicit WAD ownership-flags publication is unchanged and not included in this count. WAD tests vertical face `(i,j+1)` from the south cell `(i,j)`. Both rounded comparisons on that face see the same immediate writes as before. The following private CHECK reads dynamic VAF/DVMWAD only at its own row and `j+1`; the next EXTRNL entry requires retained north VA, south EL and both D ghosts. Hence **EL as well as D stays bilateral**. Omitting south EL would break substep two even though WAD itself only needs its north neighbor. The intentionally stale southern VA/DVMWAD/VAF are not a public return contract. Event snapshots gather owned planes. All buffers have matching REAL type/count, no reductions or arithmetic, no out-of-grid PROC_NULL actual; the paired workspace is explicitly released at finalization. The per-field slow path is selected if a doubled MPI count cannot be represented.
+
+Native fixture: stage `old`, `five`, `bad-el-south`, `bad-vaf-north` with `test_wad5.py stage PARENT/ROLE --role ROLE --source COMPLETE_PARENT/source`. Then, only on allocated physical CPUs, run `native_entry.py PARENT --wad5 --cpus ALLOCATED_CPU_LIST`. Include `check_wad_pair.f90` and `check_entry_epoch.f90` alongside the Python harness. `p3-wad5-r011a.json` records exact input fingerprints, compiler, flags, placement and checks. The frozen parent of **this unit run** is the packed-entry version; the generator also accepts the same directional interface's unpacked version without changing its body. Recheck whole-case fields and output after selecting either parent.
+
+The 372×19 actual EXTRNL/WAD/CHECK fixture deliberately re-poisons all adjacent WAD inputs *after ROTATE*, compares 24 owned planes plus extrema and indices at every one of eight steps to a separate one-rank run, verifies unused south ghosts retained their poisons, and counts the five raw directional transports per active step on each MPI rank. Both false gates and multi-threaded behavior are checked. The false south-EL omission changes the next step; withholding final VAF changes the current check. Separate raw bit tests include single-row owners, one rank, OMP, signed zeros, quiet/signaling payloads (entry unit), untouched opposites, and a wrong-direction control rejected with code 41. This is a science/transport test, not a timing measurement.

@@ -4,7 +4,7 @@ module secom_diag_store
   use omp_lib
   use iso_fortran_env, only: int64,real64
   implicit none
-  integer,parameter :: nl=5, ns=14, nm=8
+  integer,parameter :: nl=5, ns=14, nm=14
   character(18),parameter :: life_name(0:nl)=[character(18):: &
     'outside','mpi-init','initialization','iteration','post-loop','mpi-finalize']
   character(18),parameter :: site_name(0:ns)=[character(18):: &
@@ -12,7 +12,8 @@ module secom_diag_store
     'extrnl','wetdry','check','advave','smag']
   character(18),parameter :: op_name(nm)=[character(18):: &
     'halo-sendrecv','plane-allgatherv','row-allgatherv','irow-allgatherv', &
-    'index-allreduce','row-bcast','wad-sendrecv','halo9-sendrecv']
+    'index-allreduce','row-bcast','wad-sendrecv','halo9-sendrecv','checkrec-allgather','checkpicks-bor', &
+    'oneway-sendrecv','entry-sendrecv','wad-pair-sendrecv','checkkeys-max']
   integer,save::life=0,depth=0,stack(8)=0,saved_rank=-1,nr=0,nt=0,subsite=0
 !$omp threadprivate(subsite)
   logical,save :: passed_enddo=.false.

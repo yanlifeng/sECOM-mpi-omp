@@ -1,0 +1,79 @@
+{
+  "cpus": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "compiler": "GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-20)",
+  "mpi": "mpirun (Open MPI) 4.1.1",
+  "manifests": {
+    "checkready": {
+      "variant": "checkready",
+      "v46": "1b58f33639538c2d214f14a8f9a575ceffed5267",
+      "files": {
+        "wandd_kky.f": "05b84add3c551eb85ef59915f1bb1b71417f5943488780846b0988d2b130dee9",
+        "baro_check.f": "ee50f1bca25a6aab6e3c9e42a2f0393a599d8819c961f56be4a46a4386596cf4",
+        "runtime.f90": "581852389884aef94093a3bcca8aa66a0667b5efbf4f4944c5f80619fb0aea7b",
+        "v46.f": "28aa2e6673111c7f5a4261653c22215814eb2576bbb9f08829a582c93cf8a73d",
+        "driver.f": "de61e5a1ccbfe905835aaa2f6825cc5353e57b7e8dab18e49d081b801ef02a4e",
+        "comdeck": "56d150a96ad6e3d4d02458fbe6edd871cac4fc8a94365b0dd845236336cc21ab",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93"
+      }
+    },
+    "both": {
+      "variant": "both",
+      "v46": "1b58f33639538c2d214f14a8f9a575ceffed5267",
+      "files": {
+        "wandd_kky.f": "4df5bee96b35a863d5ea28c18485bec08bee038e9034b414f7161db6c2d8ca53",
+        "baro_check.f": "ee50f1bca25a6aab6e3c9e42a2f0393a599d8819c961f56be4a46a4386596cf4",
+        "runtime.f90": "581852389884aef94093a3bcca8aa66a0667b5efbf4f4944c5f80619fb0aea7b",
+        "v46.f": "28aa2e6673111c7f5a4261653c22215814eb2576bbb9f08829a582c93cf8a73d",
+        "driver.f": "592ef7eb9cfbbd1f53a9ea129b6e40fe40a6e8896bf6264d663c0657924a2c3b",
+        "comdeck": "56d150a96ad6e3d4d02458fbe6edd871cac4fc8a94365b0dd845236336cc21ab",
+        "mpideck": "cf83a538081f23ec87e9e794288f69cbfae75a3b0dffa5115c93e0999d3f1c93"
+      }
+    }
+  },
+  "tests": {
+    "checkready-none-3x2": {
+      "rc": 0,
+      "marker": "WAD_OWNED",
+      "stdout_sha256": "ffd0f6310e47d34d67addcce3f6683cd8f1f25dd2d2e8137c9cc5bdf150d9575"
+    },
+    "both-none-2x1": {
+      "rc": 0,
+      "marker": "WAD_OWNED",
+      "stdout_sha256": "c602e140294ee2c19fb80f54f9a46bc0324aac8737a17b6fe7506b747cc1ba57"
+    },
+    "both-none-3x2": {
+      "rc": 0,
+      "marker": "WAD_OWNED",
+      "stdout_sha256": "ffd0f6310e47d34d67addcce3f6683cd8f1f25dd2d2e8137c9cc5bdf150d9575"
+    },
+    "both-none-7x1": {
+      "rc": 0,
+      "marker": "WAD_OWNED",
+      "stdout_sha256": "54bb91279a40f9cd4756873bf38059a7f4b616d5322b42807cf6ceb9a3cb5c7b"
+    },
+    "both-public-stale-3x2": {
+      "rc": 91,
+      "marker": "BAD PUBLIC",
+      "stdout_sha256": "50f4d2ef597abdfc3003257934bd1008da9e949482f451c907cc6e8172c80c06"
+    },
+    "both-drop-reset-3x2": {
+      "rc": 91,
+      "marker": "BAD OWNER",
+      "stdout_sha256": "bb68b3251fa83bb661c8a627f7fefbb9190e8b224622fd6c37f2352bcc7e82ef"
+    },
+    "both-drop-vaf-3x2": {
+      "rc": 91,
+      "marker": "BAD HALO",
+      "stdout_sha256": "9b0ff11fb2b7df8898b9fad0163652b631d6dc7562ffd99cbff6ba5b5fe1ac10"
+    }
+  }
+}

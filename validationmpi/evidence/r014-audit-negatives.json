@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "modified_evidence": false,
+  "expected_rejections": {
+    "formal_rank_on_cpu36": "r014-p32-t1-full01: observed OS affinity rank 17",
+    "formal_bad_restart_sha": "r014-p32-t1-full01: input/output receipt rank 0",
+    "swap_second_registered_pair": "actual crossover order differs from AB/BA precommit",
+    "misstated_one_rank_regression_mode": "r014-p32-t1-serial300: shape/CPU bounds",
+    "early_capture_changed_to_inplace": "early regenerated capture.f differs"
+  }
+}

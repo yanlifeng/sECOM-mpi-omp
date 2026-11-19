@@ -1,0 +1,18 @@
+PASS old-3x1-mode1 []
+PASS cert-3x1-mode1 []
+PASS bad-skip-ua-3x1-mode1 [(0, 2, 'D', 258984), (1, 1, 'VA', 17900)]
+PASS old-3x1-mode3 []
+PASS cert-3x1-mode3 []
+PASS old-3x1-mode4 []
+PASS cert-3x1-mode4 []
+PASS old-3x1-mode5 []
+PASS cert-3x1-mode5 []
+PASS old-3x1-mode6 []
+PASS cert-3x1-mode6 []
+PASS old-2x2-mode1 []
+PASS cert-2x2-mode1 []
+PASS old-2x2-mode4 []
+PASS cert-2x2-mode4 []
+PASS corner-meta-1 0
+PASS corner-meta-2 0
+PASS corner-meta-3 0

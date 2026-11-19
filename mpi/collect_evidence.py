@@ -26,6 +26,8 @@ def main():
     ap.add_argument('--source', type=Path, required=True)
     ap.add_argument('--archive', type=Path, required=True)
     ap.add_argument('--representative', default='r004b-p32-t1-full03')
+    ap.add_argument('--trace-prefix', default='r004b-p32-t1-',
+                    help='Exact tested candidate run prefix, including trailing dash')
     args = ap.parse_args()
     root, source = args.root.resolve(), args.source.resolve()
     assert root == Path('/home/user_home/ylf/secom-mpi-20261119')
@@ -51,6 +53,8 @@ def main():
                 for n in ('launch.json', 'stdout.log'):
                     if (rank / n).is_file():
                         add('runs/' + p.name + '/' + rank.name + '/' + n, rank / n)
+                for log in sorted(rank.glob('smpi-profile-*.log')):
+                    add('runs/' + p.name + '/' + rank.name + '/' + log.name, log)
         add('reference/day19-serial-proof.json', old / 'day19-serial-proof.json')
         add('collector/collect_evidence.py', Path(__file__).resolve())
         for n in ('build.log', 'build-omp.log', 'build-serial.log'):
@@ -58,8 +62,25 @@ def main():
                 add('build/' + n, source.parent / n)
         add('build/r004-initial-build.log', root / 'r004outer/build.log')
         add('build/mpi-executable', source / 'build/mpi/s--pom.x')
+        for mode in ('omp', 'serial'):
+            p = source / 'build' / mode / 's--pom.x'
+            if p.is_file():
+                add('build/' + mode + '-executable', p)
+        plan = source.parent / 'formal-series-plan.json'
+        if plan.is_file():
+            add('build/formal-series-plan.json', plan)
+            add('build/control-executable', root / 'r004b/source/build/mpi/s--pom.x')
+        # Diagnostic evidence is separate from the timed scientific ELF.
+        profile = root / 'profile-r014final-v1'
+        if source.parent.name == 'r014final' and profile.is_dir():
+            for p in sorted(profile.glob('*.json')):
+                add('profile/' + p.name, p)
+            for n in ('s--pom-profile.x', 'build.log'):
+                if (profile / n).is_file():
+                    add('profile/' + n, profile / n)
         for label in ('early', 'late'):
             add('build/trace-' + label + '.json', source.parent / ('trace-' + label) / 'build.json')
+            add('build/trace-' + label + '-executable', source.parent / ('trace-' + label) / 's--pom.x')
         for p in sorted(source.iterdir()):
             if p.is_file():
                 add('source/' + p.name, p)
@@ -71,8 +92,8 @@ def main():
         # Two full 25-field frames independently compared on the Mac.
         # All twelve frames remain fully audited on p3 and have receipt hashes.
         for label, refdir, run, name in [
-            ('early', 'traceref-00-11', 'r004b-p32-t1-early', 'transient-153-05.bin'),
-            ('late', 'deepref-00-81', 'r004b-p32-t1-late', 'transient-3600-04.bin')]:
+            ('early', 'traceref-00-11', args.trace_prefix + 'early', 'transient-153-05.bin'),
+            ('late', 'deepref-00-81', args.trace_prefix + 'late', 'transient-3600-04.bin')]:
             add('frames/' + label + '/reference.bin', old / refdir / name)
             add('frames/' + label + '/candidate.bin', root / 'runs' / run / 'rank000' / name)
         inventory = {n: dict(bytes=p.stat().st_size, sha256=digest(p)) for n, p in files.items()}
