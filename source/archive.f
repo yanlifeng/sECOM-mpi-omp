@@ -1,4 +1,8 @@
       SUBROUTINE ARCHIVE
+      CALL SECOM_ARCHIVE_BODY(.FALSE.)
+      END
+      SUBROUTINE SECOM_ARCHIVE_BODY(SECOM_HIST0)
+      LOGICAL SECOM_HIST0
 !     VERSION(08/07/91)
 !
       INCLUDE 'comdeck'
@@ -147,12 +151,15 @@
 !
 !  FOR SEDIMENT TRANSPORT
 !
+           IF (.NOT.SECOM_HIST0) THEN
            ARCWS1(I,J,1)=ARCWS1(I,J,1)+WSET1(I,J,1)*DEI
            ARCWS2(I,J,1)=ARCWS2(I,J,1)+WSET2(I,J,1)*DEI
            ARCSED1(I,J,1)=ARCSED1(I,J,1)+CSED1(I,J,1)*DEI
            ARCSED2(I,J,1)=ARCSED2(I,J,1)+CSED2(I,J,1)*DEI
+           ENDIF
            ARCTAU(I,J,1)=ARCTAU(I,J,1)+TAU(I,J,1)*DEI
 !
+           IF (.NOT.SECOM_HIST0) THEN
            IF (IBMSK(I,J).EQ.0) THEN
              DO 61 LL=1,LAYMAX
                ARCTHIK(I,J)=ARCTHIK(I,J)+TSED(LL,I,J)*DEI
@@ -169,6 +176,7 @@
 !
            ARCHEM1(I,J,1)=ARCHEM1(I,J,1)+CHEM1(I,J,1)*DEI
            ARCHEM2(I,J,1)=ARCHEM2(I,J,1)+CHEM2(I,J,1)*DEI
+           ENDIF
            DO 62 LL=1,NCHEMLAY
              ARCPBED(LL,I,J)=ARCPBED(LL,I,J)
      +                           +CBEDCHEM(LL,I,J)*DEI
@@ -1135,3 +1143,43 @@
       RETURN
       END
 
+
+! Test bit patterns, never floating comparisons, so even signalling NaNs
+! are routed to the original operation (and its original trap). Read
+! only the bed branch used by the old history loop.  All six sources
+! and their histories must be exactly +0.  This is intentionally not
+! just an output-filter or a generic DEAD-physics flag.
+      LOGICAL FUNCTION SECOM_HIST_CERT0()
+      USE ISO_FORTRAN_ENV, ONLY: INT32,INT64
+      INCLUDE 'comdeck'
+      INTEGER(INT32) DIBITS
+      SECOM_HIST_CERT0=.FALSE.
+      IF (STORAGE_SIZE(DEI).NE.32.OR.STORAGE_SIZE(TSED(1,1,1)).NE.64) RETURN
+      DIBITS=TRANSFER(DEI,0_INT32)
+      IF (DIBITS.LE.0.OR.DIBITS.GT.TRANSFER(1.0,0_INT32)) RETURN
+      DO J=1,JM
+        DO I=1,IM
+          IF (TRANSFER(WSET1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(WSET2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(CSED1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(CSED2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(CHEM1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(CHEM2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCWS1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCWS2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCSED1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCSED2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCHEM1(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCHEM2(I,J,1),0_INT32).NE.0) RETURN
+          IF (TRANSFER(ARCTHIK(I,J),0_INT64).NE.0_INT64) RETURN
+          IF (IBMSK(I,J).EQ.0) THEN
+            DO LZ=1,LAYMAX
+              IF (TRANSFER(TSED(LZ,I,J),0_INT64).NE.0_INT64) RETURN
+            ENDDO
+          ELSEIF (IBMSK(I,J).EQ.1) THEN
+            IF (TRANSFER(BEDTH(1,I,J),0_INT64).NE.0_INT64) RETURN
+          ENDIF
+        ENDDO
+      ENDDO
+      SECOM_HIST_CERT0=.TRUE.
+      END

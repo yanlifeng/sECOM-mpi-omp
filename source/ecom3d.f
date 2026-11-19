@@ -9,6 +9,9 @@
       INCLUDE 'comdeck'
       REAL ROWVMAX(JM),ROWEMIN(JM)
       INTEGER ROWIMAX(JM),ROWIMIN(JM)
+      LOGICAL SECOM_HIST0,SECOM_HIST_CERT0
+      EXTERNAL SECOM_HIST_CERT0
+      DATA SECOM_HIST0/.FALSE./
 ! 
 !----------------------------------------------------------------------|
 !                  GENERAL CIRCULATION MODEL                           |
@@ -1849,7 +1852,20 @@
 !qa       ENDIF
 !
       IF (TOR.EQ.'BAROTROPIC') THEN
-        CALL ARCHIVE
+! Only this top-level call has the frozen, chemistry-free evolution
+! guarantee. Startup, public ARCHIVE and alternate model paths stay old.
+        IF (INTX.EQ.2.AND.ISTART.EQ.1) THEN
+          SECOM_HIST0=.FALSE.
+          IF (RESTAR.EQ.'COLD START'.AND.HYDTYPE.EQ.'INTERNAL'
+     &     .AND.TRACER.EQ.'NEGLECT'.AND.SEDTRAN.EQ.'NEGLECT'
+     &     .AND.CHEMTRAN.EQ.'NEGLECT'.AND.PARTICLE.EQ.'NEGLECT'
+     &     .AND.WAVEDYN.EQ.'NEGLECT'.AND.JTM.EQ.0.AND.CDFOUT
+     &     .AND.NCHEMLAY.EQ.0.AND.JHM.GT.0) THEN
+            IF (INTX.GE.IHIST(1,1).AND.INTX.LE.IHIST(1,2))
+     &        SECOM_HIST0=SECOM_HIST_CERT0()
+          ENDIF
+        ENDIF
+        CALL SECOM_ARCHIVE_BODY(SECOM_HIST0)
         GO TO 9900
       END IF
 !

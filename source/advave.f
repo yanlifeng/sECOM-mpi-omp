@@ -1,4 +1,12 @@
       SUBROUTINE ADVAVE(ADVUA,ADVVA)
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM)
+! Standalone/public calls still publish both boundary-corrected fields.
+      CALL SECOM_ADV34_TEAM(ADVUA,ADVVA,.FALSE.)
+      RETURN
+      END
+      SUBROUTINE SECOM_ADV34_TEAM(ADVUA,ADVVA,EDGE_LATE)
+      LOGICAL EDGE_LATE
 !     VERSION(09/27/90)
 !
       INCLUDE 'comdeck'
@@ -106,10 +114,20 @@
       DO 880 I=2,IMM1
  880  ADVVA(I,J)=FLUXUA(I+1,J)-FLUXUA(I,J)
      .          +FLUXVA(I,J)-FLUXVA(I,J-1)
-!$OMP END DO
-!
-! Keep potentially overlapping boundary entries in original order.
+!$OMP END DO NOWAIT
+! Only the rotating barotropic caller can defer publication: no following
+! curvature or bottom/ice stress loop reads the two acceleration fields.
+      IF(EDGE_LATE) RETURN
+!$OMP BARRIER
 !$OMP SINGLE
+      CALL SECOM_ADV34_EDGES(ADVUA,ADVVA)
+!$OMP END SINGLE
+      RETURN
+      END
+      SUBROUTINE SECOM_ADV34_EDGES(ADVUA,ADVVA)
+      INCLUDE 'comdeck'
+      REAL ADVUA(IM,JM),ADVVA(IM,JM)
+! Preserve the original serial list ordering including repeated endpoints.
       IF (OPTEBC(15:20).EQ.'LINEAR') THEN ! IF LINEAR OPTION ENABLED AT THE END OF OPTEBC
        DO 309 N=1,NUMEBC
         IE=IETA(N)
@@ -147,7 +165,6 @@
         ENDIF
  310   CONTINUE
       ENDIF
-!$OMP END SINGLE
 !
       RETURN
       END

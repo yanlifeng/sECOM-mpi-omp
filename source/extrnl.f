@@ -19,7 +19,7 @@
 !
       DIMENSION ADVUA(IM,JM),ADVVA(IM,JM),TRNU(IM,JM),TRNV(IM,JM)
       REAL GEOMX(IM,JM),GEOMY(IM,JM)
-      LOGICAL ROTATE
+      LOGICAL ROTATE,EDGE_LATE
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 400 J=2,JMM1
@@ -150,7 +150,12 @@
 !$OMP END SINGLE
       ENDIF
 ! ADVAVE uses the existing EXTRNL team; all workers must call it.
+      EDGE_LATE=ROTATE.AND.TOR.EQ.'BAROTROPIC'.AND.BCTYPE.EQ.'CLAMPED'
+      IF(EDGE_LATE) THEN
+        CALL SECOM_ADV34_TEAM(ADVUA,ADVVA,.TRUE.)
+      ELSE
       CALL ADVAVE(ADVUA,ADVVA)
+      ENDIF
 !
 !$OMP DO SCHEDULE(STATIC)
       DO 95 J=1,JM
@@ -226,6 +231,9 @@
 !NG WHETHER THIS IS A GOOD IDEA NEEDS FURTHER INVESTIGATION!
 !$OMP END DO
 !$OMP SINGLE
+! The existing stress join and preceding initialization join have completed
+! V divergence, CURV42D and both stresses before any ordered edge update.
+      IF(EDGE_LATE) CALL SECOM_ADV34_EDGES(ADVUA,ADVVA)
       DO 310 N=1,NUMEBC
       IE=IETA(N)
       JE=JETA(N)
@@ -245,6 +253,7 @@
         TXBOT(IE,JE)=TXBOT(IE,JE+1) ! NG same as internal bcond, cosmetic
       ENDIF
  310  CONTINUE
+      IF(EDGE_LATE) CALL SECOM_ADV34_CORNERS()
 !$OMP END SINGLE
 
  5000 CONTINUE
@@ -256,32 +265,11 @@
 !
 
 !NG2012 CORNERS FIX - NO NEED TO HARDWIRE ANYMORE
+      IF(.NOT.EDGE_LATE) THEN
 !$OMP SINGLE
-      DO N=1,NUMECR
-       IF(NCHARD(N).EQ.1) THEN ! Bottom Left Corner
-        Va(ICHARD(N),JCHARD(N)+1) =
-     +   .5*(Va(ICHARD(N)+1,JCHARD(N)+1)+Va(ICHARD(N),JCHARD(N)+2))
-        Ua(ICHARD(N)+1,JCHARD(N)) =
-     +   .5*(Ua(ICHARD(N)+1,JCHARD(N)+1)+Ua(ICHARD(N)+2,JCHARD(N)))
-       ELSEIF(NCHARD(N).EQ.2) THEN ! Bottom Right Corner
-        Va(ICHARD(N),JCHARD(N)+1) =
-     +   .5*(Va(ICHARD(N)-1,JCHARD(N)+1)+Va(ICHARD(N),JCHARD(N)+2))
-        Ua(ICHARD(N),JCHARD(N)) =
-     +   .5*(Ua(ICHARD(N)-1,JCHARD(N))+Ua(ICHARD(N),JCHARD(N)+1))
-       ELSEIF(NCHARD(N).EQ.3) THEN ! Top Right Corner
-        Va(ICHARD(N),JCHARD(N)) =
-     +   .5*(Va(ICHARD(N)-1,JCHARD(N))+Va(ICHARD(N),JCHARD(N)-1))
-        Ua(ICHARD(N),JCHARD(N)) =
-     +   .5*(Ua(ICHARD(N)-1,JCHARD(N))+Ua(ICHARD(N),JCHARD(N)-1))
-       ELSE ! Top Left Corner
-        Va(ICHARD(N),JCHARD(N)) =
-     +   .5*(Va(ICHARD(N)+1,JCHARD(N))+Va(ICHARD(N),JCHARD(N)-1))
-        Ua(ICHARD(N)+1,JCHARD(N)) =
-     +   .5*(Ua(ICHARD(N)+2,JCHARD(N))+Ua(ICHARD(N)+1,JCHARD(N)-1))
-       ENDIF
-      ENDDO
-
+      CALL SECOM_ADV34_CORNERS()
 !$OMP END SINGLE
+      ENDIF
 !$OMP DO SCHEDULE(STATIC)
       DO 425 J=2,JMM1
       DO 425 I=3,IMM1
@@ -387,5 +375,33 @@
       ENDIF
 !
 !hli      print *,'returning from EXTRNL'
+      RETURN
+      END
+      SUBROUTINE SECOM_ADV34_CORNERS()
+      INCLUDE 'comdeck'
+      DO N=1,NUMECR
+       IF(NCHARD(N).EQ.1) THEN ! Bottom Left Corner
+        Va(ICHARD(N),JCHARD(N)+1) =
+     +   .5*(Va(ICHARD(N)+1,JCHARD(N)+1)+Va(ICHARD(N),JCHARD(N)+2))
+        Ua(ICHARD(N)+1,JCHARD(N)) =
+     +   .5*(Ua(ICHARD(N)+1,JCHARD(N)+1)+Ua(ICHARD(N)+2,JCHARD(N)))
+       ELSEIF(NCHARD(N).EQ.2) THEN ! Bottom Right Corner
+        Va(ICHARD(N),JCHARD(N)+1) =
+     +   .5*(Va(ICHARD(N)-1,JCHARD(N)+1)+Va(ICHARD(N),JCHARD(N)+2))
+        Ua(ICHARD(N),JCHARD(N)) =
+     +   .5*(Ua(ICHARD(N)-1,JCHARD(N))+Ua(ICHARD(N),JCHARD(N)+1))
+       ELSEIF(NCHARD(N).EQ.3) THEN ! Top Right Corner
+        Va(ICHARD(N),JCHARD(N)) =
+     +   .5*(Va(ICHARD(N)-1,JCHARD(N))+Va(ICHARD(N),JCHARD(N)-1))
+        Ua(ICHARD(N),JCHARD(N)) =
+     +   .5*(Ua(ICHARD(N)-1,JCHARD(N))+Ua(ICHARD(N),JCHARD(N)-1))
+       ELSE ! Top Left Corner
+        Va(ICHARD(N),JCHARD(N)) =
+     +   .5*(Va(ICHARD(N)+1,JCHARD(N))+Va(ICHARD(N),JCHARD(N)-1))
+        Ua(ICHARD(N)+1,JCHARD(N)) =
+     +   .5*(Ua(ICHARD(N)+2,JCHARD(N))+Ua(ICHARD(N)+1,JCHARD(N)-1))
+       ENDIF
+      ENDDO
+
       RETURN
       END
